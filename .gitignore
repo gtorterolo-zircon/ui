@@ -33,3 +33,6 @@ logs/
 
 # lol macs
 .DS_Store/
+
+# ignore contracts link
+src/contracts

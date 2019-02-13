@@ -24,8 +24,10 @@ start_ganache() {
         --account="0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501209,1000000000000000000000000"
     )
 
-    docker run -d -p 8545:8545 --name cementdao-local-ganache trufflesuite/ganache-cli:v6.3.0 -a 10 "${accounts[@]}"
+    docker run --rm -d -p 8545:8545 --name cementdao-local-ganache trufflesuite/ganache-cli:v6.3.0 -a 10 "${accounts[@]}"
+    npm run link-contracts
     sleep 10
+    cd ../Contracts
     truffle deploy --network development
 }
 

@@ -10,6 +10,7 @@
     },
     "scripts": {
         "docker": "npm run deploy-contracts && npm run start",
+        "deploy-network": "scripts/local_with_docker.sh",
         "deploy-contracts": "scripts/local_with_node.sh",
         "postinstall": "check-node-version --node '>= 8.12.0' --npm '>= 6.4.0' --yarn '>= 1.10.0'",
         "pretest": "npm-check --skip-unused",

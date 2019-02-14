@@ -2,7 +2,8 @@
     "source": "./src",
     "destination": "./docs",
     "includes": [
-        "\\.jsx$"
+        "\\.jsx$",
+        "\\.tsx$"
     ],
     "excludes": [
         "\\.js$"
@@ -16,6 +17,9 @@
         },
         {
             "name": "esdoc-jsx-plugin"
+        },
+        {
+            "name": "esdoc-typescript-plugin"
         }
     ]
 }

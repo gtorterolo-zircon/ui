@@ -1,6 +1,9 @@
 /* eslint-disable react/prefer-stateless-function */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+
+import Logo from '../../Assets/cementDAO-logo.png';
+
 import './Navbar.css';
 
 
@@ -9,7 +12,7 @@ class Navbar extends Component {
         return (
             <div className="Navbar">
                 <div>
-                    <img className="Navbar__Logo" src="https://pbs.twimg.com/profile_images/1081871727695724544/KkAFlmWi_400x400.jpg" alt="cementDAO logo" />
+                    <img className="Navbar__Logo" src={Logo} alt="cementDAO logo" />
                 </div>
                 <div className="Navbar__items-container">
                     <Link to="/mixr" className="Navbar__item">MIXR</Link>

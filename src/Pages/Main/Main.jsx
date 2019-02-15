@@ -1,7 +1,7 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 
-import Login from '../Login/Login'
+import Login from '../Login/Login';
 import MIXR from '../MIXR/MIXR';
 import BILD from '../BILD/BILD';
 import RISK from '../RISK/RISK';

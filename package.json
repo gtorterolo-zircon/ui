@@ -22,14 +22,16 @@
         "link-contracts:win32": "cd src && mklink \\D contracts ..\\..\\Contracts\\build\\contracts"
     },
     "dependencies": {
+        "@types/react": "^16.8.3",
+        "@types/react-router-dom": "^4.3.1",
         "bignumber.js": "^8.0.2",
         "react": "^16.8.2",
         "react-dom": "^16.8.2",
         "react-router-dom": "^4.3.1",
         "react-scripts": "2.1.5",
         "truffle-contract": "^4.0.5",
-        "web3": "^1.0.0-beta.35",
-        "typescript": "3.3.3"
+        "typescript": "3.3.3",
+        "web3": "^1.0.0-beta.35"
     },
     "devDependencies": {
         "esdoc": "^1.1.0",
@@ -42,10 +44,10 @@
         "eslint-plugin-import": "^2.16.0",
         "eslint-plugin-jsx-a11y": "^6.2.1",
         "eslint-plugin-react": "^7.12.4",
+        "run-script-os": "^1.0.5",
         "tslint": "5.12.1",
         "tslint-react": "3.6.0",
-        "typescript-tslint-plugin": "0.3.1",
-        "run-script-os": "^1.0.5"
+        "typescript-tslint-plugin": "0.3.1"
     },
     "eslintConfig": {
         "extends": "react-app"

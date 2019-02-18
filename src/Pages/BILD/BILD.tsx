@@ -2,15 +2,15 @@ import React, { Component } from 'react';
 import Navbar from '../../Containers/Navbar/Navbar';
 
 
-class RISK extends Component {
-    render() {
+class BILD extends Component {
+    public render() {
         return (
             <div>
                 <Navbar />
-                RISK VIEW
+        BILD VIEW
             </div>
         );
     }
 }
 
-export default RISK;
+export default BILD;

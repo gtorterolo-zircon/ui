@@ -1,21 +1,19 @@
 /* eslint-disable react/prefer-stateless-function */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import Sidebar from '../Sidebar/Sidebar';
 
 import Logo from '../../Assets/cementDAO-logo.png';
-import Sidebar from '../Sidebar/Sidebar';
 
 import './Navbar.css';
 
 class Navbar extends Component {
     // eslint-disable-next-line no-useless-constructor
-    constructor() {
-        super();
-        this.state = {
-        };
+    constructor(props: any) {
+        super(props);
     }
 
-    render() {
+    public render() {
         return (
             <React.Fragment>
                 <div className="Navbar">

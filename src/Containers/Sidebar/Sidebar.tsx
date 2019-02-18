@@ -6,7 +6,11 @@ import './Sidebar.css';
 
 
 class Sidebar extends Component {
-    render() {
+    constructor(props: any) {
+        super(props);
+    }
+
+    public render() {
         return (
             <div className="Sidebar">
                 <p className="Sidebar__closebtn">&times;</p>

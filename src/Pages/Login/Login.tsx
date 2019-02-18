@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 
-import LoginLogo from '../../Assets/login-page-logo.png';
 import Logo from '../../Assets/cementDAO-logo.png';
+import LoginLogo from '../../Assets/login-page-logo.png';
+
 import './Login.css';
 
 class Login extends Component {
-    render() {
+    public render() {
         return (
             <div>
                 <div className="Login__grid">

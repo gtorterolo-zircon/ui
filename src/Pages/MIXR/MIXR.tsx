@@ -7,7 +7,7 @@ import './MIXR.css';
 
 
 class MIXR extends Component {
-    render() {
+    public render() {
         return (
             <div className="MIXR">
                 <Navbar />

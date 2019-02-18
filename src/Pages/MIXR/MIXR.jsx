@@ -16,7 +16,7 @@ class MIXR extends Component {
                         <Wallet />
                     </div>
                     <div className="MIXR__wallet1">middle</div>
-                    <div className="MIXR__wallet1">end</div>
+                    <div className="MIXR__wallet1">l</div>
                 </div>
             </div>
         );

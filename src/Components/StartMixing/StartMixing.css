@@ -1,0 +1,35 @@
+.Start-Mixing__container {
+
+}
+
+.Start-Mixing__title {
+    width: 90%;
+    font-size: 20px;
+    transform: scale(1, 0.9);
+    line-height: 28px;
+    word-spacing: 1.8px;
+    letter-spacing: 1.8px;
+    font-weight: 700;
+}
+
+.Start-Mixing__Image {
+    width: 90%;
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.Start-Mixing__content {
+    font-size: 16px;
+    line-height: 26px;
+    width: 90%;
+    margin-bottom: 30px;
+    font-weight: 400;
+}
+
+.Start-Mixing__button {
+    height: 34px;
+    width: 160px;
+    font-weight: 500;
+    background: #000;
+    color: #fff;
+}

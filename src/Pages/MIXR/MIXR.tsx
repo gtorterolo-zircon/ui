@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Navbar from '../../Containers/Navbar/Navbar';
 import Wallet from '../../Containers/Wallet/Wallet';
 
+import StartMixing from '../../Components/StartMixing/StartMixing';
 
 import './MIXR.css';
 
@@ -15,8 +16,13 @@ class MIXR extends Component {
                     <div className="MIXR__wallet">
                         <Wallet />
                     </div>
-                    <div className="MIXR__wallet1">middle</div>
-                    <div className="MIXR__wallet1">l</div>
+                    <div className="MIXR__main">
+                        {/* <StartMixing /> */}
+                        <div className="MIXR-Input">
+
+                        </div>
+                    </div>
+                    <div>l</div>
                 </div>
             </div>
         );

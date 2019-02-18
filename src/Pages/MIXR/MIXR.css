@@ -3,8 +3,9 @@
     grid-template-columns: 1fr 2fr 1fr;
 }
 
-.MIXR__wallet1 {
+.MIXR__main {
     border-right: 1.6px solid #D5D3DA;
+    padding: 50px;
 }
 
 

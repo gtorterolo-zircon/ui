@@ -3,14 +3,17 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
 import Logo from '../../Assets/cementDAO-logo.png';
-import Sidebar from '../Sidebar/Sidebar'
+import Sidebar from '../Sidebar/Sidebar';
 
 import './Navbar.css';
 
 class Navbar extends Component {
-    state = {
-
-    };
+    // eslint-disable-next-line no-useless-constructor
+    constructor() {
+        super();
+        this.state = {
+        };
+    }
 
     render() {
         return (

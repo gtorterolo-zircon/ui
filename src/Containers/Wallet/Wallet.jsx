@@ -3,7 +3,30 @@ import './Wallet.css';
 
 
 class Wallet extends Component {
+    constructor() {
+        super();
+        this.state = {
+            walletInfo: [],
+        };
+    }
+
+    componentDidMount() {
+        this.loadWalletInfo();
+    }
+
+    loadWalletInfo() {
+        const walletInfo = [
+            {
+                name: 'USDT',
+                value: 21.056,
+                priceUSD: 21.012,
+            },
+        ];
+        this.setState({ walletInfo });
+    }
+
     render() {
+        const { walletInfo } = this.state;
         return (
             <div className="Wallet">
                 <div className="Wallet__container">
@@ -14,33 +37,23 @@ class Wallet extends Component {
                         <div className="Wallet__grid-title"><span className="underline"><span className="Wallet__grid-title--underline">DEPOSIT</span></span></div>
 
                         {/* TODO: Create a for each to loop out each cryptocurrency in wallet  */}
-                        <div className="Wallet__grid-item">USDT</div>
-                        <div>
-                            <p className="Wallet__grid-item">21.056</p>
-                            <p className="Wallet__grid-item--small">$21.012</p>
-                        </div>
-                        <div>
-                            <i className="Wallet__grid-button fas fa-chevron-circle-right fa-2x" />
-                        </div>
-
-                        <div className="Wallet__grid-item">TUSD</div>
-                        <div>
-                            <p className="Wallet__grid-item">0.056</p>
-                            <p className="Wallet__grid-item--small">$0.055</p>
-                        </div>
-                        <div>
-                            <i className="Wallet__grid-button fas fa-chevron-circle-right fa-2x" />
-                        </div>
-
-                        <div className="Wallet__grid-item">TUSD</div>
-                        <div>
-                            <p className="Wallet__grid-item">0.056</p>
-                            <p className="Wallet__grid-item--small">$0.055</p>
-                        </div>
-                        <div>
-                            <i className="Wallet__grid-button fas fa-chevron-circle-right fa-2x" />
-                        </div>
-
+                        {
+                            walletInfo.map(element => (
+                                <React.Fragment>
+                                    <div className="Wallet__grid-item">{element.name}</div>
+                                    <div>
+                                        <p className="Wallet__grid-item">{element.value}</p>
+                                        <p className="Wallet__grid-item--small">
+                                            $
+                                            {element.priceUSD}
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <i className="Wallet__grid-button fas fa-chevron-circle-right fa-2x" />
+                                    </div>
+                                </React.Fragment>
+                            ))
+                        }
 
                     </div>
                 </div>

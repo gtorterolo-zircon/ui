@@ -11,11 +11,11 @@ interface IMIXRContractState {
     getApprovedTokens: () => Promise<[[IWalletType], number]>;
 }
 interface IWalletState {
-    mixrContract: IMIXRContractState;
-    sampleERC20: object;
-    userAccount: string;
-    web3: object;
-    walletInfo: [IWalletType];
+    mixrContract?: IMIXRContractState;
+    sampleERC20?: object;
+    userAccount?: string;
+    web3?: object;
+    walletInfo?: IWalletType[];
 }
 class Wallet extends Component<{}, IWalletState> {
     /**
@@ -23,10 +23,6 @@ class Wallet extends Component<{}, IWalletState> {
      */
     constructor(props: any) {
         super(props);
-
-        /* this.state = {
-            walletInfo: [{} as IWalletType],
-        }; */
     }
 
     /**
@@ -50,22 +46,20 @@ class Wallet extends Component<{}, IWalletState> {
                 ContractSampleERC20.setProvider(web3.currentProvider);
                 const instanceSampleERC20 = await ContractSampleERC20.deployed();
 
-                /* const walletInfo = [
+                const walletInfo = [
                     {
                         name: 'USDT',
                         priceUSD: 21.012,
                         value: 21.056,
                     },
-                ]; */
+                ];
 
                 // update component state
                 this.setState({
                     mixrContract: instanceMIXR,
                     sampleERC20: instanceSampleERC20,
-                });
-                /* this.setState({
                     walletInfo,
-                }); */
+                });
                 resolve();
             });
 
@@ -118,12 +112,12 @@ class Wallet extends Component<{}, IWalletState> {
      */
     public renderWalletInfo() {
         {
-            if (this.state === undefined || this.state === null) {
+            if (this.state === null || this.state === undefined) {
                 return;
             }
 
             const { walletInfo } = this.state;
-            if (walletInfo === undefined /* [{} as IWalletType] */) {
+            if (walletInfo === null || walletInfo === undefined) {
                 return;
             }
 

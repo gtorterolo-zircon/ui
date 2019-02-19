@@ -36,3 +36,6 @@ logs/
 
 # ignore contracts link
 src/contracts
+
+# ignore typedoc files
+.external-*.js

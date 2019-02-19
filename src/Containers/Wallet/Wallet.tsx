@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import React, { Component } from 'react';
 import truffleContract from 'truffle-contract';
 import MIXRContract from '../../contracts/MIXR.json';
@@ -34,6 +35,12 @@ class Wallet extends Component<{}, IWalletState> {
             const web3 = await getWeb3();
             const accounts = await web3.eth.getAccounts();
 
+            // update component state
+            this.setState({
+                userAccount: accounts[0],
+                web3,
+            });
+
             // tslint:disable-next-line: no-unused-expression
             new Promise(async (resolve, reject) => {
                 // load MIXR contract
@@ -46,11 +53,36 @@ class Wallet extends Component<{}, IWalletState> {
                 ContractSampleERC20.setProvider(web3.currentProvider);
                 const instanceSampleERC20 = await ContractSampleERC20.deployed();
 
+                // load main wallet balances
+                const { userAccount } = this.state;
+                // get the token decimals
+                const mixrDecimals = new BigNumber(await instanceMIXR.decimals()).toNumber();
+                // get balance and devide by tokens decimals so we can see a friendly number
+                const mixrBalance = new BigNumber(
+                    await instanceMIXR.balanceOf(userAccount),
+                ).dividedBy(10 ** mixrDecimals);
+                // same as above!
+                const sampleERC20Decimals = new BigNumber(await instanceSampleERC20.decimals()).toNumber();
+                const sampleERC20Balance = new BigNumber(
+                    await instanceSampleERC20.balanceOf(userAccount),
+                ).dividedBy(10 ** sampleERC20Decimals);
+
+                // save in a state array to render
                 const walletInfo = [
                     {
                         name: 'USDT',
                         priceUSD: 21.012,
                         value: 21.056,
+                    },
+                    {
+                        name: 'MIX',
+                        priceUSD: mixrBalance.toNumber(),
+                        value: mixrBalance.toNumber(),
+                    },
+                    {
+                        name: 'SAMPLE',
+                        priceUSD: sampleERC20Balance.toNumber(),
+                        value: sampleERC20Balance.toNumber(),
                     },
                 ];
 
@@ -61,12 +93,6 @@ class Wallet extends Component<{}, IWalletState> {
                     walletInfo,
                 });
                 resolve();
-            });
-
-            // update component state
-            this.setState({
-                userAccount: accounts[0],
-                web3,
             });
         } catch (error) {
             // if an error happen, log it

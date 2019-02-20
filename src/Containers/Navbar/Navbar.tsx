@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../Sidebar/Sidebar';
 
-import Logo from '../../Assets/cementDAO-logo.png';
+import Logo from '../../Assets/img/cementDAO-logo.png';
 
 import './Navbar.css';
 

@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
 
-import Logo from '../../Assets/cementDAO-logo.png';
-import LoginLogo from '../../Assets/login-page-logo.svg';
-import sliderNext from '../../Assets/slider-next.svg';
+// import Logo from '../../Assets/cementDAO-logo.png';
+import Logo from '../../Assets/img/cement-logo.svg';
+import sliderNext from '../../Assets/img/slider-next.svg';
+import loginImg1 from '../../Assets/img/homepage-slider-img-1.svg';
 
 import './Login.css';
 
@@ -11,6 +12,7 @@ class Login extends Component {
         return (
             <div>
                 <div className="Login__grid">
+
                     <div className="Login__grid-left">
                         <img className="Login__logo" src={Logo} alt="cementDAO logo" />
 
@@ -44,7 +46,7 @@ class Login extends Component {
 
                     </div>
                     <div className="Login__grid-right">
-                        <img className="Login__grid-right-logo" src={LoginLogo} alt="cementDAO logo" />
+                        <img className="Login__grid-right-logo" src={loginImg1}  alt="cementDAO logo" />
                         <p className="Login__grid-right-title">CEMENT IS A BASKET OF MANY STABLECOINS</p>
                         <p className="Login__grid-right-content">
                             Stablecoin holders can deposit their stablecoins into the

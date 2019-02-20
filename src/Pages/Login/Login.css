@@ -1,6 +1,6 @@
 .Login__grid {
     display: grid;
-    grid-template-columns: 42vw auto;
+    grid-template-columns: 44vw auto;
 }
 
 .Login__grid-left {

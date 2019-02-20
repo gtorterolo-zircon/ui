@@ -42,6 +42,9 @@ interface IWalletState {
     userAccount?: string;
     web3?: IWeb3Type;
     walletInfo?: IWalletType[];
+    // TODO: as a first approach to fe unit tests
+    // we should remove it at some point
+    ready?: boolean;
 }
 /**
  * The wallet component
@@ -52,6 +55,9 @@ class Wallet extends Component<{}, IWalletState> {
      */
     constructor(props: any) {
         super(props);
+        this.state = {
+            ready: false,
+        };
     }
     /**
      * @ignore
@@ -67,9 +73,8 @@ class Wallet extends Component<{}, IWalletState> {
                 web3,
             });
             // load platform info async
-            this.loadContracts().then(() => {
-                this.loadUserBalances();
-            });
+            await this.loadContracts();
+            await this.loadUserBalances();
         } catch (error) {
             // if an error happen, log it
             // TODO: should we log somewhere else apart from the browser console?
@@ -204,6 +209,7 @@ class Wallet extends Component<{}, IWalletState> {
             }
             // update component state
             this.setState({
+                ready: true,
                 walletInfo,
             });
             resolve();

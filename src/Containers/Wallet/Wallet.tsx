@@ -7,6 +7,8 @@ import getWeb3 from '../../utils/getWeb3';
 
 import './Wallet.css';
 
+import DepositBtn from '../../Assets/img/deposit-btn.svg';
+
 /**
  * Interface for wallet definition
  */
@@ -85,19 +87,13 @@ class Wallet extends Component<{}, IWalletState> {
                     <p className="Wallet__title">MY WALLET</p>
                     <div className="Wallet__grid">
                         <div className="Wallet__grid-title">
-                            <span className="underline">
-                                <span className="Wallet__grid-title--underline">ASSET</span>
-                            </span>
+                            <span className="Wallet__grid-title--underline">ASSET</span>
                         </div>
                         <div className="Wallet__grid-title">
-                            <span className="underline">
-                                <span className="Wallet__grid-title--underline">BALANCE</span>
-                            </span>
+                            <span className="Wallet__grid-title--underline">BALANCE</span>
                         </div>
                         <div className="Wallet__grid-title">
-                            <span className="underline">
-                                <span className="Wallet__grid-title--underline">DEPOSIT</span>
-                            </span>
+                            <span className="Wallet__grid-title--underline">DEPOSIT</span>
                         </div>
                         {this.renderWalletInfo()}
                     </div>
@@ -131,7 +127,7 @@ class Wallet extends Component<{}, IWalletState> {
                             </p>
                         </div>
                         <div>
-                            <i className="Wallet__grid-button fas fa-chevron-circle-right fa-2x" />
+                            <img className="Wallet__grid-button" src={DepositBtn} />
                         </div>
                     </React.Fragment>
                 );

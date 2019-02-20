@@ -4,6 +4,7 @@
     border: 1px;
     height: calc(100vh - 152px);
     padding-top: 50px;
+    background: #14002d;
 }
 
 .Wallet__container {
@@ -14,6 +15,7 @@
     font-weight: 900;
     font-size: 18px;
     margin-bottom: 30px;
+    color: #00d0de;
 }
 
 .Wallet__grid {
@@ -25,41 +27,32 @@
 .Wallet__grid-title {
     line-height: 20px;
     font-size: 12px;
-    color: #B9B9B9;
 }
 
 .Wallet__grid-title--underline {
     font-weight: 500;
-    color: #B9B9B9;
+    color: #958ca0;
 }
 
-.underline {
-    padding-bottom: 2px;
-    border-bottom: #B9B9B9 1px solid;
-}
 
 .Wallet__grid-item {
     font-size: 16px;
-    color: #B9B9B9;
+    color: #958ca0;
     font-weight: 300;
 }
 
 .Wallet__grid-item--small {
     font-size: 10px;
-    color: #B9B9B9;
+    color: #958ca0;
     font-weight: 100;
     margin-top: 4px;
 }
 
 .Wallet__grid-button {
     display: block;
+    padding-left: 12px;
 }
 
-.fa-2x {
-    font-size: 1.4em;
-    opacity: 0.5;
-    padding-left: 10px;
-}
 
 
 

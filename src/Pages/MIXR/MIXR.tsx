@@ -3,7 +3,7 @@ import Navbar from '../../Containers/Navbar/Navbar';
 import Wallet from '../../Containers/Wallet/Wallet';
 import MIXRAsset from '../../Components/MIXR-Asset/MIXR-Asset';
 
-// import StartMixing from '../../Components/StartMixing/StartMixing';
+import StartMixing from '../../Components/StartMixing/StartMixing';
 
 import './MIXR.css';
 
@@ -19,20 +19,20 @@ class MIXR extends Component {
                         <Wallet />
                     </div>
                     <div className="MIXR__main">
-                        {/* <StartMixing /> */}
+                        <StartMixing />
 
-                        <div className="MIXR-Input">
+                        {/* <div className="MIXR-Input">
                             <p className="MIXR-Input__title">CREATE NEW MIX TOKEN OR EXCHANGE STABLECOINS</p>
                             <div className="MIXR-Input__grid">
-                                <select className="MIXR-Input__coin-input" placeholder="Select Coin To Convert">
-
-                                        <option className="MIXR-Input__coin-option-container"
-                                          value="volvo">Volvo</option>
+                                <div className="custom-select">
+                                    <select placeholder="Select Coin To Convert">
                                         <option value="volvo">Volvo</option>
                                         <option value="volvo">Volvo</option>
                                         <option value="volvo">Volvo</option>
                                         <option value="volvo">Volvo</option>
-                                </select>
+                                        <option value="volvo">Volvo</option>
+                                    </select>
+                                </div>
                                 <input placeholder="Send Amount" type="text" />
                                 <button>max</button>
                             </div>
@@ -61,7 +61,7 @@ class MIXR extends Component {
                             receive="32.000"
                             fee="0.00000018"
                             total="31.221"
-                        />
+                        /> */}
 
                     </div>
                     <div className="MIXR__basket-composition"></div>

@@ -4,32 +4,41 @@
 
 .Start-Mixing__title {
     width: 90%;
-    font-size: 20px;
-    transform: scale(1, 0.9);
-    line-height: 28px;
+    font-size: 12px;
+    line-height: 20px;
     word-spacing: 1.8px;
     letter-spacing: 1.8px;
     font-weight: 700;
+    color: #00d0de;
+    margin-bottom: 10px;
 }
 
 .Start-Mixing__Image {
     width: 90%;
-    margin-top: 10px;
     margin-bottom: 20px;
 }
 
 .Start-Mixing__content {
-    font-size: 16px;
-    line-height: 26px;
+    font-size: 12px;
+    line-height: 20px;
+    width: 64%;
+    margin-bottom: 10px;
+    font-weight: 100;
+    color: #fff;
+}
+
+.Start-Mixing__button-grid {
+    display: flex;
+    justify-content: flex-end;
     width: 90%;
-    margin-bottom: 30px;
-    font-weight: 400;
 }
 
 .Start-Mixing__button {
     height: 34px;
-    width: 160px;
-    font-weight: 500;
-    background: #000;
-    color: #fff;
+    width: 120px;
+    font-weight: 900;
+    background: #00d0de;
+    color: #000;
+    border: none;
+    border-radius: 3px;
 }

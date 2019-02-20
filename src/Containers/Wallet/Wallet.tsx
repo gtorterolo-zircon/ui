@@ -8,6 +8,7 @@ import getWeb3 from '../../utils/getWeb3';
 import './Wallet.css';
 
 import DepositBtn from '../../Assets/img/deposit-btn.svg';
+import plusButton from '../../Assets/img/action-plus.svg';
 
 /**
  * Interface for wallet definition
@@ -101,6 +102,9 @@ class Wallet extends Component<{}, IWalletState> {
                             <span className="Wallet__grid-title--underline">DEPOSIT</span>
                         </div>
                         {this.renderWalletInfo()}
+                    </div>
+                    <div>
+                        <img className="Wallet__plus" src={plusButton} alt="plus button" />
                     </div>
                 </div>
             </div>

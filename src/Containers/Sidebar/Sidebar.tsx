@@ -13,11 +13,20 @@ class Sidebar extends Component {
     public render() {
         return (
             <div className="Sidebar">
-                <p className="Sidebar__closebtn">&times;</p>
-                <p>About</p>
-                <p>Services</p>
-                <p>Clients</p>
-                <p>Contact</p>
+                <div className="Sidebar__container">
+                    <div>
+                        <p className="Sidebar__closebtn">&times;</p>
+                        <p className="Sidebar_item">ABOUT</p>
+                        <p className="Sidebar_item">LEGAL</p>
+                        <p className="Sidebar_item">TERMS</p>
+                        <p className="Sidebar_item">CONTACT</p>
+                    </div>
+                    <div>
+                        <p className="Sidebar_copyright">
+                            &#169; Copyright 2019 by 1A1Z Ltd. All rights reserved.
+                        </p>
+                    </div>
+                </div>
             </div>
         );
     }

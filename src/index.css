@@ -2,6 +2,56 @@
 
 
 body {
-    font-family: Roboto, RobotoDraft, Helvetica, Arial, sans-serif;
+    font-family: Runda;
     overflow: hidden;
 }
+
+@font-face {
+    font-family: 'Runda';
+    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Normal.otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Runda';
+    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Bold.otf');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Runda';
+    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Bold_Italic.otf');
+    font-weight: bold;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Runda';
+    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Light.otf');
+    font-weight: lighter;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Runda';
+    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Light_Italic.otf');
+    font-weight: lighter;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Runda';
+    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Medium.otf');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Runda';
+    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Medium_Italic.otf');
+    font-weight: normal;
+    font-style: italic;
+}
+

@@ -1,14 +1,15 @@
 .Navbar {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
-    height: 60px;
+    height: 40px;
     width: 100%;
-    border-bottom: 1.6px solid #E3E1E7;
+    border-bottom: 1px solid #655E6E;
     padding: 20px 0px;
+    background: #10001F;
 }
 
 .Navbar__Logo {
-    height: 60px;
+    height: 40px;
     width: 60px;
     padding-left: 30px;
     width: 200px;
@@ -16,14 +17,16 @@
 
 .Navbar__items-container {
     padding-left: 30px;
-    line-height: 60px;
+    line-height: 40px;
 }
 
 .Navbar__item {
     display: inline-block;
     padding: 0px 60px;
     font-weight: 700;
-    font-size: 18px;
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: #6B5F7A;
 }
 
 .Navbar__menu-icon-container {
@@ -33,15 +36,18 @@
 
 .Navbar__menu-icon {
     line-height: 60px;
+    padding: 11px 0px;
+    height: 18px;
     display: block;
     padding-right: 30px;
+    color: #fff !important;
 }
 
 a {
     text-decoration: none;
-    color: #9E9E9E;
+    color: #6B5F7A;
 }
 
 a:focus {
-    color: #000;
+    color: #0096A1;
 }

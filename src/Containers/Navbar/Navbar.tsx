@@ -3,7 +3,8 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import Sidebar from '../Sidebar/Sidebar';
 
-import Logo from '../../Assets/img/cementDAO-logo.png';
+import Logo from '../../Assets/img/cement-logo.svg';
+import MenuIcon from '../../Assets/img/hamburger-menu-icon.svg';
 
 import './Navbar.css';
 
@@ -26,7 +27,7 @@ class Navbar extends Component {
                         <Link to="/risk" className="Navbar__item">RISK</Link>
                     </div>
                     <div className="Navbar__menu-icon-container">
-                        <i className="Navbar__menu-icon fas fa-bars fa-2x" />
+                        <img className="Navbar__menu-icon" src={MenuIcon} />
                     </div>
                 </div>
                 <Sidebar />

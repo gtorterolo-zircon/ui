@@ -9,5 +9,66 @@
 }
 
 
+/* MIXR-INPUT CSS */
+.MIXR-Input {
+    width: 80%;
+}
+
+.MIXR-Input__grid {
+    display: grid;
+    grid-template-columns: 52% 30% 10%;
+    grid-column-gap: 14px;
+    padding-bottom: 30px;
+    padding-top: 30px;
+}
+
+.MIXR-Input__title {
+    font-size: 15px;
+    letter-spacing: 1.2px;
+    color: #888888;
+    font-weight: 100;
+
+}
+
+select {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+.MIXR-Input__coin-input {
+    height: 30px;
+    border-radius: 2px;
+    border: 1.2px solid;
+    outline: none;
+    background: #fff;
+}
+
+
+/* MIXR-New-Token css */
+
+.MIXR-New-Token__title {
+    font-size: 15px;
+    letter-spacing: 1.2px;
+    color: #888888;
+    font-weight: 100;
+    padding-bottom: 20px;
+}
+
+.MIXR-New-Token__title--bold {
+    font-weight: 700;
+    color: #949494;
+}
+
+.MIXR-New-Token__grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    max-width: 80%;
+}
+
 
 

@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 
 import Logo from '../../Assets/cementDAO-logo.png';
-import LoginLogo from '../../Assets/login-page-logo.png';
+import LoginLogo from '../../Assets/login-page-logo.svg';
+import sliderNext from '../../Assets/slider-next.svg';
 
 import './Login.css';
 
@@ -52,7 +53,7 @@ class Login extends Component {
                             protection from risk.
                         </p>
                         <div className="Login__button-flex">
-                            <span className="Login__button--background"><i className="Login__button" /></span>
+                            <img className="Login__button" src={sliderNext} alt="slider next"/>
                         </div>
                     </div>
                 </div>

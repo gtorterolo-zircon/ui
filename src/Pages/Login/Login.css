@@ -113,25 +113,12 @@
     margin-top: 30px;
 }
 
-.Login__button--background {
-    position: absolute;
-    right: 0px;
-    padding: 14px;
-    border-radius: 50%;
-    background: #fff;
-}
-
 .Login__button {
     position: absolute;
-    right: 10px;
-    bottom: 8px;
-    color: #fff;
-    opacity: 1;
-    display: inline-block;
-    border-right: 3px solid black;
-    border-bottom: 3px solid black;
-    width: 7px; height: 7px;
-    transform: rotate(-45deg);
+    right: 0px;
+    height: 24px;
+    width: 24px;
 }
+
 
 

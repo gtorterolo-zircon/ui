@@ -8,10 +8,19 @@ import MenuIcon from '../../Assets/img/hamburger-menu-icon.svg';
 
 import './Navbar.css';
 
-class Navbar extends Component {
+
+
+class Navbar extends Component<any, any> {
     // eslint-disable-next-line no-useless-constructor
     constructor(props: any) {
         super(props);
+        this.state = {
+            sidebarOpen: false,
+        }
+    }
+
+    public sidebar = () => {
+        this.setState({sidebarOpen: !this.state.sidebarOpen});
     }
 
     public render() {
@@ -27,10 +36,11 @@ class Navbar extends Component {
                         <Link to="/risk" className="Navbar__item">RISK</Link>
                     </div>
                     <div className="Navbar__menu-icon-container">
-                        <img className="Navbar__menu-icon" src={MenuIcon} />
+                        <img onClick={this.sidebar} className="Navbar__menu-icon" src={MenuIcon} />
                     </div>
                 </div>
-                <Sidebar />
+
+                { this.state.sidebarOpen ?  <Sidebar click={this.sidebar} /> : null}
             </React.Fragment>
         );
     }

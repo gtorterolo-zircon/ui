@@ -41,6 +41,7 @@
     display: block;
     padding-right: 30px;
     color: #fff !important;
+    cursor: pointer;
 }
 
 a {

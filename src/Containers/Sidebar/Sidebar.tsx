@@ -5,17 +5,11 @@ import React, { Component } from 'react';
 import './Sidebar.css';
 
 
-class Sidebar extends Component {
-    constructor(props: any) {
-        super(props);
-    }
-
-    public render() {
-        return (
+const Sidebar = (props: any) =>   (
             <div className="Sidebar">
                 <div className="Sidebar__container">
                     <div>
-                        <p className="Sidebar__closebtn">&times;</p>
+                        <p onClick={props.click} className="Sidebar__closebtn">&times;</p>
                         <p className="Sidebar_item">ABOUT</p>
                         <p className="Sidebar_item">LEGAL</p>
                         <p className="Sidebar_item">TERMS</p>
@@ -29,7 +23,5 @@ class Sidebar extends Component {
                 </div>
             </div>
         );
-    }
-}
 
 export default Sidebar;

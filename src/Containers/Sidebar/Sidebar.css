@@ -7,7 +7,7 @@
     right: 0;
     background-color: #fff;
     overflow-x: hidden;
-    transition: 0.5s;
+    transition: 0.8s;
     padding-top: 50px;
   }
 
@@ -27,6 +27,7 @@
     right: 20px;
     font-size: 36px;
     margin-left: 50px;
+    cursor: pointer;
   }
 
   .Sidebar_item {

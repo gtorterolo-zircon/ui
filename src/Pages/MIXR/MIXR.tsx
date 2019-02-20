@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 import Navbar from '../../Containers/Navbar/Navbar';
 import Wallet from '../../Containers/Wallet/Wallet';
+import MIXRAsset from '../../Components/MIXR-Asset/MIXR-Asset';
 
 // import StartMixing from '../../Components/StartMixing/StartMixing';
 
 import './MIXR.css';
+
 
 
 class MIXR extends Component {
@@ -23,7 +25,13 @@ class MIXR extends Component {
                             <p className="MIXR-Input__title">CREATE NEW MIX TOKEN OR EXCHANGE STABLECOINS</p>
                             <div className="MIXR-Input__grid">
                                 <select className="MIXR-Input__coin-input" placeholder="Select Coin To Convert">
-                                    <option value="volvo">Volvo</option>
+
+                                        <option className="MIXR-Input__coin-option-container"
+                                          value="volvo">Volvo</option>
+                                        <option value="volvo">Volvo</option>
+                                        <option value="volvo">Volvo</option>
+                                        <option value="volvo">Volvo</option>
+                                        <option value="volvo">Volvo</option>
                                 </select>
                                 <input placeholder="Send Amount" type="text" />
                                 <button>max</button>
@@ -32,29 +40,31 @@ class MIXR extends Component {
 
                         <div className="MIXR-New-Token">
                             <p className="MIXR-New-Token__title">
-                                <span className="MIXR-New-Token__title--bold">CREATE </span>
-                                NEW MIX TOKEN </p>
-                            <div className="MIXR-New-Token__grid">
-                                <div>TUSD</div>
-                                <div>
-                                    <p>Receive</p>
-                                    <p>32.000</p>
-                                </div>
-                                <div>
-                                    <p>- FEE</p>
-                                    <p>0.000000018</p>
-                                </div>
-                                <div>
-                                    <p>TOTAL</p>
-                                    <p>31.918</p>
-                                </div>
-                                <button type="button">SELECT</button>
-                            </div>
+                                CREATE
+                                <span className="MIXR-New-Token__title--light"> NEW MIX TOKEN</span></p>
                         </div>
 
+                        <MIXRAsset
+                            assetName="MIXUSD"
+                            receive="32.000"
+                            fee="0.00000018"
+                            total="31.221"
+                        />
+
+                        <p className="MIXR-New-Token__title MIXR-New-Token__title--padding-top">
+                            EXCHANGE
+                            <span className="MIXR-New-Token__title--light"> FOR STABLECOIN</span>
+                        </p>
+
+                        <MIXRAsset
+                            assetName="MIXUSD"
+                            receive="32.000"
+                            fee="0.00000018"
+                            total="31.221"
+                        />
 
                     </div>
-                    <div>l</div>
+                    <div className="MIXR__basket-composition"></div>
                 </div>
             </div>
         );

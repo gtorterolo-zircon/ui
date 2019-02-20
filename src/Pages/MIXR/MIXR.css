@@ -8,8 +8,13 @@
 }
 
 .MIXR__main {
-    border-right: 1.6px solid #D5D3DA;
+    border-right: 1px solid #655E6E;
     padding: 50px;
+    background: #10001f;
+}
+
+.MIXR__basket-composition {
+    background: #10001f;
 }
 
 
@@ -27,10 +32,11 @@
 }
 
 .MIXR-Input__title {
-    font-size: 15px;
-    letter-spacing: 1.2px;
-    color: #888888;
-    font-weight: 100;
+    font-size: 13px;
+    letter-spacing: 1.4px;
+    color: #00d0de;
+    font-weight: 300;
+    opacity: 0.6;
 
 }
 
@@ -40,9 +46,6 @@ select {
     appearance: none;
 }
 
-select::-ms-expand {
-    display: none;
-}
 
 .MIXR-Input__coin-input {
     height: 30px;
@@ -52,27 +55,92 @@ select::-ms-expand {
     background: #fff;
 }
 
+.MIXR-Input__coin-option-container {
+    margin-top: 10px;
+    background: #fff;
+}
+
 
 /* MIXR-New-Token css */
 
 .MIXR-New-Token__title {
-    font-size: 15px;
+    font-size: 14px;
     letter-spacing: 1.2px;
-    color: #888888;
-    font-weight: 100;
+    color: #00d0de;
+    font-weight: 900;
     padding-bottom: 20px;
+    opacity: 1;
 }
 
-.MIXR-New-Token__title--bold {
-    font-weight: 700;
-    color: #949494;
+.MIXR-New-Token__title--padding-top {
+    padding-top: 20px;
 }
 
-.MIXR-New-Token__grid {
+.MIXR-New-Token__title--light {
+    font-weight: 100;
+    color: #00d0de;
+    opacity: 0.6;
+}
+
+.MIXR-Asset__grid {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    max-width: 80%;
+    grid-template-columns: 1fr 1fr 52px 1fr;
+    max-width: 70%;
+    grid-column-gap: 20px;
+    padding: 10px 0px;
+    border-radius: 3px;
 }
+
+.MIXR-Asset__grid:hover {
+    background: #fff;
+    border-right: 4px solid #fff;
+    border-left: 4px solid #fff;
+}
+
+.MIXR-Asset__content--white {
+    color: #fff;
+    font-size: 20px;
+    padding-top: 2px;
+}
+
+.MIXR-Asset__grid:hover  .MIXR-Asset__content--white {
+    color: #10001f;
+}
+
+.MIXR-Asset__content--white--top-padding {
+    color: #fff;
+    font-size: 20px;
+    padding-top: 12px;
+}
+
+.MIXR-Asset__grid:hover  .MIXR-Asset__content--white--top-padding {
+    color: #10001f;
+}
+
+.MIXR-Asset__content--top-padding {
+    color: #655E6E;
+    font-size: 20px;
+    padding-top: 2px;
+}
+
+.MIXR-Asset__content--small {
+    font-size: 12px;
+    word-break: break-all;
+    padding-top: 2px;
+    color: #655E6E;
+}
+
+.MIXR-Asset__title {
+    color: #655E6E;
+    font-size: 11px;
+}
+
+
+
+
+
+
+
 
 
 

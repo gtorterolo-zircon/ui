@@ -1,57 +1,12 @@
+@font-face {
+    font-family: 'Runda';
+    src: url('/src/Assets/fonts/Runda/Runda_Black.otf') format("otf");
+}
+
 @import "reset.css";
 
-
 body {
-    font-family: Runda;
+    font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
     overflow: hidden;
-}
-
-@font-face {
-    font-family: 'Runda';
-    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Normal.otf');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Runda';
-    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Bold.otf');
-    font-weight: bold;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Runda';
-    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Bold_Italic.otf');
-    font-weight: bold;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'Runda';
-    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Light.otf');
-    font-weight: lighter;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Runda';
-    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Light_Italic.otf');
-    font-weight: lighter;
-    font-style: italic;
-}
-
-@font-face {
-    font-family: 'Runda';
-    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Medium.otf');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-    font-family: 'Runda';
-    src: local('Runda'), url('/src/Assets/fonts/Runda/Runda_Medium_Italic.otf');
-    font-weight: normal;
-    font-style: italic;
 }
 

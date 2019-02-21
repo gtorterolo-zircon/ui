@@ -70,26 +70,18 @@ class MIXR extends Component<{}, IMIXRState> {
                                 <button>max</button>
                             </form>
                         </div>
-                        {/* warning message */}
-                        <div className="MIXR-Input__warning-grid" hidden={true}>
-                            <img className="MIXR-Input__warning-logo" src={warningLogo} alt="warning logo" />
-                            <p className="MIXR-Input__warning-message">
-                                LOOKS LIKE YOU DO NOT HAVE SUFFICIENT FUNDS,
-                                <br />
-                                PURCHASE ADDITIONAL COINS TO START.
-                            </p>
-                        </div>
+                        {this.renderWarningBalance()}
                         {this.renderCreate()}
                         {this.renderExchange()}
                     </div>
-                    <div className="MIXR__basket-composition"></div>
+                    <div className="MIXR__basket-composition" />
                 </div>
             </div>
         );
     }
 
     private renderCoins = () => {
-        return this.loadCoins().map(element => {
+        return this.loadCoins().map((element) => {
             return <option key={element} value={element.toLowerCase()}>{element}</option>
         });
     }
@@ -142,6 +134,24 @@ class MIXR extends Component<{}, IMIXRState> {
                     total="31.221"
                 />
             </React.Fragment>
+        </React.Fragment>;
+    }
+
+    private renderWarningBalance = () => {
+        const { haveValidFunds } = this.state;
+        if (haveValidFunds === true) {
+            return null;
+        }
+        return <React.Fragment>
+            {/* warning message */}
+            <div className="MIXR-Input__warning-grid">
+                <img className="MIXR-Input__warning-logo" src={warningLogo} alt="warning logo" />
+                <p className="MIXR-Input__warning-message">
+                    LOOKS LIKE YOU DO NOT HAVE SUFFICIENT FUNDS,
+                                <br />
+                    PURCHASE ADDITIONAL COINS TO START.
+                            </p>
+            </div>
         </React.Fragment>;
     }
 }

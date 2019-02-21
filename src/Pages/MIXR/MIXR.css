@@ -23,6 +23,24 @@
     width: 80%;
 }
 
+.MIXR-Input__warning-grid {
+    display: grid;
+    grid-template-columns: 40px auto;
+    margin: 20px 0px;
+}
+
+.MIXR-Input__warning-logo {
+    height: 20px;
+    width: 20px;
+}
+
+.MIXR-Input__warning-message {
+    font-size: 10px;
+    color: #ff6272;
+    font-weight: 100;
+    line-height: 12px;
+}
+
 .MIXR-Input__grid {
     display: grid;
     grid-template-columns: 52% 30% 10%;

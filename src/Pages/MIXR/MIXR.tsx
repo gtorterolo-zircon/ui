@@ -4,6 +4,7 @@ import Wallet from '../../Containers/Wallet/Wallet';
 import MIXRAsset from '../../Components/MIXR-Asset/MIXR-Asset';
 
 import StartMixing from '../../Components/StartMixing/StartMixing';
+import warningLogo from '../../Assets/img/invalid-name.svg';
 
 import './MIXR.css';
 
@@ -19,10 +20,18 @@ class MIXR extends Component {
                         <Wallet />
                     </div>
                     <div className="MIXR__main">
-                        <StartMixing />
+                        {/* <StartMixing /> */}
 
-                        {/* <div className="MIXR-Input">
+                        <div className="MIXR-Input">
                             <p className="MIXR-Input__title">CREATE NEW MIX TOKEN OR EXCHANGE STABLECOINS</p>
+                            <div className="MIXR-Input__warning-grid">
+                                <img className="MIXR-Input__warning-logo" src={warningLogo} alt="warning logo" />
+                                <p className="MIXR-Input__warning-message">
+                                    LOOKS LIKE YOU DO NOT HAVE SUFFICIENT FUNDS,
+                                    <br />
+                                    PURCHASE ADDITIONAL COINS TO START.
+                                </p>
+                            </div>
                             <div className="MIXR-Input__grid">
                                 <div className="custom-select">
                                     <select placeholder="Select Coin To Convert">
@@ -61,7 +70,7 @@ class MIXR extends Component {
                             receive="32.000"
                             fee="0.00000018"
                             total="31.221"
-                        /> */}
+                        />
 
                     </div>
                     <div className="MIXR__basket-composition"></div>

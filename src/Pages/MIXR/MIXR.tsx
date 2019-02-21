@@ -12,11 +12,13 @@ import './MIXR.css';
 interface IMIXRState {
     coinSelect?: string;
     coinAmount?: number;
+    haveValidFunds?: boolean;
+    selectedExchange?: boolean;
 }
 class MIXR extends Component<{}, IMIXRState> {
     constructor(props: any) {
         super(props);
-        this.state = { coinSelect: 'empty' };
+        this.state = { coinSelect: 'empty', haveValidFunds: false, selectedExchange: false };
     }
 
     public handleChange = (event: any) => {
@@ -34,7 +36,7 @@ class MIXR extends Component<{}, IMIXRState> {
     }
 
     public render() {
-        const { coinSelect, coinAmount } = this.state;
+        const { coinSelect, coinAmount, haveValidFunds } = this.state;
         return (
             <div className="MIXR">
                 <Navbar />
@@ -44,7 +46,6 @@ class MIXR extends Component<{}, IMIXRState> {
                     </div>
                     <div className="MIXR__main">
                         {/* <StartMixing /> */}
-
                         <div className="MIXR-Input">
                             <p className="MIXR-Input__title">CREATE NEW MIX TOKEN OR EXCHANGE STABLECOINS</p>
 
@@ -69,8 +70,8 @@ class MIXR extends Component<{}, IMIXRState> {
                                 <button>max</button>
                             </form>
                         </div>
-
-                        <div className="MIXR-Input__warning-grid">
+                        {/* warning message */}
+                        <div className="MIXR-Input__warning-grid" hidden={true}>
                             <img className="MIXR-Input__warning-logo" src={warningLogo} alt="warning logo" />
                             <p className="MIXR-Input__warning-message">
                                 LOOKS LIKE YOU DO NOT HAVE SUFFICIENT FUNDS,
@@ -78,32 +79,8 @@ class MIXR extends Component<{}, IMIXRState> {
                                 PURCHASE ADDITIONAL COINS TO START.
                             </p>
                         </div>
-
-                        <div className="MIXR-New-Token">
-                            <p className="MIXR-New-Token__title">
-                                CREATE
-                                <span className="MIXR-New-Token__title--light"> NEW MIX TOKEN</span></p>
-                        </div>
-
-                        <MIXRAsset
-                            assetName="MIXUSD"
-                            receive="32.000"
-                            fee="0.00000018"
-                            total="31.221"
-                        />
-
-                        <p className="MIXR-New-Token__title MIXR-New-Token__title--padding-top">
-                            EXCHANGE
-                            <span className="MIXR-New-Token__title--light"> FOR STABLECOIN</span>
-                        </p>
-
-                        <MIXRAsset
-                            assetName="MIXUSD"
-                            receive="32.000"
-                            fee="0.00000018"
-                            total="31.221"
-                        />
-
+                        {this.renderCreate()}
+                        {this.renderExchange()}
                     </div>
                     <div className="MIXR__basket-composition"></div>
                 </div>
@@ -115,6 +92,57 @@ class MIXR extends Component<{}, IMIXRState> {
         return this.loadCoins().map(element => {
             return <option key={element} value={element.toLowerCase()}>{element}</option>
         });
+    }
+
+    private renderCreate = () => {
+        return <React.Fragment>
+            {/* new mix token title */}
+            <div className="MIXR-New-Token">
+                <p className="MIXR-New-Token__title">
+                    CREATE
+            <span className="MIXR-New-Token__title--light"> NEW MIX TOKEN</span></p>
+            </div>
+            {/* mixr asset component */}
+            <React.Fragment>
+                <MIXRAsset
+                    assetName="MIXUSD"
+                    receive="32.000"
+                    fee="0.00000018"
+                    total="31.221"
+                />
+                <MIXRAsset
+                    assetName="MIXUSD"
+                    receive="32.000"
+                    fee="0.00000018"
+                    total="31.221"
+                />
+            </React.Fragment>
+        </React.Fragment>;
+    }
+
+    private renderExchange = () => {
+        return <React.Fragment>
+            {/* stablecoin title */}
+            <p className="MIXR-New-Token__title MIXR-New-Token__title--padding-top">
+                EXCHANGE
+            <span className="MIXR-New-Token__title--light"> FOR STABLECOIN</span>
+            </p>
+            {/* mixr asset component */}
+            <React.Fragment>
+                <MIXRAsset
+                    assetName="MIXUSD"
+                    receive="32.000"
+                    fee="0.00000018"
+                    total="31.221"
+                />
+                <MIXRAsset
+                    assetName="MIXUSD"
+                    receive="32.000"
+                    fee="0.00000018"
+                    total="31.221"
+                />
+            </React.Fragment>
+        </React.Fragment>;
     }
 }
 

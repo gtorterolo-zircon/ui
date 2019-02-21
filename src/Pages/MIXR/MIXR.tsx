@@ -21,6 +21,7 @@ interface IMIXRState {
     selectedAssetCreate?: string;
     selectedAssetExchange?: string;
     assets?: IAsset[];
+    isMixing?: boolean;
 }
 class MIXR extends Component<{}, IMIXRState> {
     constructor(props: any) {
@@ -28,6 +29,7 @@ class MIXR extends Component<{}, IMIXRState> {
         this.state = {
             coinSelect: 'empty',
             haveValidFunds: false,
+            isMixing: false,
             selectedAssetCreate: '',
             selectedAssetExchange: '',
         };
@@ -63,7 +65,7 @@ class MIXR extends Component<{}, IMIXRState> {
     }
 
     public render() {
-        const { coinSelect, coinAmount } = this.state;
+        const { isMixing } = this.state;
         return (
             <div className="MIXR">
                 <Navbar />
@@ -72,35 +74,8 @@ class MIXR extends Component<{}, IMIXRState> {
                         <Wallet />
                     </div>
                     <div className="MIXR__main">
-                        {/* <StartMixing /> */}
-                        <div className="MIXR-Input">
-                            <p className="MIXR-Input__title">CREATE NEW MIX TOKEN OR EXCHANGE STABLECOINS</p>
-
-                            <form className="MIXR-Input__grid" onSubmit={this.handleSubmit}>
-
-                                <select
-                                    className="MIXR-Input__coin-input"
-                                    name="coinSelect"
-                                    value={coinSelect}
-                                    onChange={this.handleChange}
-                                >
-                                    {this.renderCoins()}
-                                </select>
-
-                                <input
-                                    placeholder="Send Amount"
-                                    type="text"
-                                    name="coinAmount"
-                                    value={coinAmount}
-                                    onChange={this.handleChange}
-                                />
-                                <button>max</button>
-                            </form>
-                        </div>
-                        {this.renderWarningBalance()}
-                        {this.renderCreate()}
-                        {this.renderExchange()}
-                        {this.renderSelectionChoice()}
+                        {!isMixing && <StartMixing click={this.startMixing} />}
+                        {isMixing && this.renderMixing()}
                     </div>
                     <div className="MIXR__basket-composition" />
                 </div>
@@ -108,8 +83,46 @@ class MIXR extends Component<{}, IMIXRState> {
         );
     }
 
+    private startMixing = () => {
+        this.setState({isMixing: true});
+    }
+
+    private renderMixing = () => {
+        const { coinAmount, coinSelect } = this.state;
+        return <React.Fragment>
+            <div className="MIXR-Input">
+                <p className="MIXR-Input__title">CREATE NEW MIX TOKEN OR EXCHANGE STABLECOINS</p>
+
+                <form className="MIXR-Input__grid" onSubmit={this.handleSubmit}>
+
+                    <select
+                        className="MIXR-Input__coin-input"
+                        name="coinSelect"
+                        value={coinSelect}
+                        onChange={this.handleChange}
+                    >
+                        {this.renderCoins()}
+                    </select>
+
+                    <input
+                        placeholder="Send Amount"
+                        type="text"
+                        name="coinAmount"
+                        value={coinAmount}
+                        onChange={this.handleChange}
+                    />
+                    <button>max</button>
+                </form>
+            </div>
+            {this.renderWarningBalance()}
+            {this.renderCreate()}
+            {this.renderExchange()}
+            {this.renderSelectionChoice()}
+        </React.Fragment>;
+    }
+
     private changeSelection = () => {
-        this.setState({selectedAssetCreate: '', selectedAssetExchange: ''});
+        this.setState({ selectedAssetCreate: '', selectedAssetExchange: '' });
     }
 
     private confirmTransaction = () => {

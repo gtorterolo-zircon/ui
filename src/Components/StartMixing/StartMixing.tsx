@@ -5,27 +5,25 @@ import StartMixingLogo from '../../Assets/img/illustration-welcome.svg';
 import './StartMixing.css';
 
 
-class Sidebar extends Component {
-    constructor(props: any) {
-        super(props);
-    }
-
-    public render() {
-        return (
-            <div>
-                <div className="Start-Mixing__container">
-                    <p className="Start-Mixing__title">THE CEMENT MIXR PROVIDES ON DEMAND LIQUIDITY AND
+const StartMixing = (props: any) => (
+    <div>
+        <div className="Start-Mixing__container">
+            <p className="Start-Mixing__title">THE CEMENT MIXR PROVIDES ON DEMAND LIQUIDITY AND
                     DECENTRALIZED  EXCHANGE FOR STABLECOINS</p>
-                    <p className="Start-Mixing__content">Deposit a stablecoin into the MIXR and seamlessly exchange it
+            <p className="Start-Mixing__content">Deposit a stablecoin into the MIXR and seamlessly exchange it
                     for any other stablecoin, or simply create new MIXUSD token.</p>
-                    <img  className="Start-Mixing__Image" src={StartMixingLogo} alt="start-mixing-logo" />
-                    <div className="Start-Mixing__button-grid">
-                        <button className="Start-Mixing__button" type="button">GET STARTED</button>
-                    </div>
-                </div>
+            <img className="Start-Mixing__Image" src={StartMixingLogo} alt="start-mixing-logo" />
+            <div className="Start-Mixing__button-grid">
+                <button
+                    onClick={props.click}
+                    className="Start-Mixing__button"
+                    type="button"
+                >
+                    GET STARTED
+                </button>
             </div>
-        );
-    }
-}
+        </div>
+    </div>
+);
 
-export default Sidebar;
+export default StartMixing;

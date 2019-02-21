@@ -18,14 +18,21 @@ interface IMIXRState {
     coinSelect?: string;
     coinAmount?: number;
     haveValidFunds?: boolean;
-    selectedExchange?: boolean;
+    selectedAssetCreate?: string;
+    selectedAssetExchange?: string;
     assets?: IAsset[];
 }
 class MIXR extends Component<{}, IMIXRState> {
     constructor(props: any) {
         super(props);
-        this.state = { coinSelect: 'empty', haveValidFunds: false, selectedExchange: false };
+        this.state = {
+            coinSelect: 'empty',
+            haveValidFunds: false,
+            selectedAssetCreate: '',
+            selectedAssetExchange: '',
+        };
     }
+
 
     public handleChange = (event: any) => {
         this.setState({ [event.target.name]: event.target.value });
@@ -41,7 +48,7 @@ class MIXR extends Component<{}, IMIXRState> {
                 total: '31.221',
             },
             {
-                assetName: 'MIXUSD',
+                assetName: 'MIXEURO',
                 fee: '0.00000018',
                 receive: '32.000',
                 total: '31.221',
@@ -105,20 +112,38 @@ class MIXR extends Component<{}, IMIXRState> {
         });
     }
 
+    private filterAssetHandler = (isExchanging: boolean, key: string) => {
+        if (isExchanging) {
+            this.setState({ selectedAssetExchange: key });
+        } else {
+            this.setState({ selectedAssetCreate: key });
+        }
+    }
+
     private renderCreate = () => {
-        const { assets } = this.state;
+        const { assets, selectedAssetCreate, selectedAssetExchange } = this.state;
         if (assets === null || assets === undefined) {
             return null;
         }
-        const assetsMap = assets.map((element) => {
-            return <MIXRAsset
-                key={element.assetName}
-                assetName={element.assetName}
-                receive={element.receive}
-                fee={element.fee}
-                total={element.total}
-            />;
-        });
+        let assetsMap;
+        const mixrAsset = (element: IAsset) => <MIXRAsset
+            key={element.assetName}
+            assetName={element.assetName}
+            receive={element.receive}
+            fee={element.fee}
+            total={element.total}
+            click={() => this.filterAssetHandler(false, element.assetName)}
+        />;
+        if (selectedAssetExchange === '') {
+            if (selectedAssetCreate !== '') {
+                const element = assets.filter((asset) => asset.assetName === selectedAssetCreate)[0];
+                assetsMap = mixrAsset(element);
+            } else {
+                assetsMap = assets.map((element) => {
+                    return mixrAsset(element);
+                });
+            }
+        }
         return <React.Fragment>
             {/* new mix token title */}
             <div className="MIXR-New-Token">
@@ -134,19 +159,29 @@ class MIXR extends Component<{}, IMIXRState> {
     }
 
     private renderExchange = () => {
-        const { assets } = this.state;
+        const { assets, selectedAssetCreate, selectedAssetExchange } = this.state;
         if (assets === null || assets === undefined) {
             return null;
         }
-        const assetsMap = assets.map((element) => {
-            return <MIXRAsset
-                key={element.assetName}
-                assetName={element.assetName}
-                receive={element.receive}
-                fee={element.fee}
-                total={element.total}
-            />;
-        });
+        let assetsMap;
+        const mixrAsset = (element: IAsset) => <MIXRAsset
+            key={element.assetName}
+            assetName={element.assetName}
+            receive={element.receive}
+            fee={element.fee}
+            total={element.total}
+            click={() => this.filterAssetHandler(true, element.assetName)}
+        />;
+        if (selectedAssetCreate === '') {
+            if (selectedAssetExchange !== '') {
+                const element = assets.filter((asset) => asset.assetName === selectedAssetExchange)[0];
+                assetsMap = mixrAsset(element);
+            } else {
+                assetsMap = assets.map((element) => {
+                    return mixrAsset(element);
+                });
+            }
+        }
         return <React.Fragment>
             {/* stablecoin title */}
             <p className="MIXR-New-Token__title MIXR-New-Token__title--padding-top">

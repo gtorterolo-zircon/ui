@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 const MIXRAsset = (props: any) =>  (
-        <div className="MIXR-Asset__grid">
+        <div className="MIXR-Asset__grid" onClick={props.click}>
             <div className="MIXR-Asset__content--white--top-padding">{props.assetName}</div>
             <div>
                 <p className="MIXR-Asset__title">RECEIVE</p>

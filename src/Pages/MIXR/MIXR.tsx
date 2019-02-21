@@ -9,9 +9,32 @@ import warningLogo from '../../Assets/img/invalid-name.svg';
 import './MIXR.css';
 
 
+interface IMIXRState {
+    coinSelect?: string;
+    coinAmount?: number;
+}
+class MIXR extends Component<{}, IMIXRState> {
+    constructor(props: any) {
+        super(props);
+        this.state = { coinSelect: 'empty' };
+    }
 
-class MIXR extends Component {
+    public handleChange = (event: any) => {
+        this.setState({ [event.target.name]: event.target.value });
+    }
+
+    public handleSubmit = (event: any) => {
+        const { coinSelect } = this.state;
+        alert('Your favorite flavor is: ' + coinSelect);
+        event.preventDefault();
+    }
+
+    public loadCoins = () => {
+        return ['Tether', 'Paxos'];
+    }
+
     public render() {
+        const { coinSelect, coinAmount } = this.state;
         return (
             <div className="MIXR">
                 <Navbar />
@@ -24,27 +47,36 @@ class MIXR extends Component {
 
                         <div className="MIXR-Input">
                             <p className="MIXR-Input__title">CREATE NEW MIX TOKEN OR EXCHANGE STABLECOINS</p>
-                            <div className="MIXR-Input__warning-grid">
-                                <img className="MIXR-Input__warning-logo" src={warningLogo} alt="warning logo" />
-                                <p className="MIXR-Input__warning-message">
-                                    LOOKS LIKE YOU DO NOT HAVE SUFFICIENT FUNDS,
-                                    <br />
-                                    PURCHASE ADDITIONAL COINS TO START.
-                                </p>
-                            </div>
-                            <div className="MIXR-Input__grid">
-                                <div className="custom-select">
-                                    <select placeholder="Select Coin To Convert">
-                                        <option value="volvo">Volvo</option>
-                                        <option value="volvo">Volvo</option>
-                                        <option value="volvo">Volvo</option>
-                                        <option value="volvo">Volvo</option>
-                                        <option value="volvo">Volvo</option>
-                                    </select>
-                                </div>
-                                <input placeholder="Send Amount" type="text" />
+
+                            <form className="MIXR-Input__grid" onSubmit={this.handleSubmit}>
+
+                                <select
+                                    className="MIXR-Input__coin-input"
+                                    name="coinSelect"
+                                    value={coinSelect}
+                                    onChange={this.handleChange}
+                                >
+                                    {this.renderCoins()}
+                                </select>
+
+                                <input
+                                    placeholder="Send Amount"
+                                    type="text"
+                                    name="coinAmount"
+                                    value={coinAmount}
+                                    onChange={this.handleChange}
+                                />
                                 <button>max</button>
-                            </div>
+                            </form>
+                        </div>
+
+                        <div className="MIXR-Input__warning-grid">
+                            <img className="MIXR-Input__warning-logo" src={warningLogo} alt="warning logo" />
+                            <p className="MIXR-Input__warning-message">
+                                LOOKS LIKE YOU DO NOT HAVE SUFFICIENT FUNDS,
+                                <br />
+                                PURCHASE ADDITIONAL COINS TO START.
+                            </p>
                         </div>
 
                         <div className="MIXR-New-Token">
@@ -77,6 +109,12 @@ class MIXR extends Component {
                 </div>
             </div>
         );
+    }
+
+    private renderCoins = () => {
+        return this.loadCoins().map(element => {
+            return <option key={element} value={element.toLowerCase()}>{element}</option>
+        });
     }
 }
 

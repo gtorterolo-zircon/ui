@@ -33,12 +33,12 @@ class MIXR extends Component<{}, IMIXRState> {
         };
     }
 
-
     public handleChange = (event: any) => {
         this.setState({ [event.target.name]: event.target.value });
     }
 
     public handleSubmit = (event: any) => {
+        // TODO: load coins and prices
         event.preventDefault();
         const dummyData = [
             {
@@ -58,11 +58,12 @@ class MIXR extends Component<{}, IMIXRState> {
     }
 
     public loadCoins = () => {
+        // TODO: load coins from blockchain
         return ['Tether', 'Paxos'];
     }
 
     public render() {
-        const { coinSelect, coinAmount, haveValidFunds } = this.state;
+        const { coinSelect, coinAmount } = this.state;
         return (
             <div className="MIXR">
                 <Navbar />
@@ -99,11 +100,33 @@ class MIXR extends Component<{}, IMIXRState> {
                         {this.renderWarningBalance()}
                         {this.renderCreate()}
                         {this.renderExchange()}
+                        {this.renderSelectionChoice()}
                     </div>
                     <div className="MIXR__basket-composition" />
                 </div>
             </div>
         );
+    }
+
+    private changeSelection = () => {
+        this.setState({selectedAssetCreate: '', selectedAssetExchange: ''});
+    }
+
+    private confirmTransaction = () => {
+        // TODO: confirm transaction
+        const { selectedAssetCreate, selectedAssetExchange } = this.state;
+        alert('clicked' + selectedAssetCreate + ' ' + selectedAssetExchange);
+    }
+
+    private renderSelectionChoice = () => {
+        const { selectedAssetCreate, selectedAssetExchange } = this.state;
+        if (selectedAssetCreate === '' && selectedAssetExchange === '') {
+            return null;
+        }
+        return <div>
+            <p className="MIXR-Input__title" onClick={this.changeSelection}>change selection</p>
+            <button onClick={this.confirmTransaction}>CONFIRM</button>
+        </div>;
     }
 
     private renderCoins = () => {

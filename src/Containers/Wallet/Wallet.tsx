@@ -15,13 +15,34 @@ import plusButton from '../../Assets/img/action-plus.svg';
  */
 interface IWalletType { name: string; priceUSD: number; value: number; }
 /**
- * Interface for web3 definition
+ * Interface for IERC20 definition
+ * using web3.js package
  */
+interface IERC20Calls {
+    // although we should not use any, it needs to be
+    call: () => Promise<any>;
+}
+interface IERC20TypeDefault {
+    (address: string): IERC20Type;
+    methods: IERC20TypeDefault;
+    balanceOf: (user: string) => IERC20Calls;
+}
+/**
+ * Interfaces for web3 definition
+ */
+interface IWeb3EthContract {
+    new(jsonInterface: object, address: string, options?: object): IERC20TypeDefault;
+}
+interface IWeb3Eth {
+    Contract: IWeb3EthContract;
+}
 interface IWeb3Type {
+    eth: IWeb3Eth;
     currentProvider?: object;
 }
 /**
  * Interface for IERC20 definition
+ * using truffle contract package
  */
 interface IERC20Type {
     (address: string): IERC20Type;
@@ -39,7 +60,7 @@ interface IMIXRContractType extends IERC20Type {
  */
 interface IWalletState {
     mixrContract?: IMIXRContractType;
-    IERC20?: IERC20Type;
+    IERC20ABI?: object;
     userAccount?: string;
     web3?: IWeb3Type;
     walletInfo?: IWalletType[];
@@ -157,11 +178,11 @@ class Wallet extends Component<{}, IWalletState> {
             const ContractMIXR = truffleContract(MIXRContract);
             ContractMIXR.setProvider(web3.currentProvider);
             const instanceMIXR = await ContractMIXR.deployed();
-            // load the ERC20 interface
-            const IERC20 = truffleContract(IERC20Contract);
+            // load the ERC20 interface abi
+            const abi = (IERC20Contract).abi;
             // update component state
             this.setState({
-                IERC20,
+                IERC20ABI: abi,
                 mixrContract: instanceMIXR,
             });
             resolve();
@@ -174,8 +195,13 @@ class Wallet extends Component<{}, IWalletState> {
     private loadUserBalances() {
         return new Promise(async (resolve, reject) => {
             // load main wallet balances
-            const { userAccount, mixrContract, IERC20 } = this.state;
-            if (userAccount === undefined || mixrContract === undefined || IERC20 === undefined) {
+            const { userAccount, mixrContract, web3, IERC20ABI } = this.state;
+            if (
+                userAccount === undefined ||
+                mixrContract === undefined ||
+                web3 === undefined ||
+                IERC20ABI === undefined
+            ) {
                 return;
             }
             // get the token decimals
@@ -201,8 +227,9 @@ class Wallet extends Component<{}, IWalletState> {
                 // get token info
                 // TODO: we actualy need a method to get decimals!
                 const sampleDecimals = new BigNumber(18).toNumber();
+                const ERC = new web3.eth.Contract(IERC20ABI, approvedTokensAddress[i]);
                 const sampleBalance = new BigNumber(
-                    await IERC20(approvedTokensAddress[i]).balanceOf(userAccount),
+                    await ERC.methods.balanceOf(userAccount).call(),
                 ).dividedBy(10 ** sampleDecimals);
                 // add it to the array
                 walletInfo.push({

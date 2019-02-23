@@ -4,7 +4,10 @@ import StartMixingLogo from '../../Assets/img/illustration-welcome.svg';
 
 import './StartMixing.css';
 
-
+/**
+ * The StartMixing component
+ * @param props properties to be send to component
+ */
 const StartMixing = (props: any) => (
     <div>
         <div className="Start-Mixing__container">

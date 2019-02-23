@@ -12,8 +12,16 @@ configure({ adapter: new Adapter() });
 // to use the mock class instead of the real one
 jest.mock('../../../utils/getWeb3');
 
-describe('some test!', () => {
+describe('Basic tests to Wallet Container', () => {
     test('Should mount Wallet with success', async (done) => {
+        // Render wallet and all information associated
+        const wrapper = mount(<Wallet />);
+        // wait until component did load finishes
+        await wrapper.instance().componentDidMount();
+        // tell the test that it's done
+        done();
+    });
+    test('Should be fully rendered', async (done) => {
         // define an expected value
         const expectedWalletInfo = [
             {

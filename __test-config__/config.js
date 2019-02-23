@@ -1,9 +1,9 @@
 const Web3 = require('web3');
 const truffleContract = require('truffle-contract');
 const BigNumber = require('bignumber.js');
-const SampleERC20Contract = require('../contracts/SampleERC20.json');
-const MIXRContract = require('../contracts/MIXR.json');
-const FixidityLibMockContract = require('../contracts/FixidityLibMock.json');
+const SampleERC20Contract = require('../src/contracts/SampleERC20.json');
+const MIXRContract = require('../src/contracts/MIXR.json');
+const FixidityLibMockContract = require('../src/contracts/FixidityLibMock.json');
 
 
 // eslint-disable-next-line no-unused-vars

@@ -12,6 +12,7 @@
         "docker": "npm run deploy-contracts && npm run start",
         "deploy-network": "scripts/local_with_docker.sh",
         "deploy-contracts": "scripts/local_with_node.sh",
+        "test-config": "node -r esm src/__test-config__/config.js",
         "test": "react-scripts test --env=jsdom --coverage",
         "docs": "typedoc --out docs ./src",
         "start": "react-scripts start",
@@ -47,7 +48,8 @@
         "jest": "^23.0.0",
         "run-script-os": "^1.0.5",
         "tslint-react": "3.6.0",
-        "typescript-tslint-plugin": "0.3.1"
+        "typescript-tslint-plugin": "0.3.1",
+        "esm": "3.2.6"
     },
     "eslintConfig": {
         "extends": "react-app"

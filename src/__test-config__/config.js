@@ -1,10 +1,10 @@
-import Web3 from 'web3';
-import truffleContract from 'truffle-contract';
-import SampleERC20Contract from '../contracts/SampleERC20.json';
-import MIXRContract from '../contracts/MIXR.json';
-import FixidityLibMockContract from '../contracts/FixidityLibMock.json';
-
+const Web3 = require('web3');
+const truffleContract = require('truffle-contract');
 const BigNumber = require('bignumber.js');
+const SampleERC20Contract = require('../contracts/SampleERC20.json');
+const MIXRContract = require('../contracts/MIXR.json');
+const FixidityLibMockContract = require('../contracts/FixidityLibMock.json');
+
 
 // eslint-disable-next-line no-unused-vars
 const getWeb3 = () => new Promise((resolve, reject) => {
@@ -12,6 +12,7 @@ const getWeb3 = () => new Promise((resolve, reject) => {
         'http://127.0.0.1:9545',
     );
     const web3 = new Web3(provider);
+    // eslint-disable-next-line no-console
     console.log('No web3 instance injected, using Local web3.');
     resolve(web3);
 });
@@ -21,7 +22,8 @@ const tokenNumber = (decimals, tokens) => new BigNumber(10)
     .multipliedBy(tokens)
     .toString(10);
 
-const loadCenas = () => new Promise(async (resolve, reject) => {
+// eslint-disable-next-line no-unused-vars
+const configContracts = () => new Promise(async (resolve, reject) => {
     // load web3 and the usar account
     const web3 = await getWeb3();
     const accounts = await web3.eth.getAccounts();
@@ -106,9 +108,10 @@ const loadCenas = () => new Promise(async (resolve, reject) => {
 
     // set account to receive fees
     await mixr.setAccountForFees(walletFees, { from: governor });
-    resolve('done!!');
+    resolve();
 });
 
-loadCenas().then((result) => {
-    console.log(result);
+Promise.all([configContracts]).then(() => {
+    // eslint-disable-next-line no-console
+    console.log('Finished with success!');
 });

@@ -10,3 +10,5 @@ body {
     overflow: hidden;
 }
 
+button:focus {outline:0;}
+

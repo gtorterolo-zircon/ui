@@ -32,7 +32,9 @@ class Login extends Component {
                                         <span>&#39;</span>
                                         t have a Metamask account?
                                         <br />
-                                        <span className="Login__grid-left-CTA--underline">Create one now</span>
+                                        <a href="https://metamask.io/" target="_blank">
+                                            <span className="Login__grid-left-CTA--underline">Create one now</span>
+                                        </a>
                                     </p>
                                 </div>
                             </div>

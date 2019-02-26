@@ -1,15 +1,16 @@
 /* globals document */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter, Route } from 'react-router-dom';
-import Main from './pages/Main';
+import { BrowserRouter } from 'react-router-dom';
+
+import Main from './Pages/Main/Main';
 
 
 export default function renderApp() {
     ReactDOM.render(
         <BrowserRouter>
             <div>
-                <Route path="/" exact component={Main} />
+                <Main />
             </div>
         </BrowserRouter>, document.getElementById('root'),
     );

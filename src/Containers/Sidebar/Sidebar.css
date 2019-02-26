@@ -1,0 +1,43 @@
+.Sidebar {
+    height: 100%;
+    width: 26vw;
+    position: fixed;
+    z-index: 10;
+    top: 0;
+    right: 0;
+    background-color: #fff;
+    overflow-x: hidden;
+    transition: 0.8s;
+    padding-top: 50px;
+  }
+
+  .Sidebar__container {
+      padding: 50px;
+      padding-top: 60px;
+      height: calc(100vh - 180px);
+      padding-bottom: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+  }
+
+  .Sidebar .Sidebar__closebtn {
+    position: absolute;
+    top: 40px;
+    right: 20px;
+    font-size: 36px;
+    margin-left: 50px;
+    cursor: pointer;
+  }
+
+  .Sidebar_item {
+      letter-spacing: 1.2px;
+      margin-bottom: 20px;
+      font-size: 14px;
+  }
+
+  .Sidebar_copyright {
+      font-size: 10px;
+      text-align: center;
+  }
+

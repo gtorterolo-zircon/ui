@@ -11,9 +11,12 @@
     "scripts": {
         "docker": "npm run deploy-contracts && npm run start",
         "deploy-network": "scripts/local_with_docker.sh",
-        "deploy-contracts": "scripts/local_with_node.sh",
+        "deploy-contracts": "DEPLOY_ACTION=start scripts/local_with_node.sh",
         "test-config": "node -r esm __test-config__/config.js",
         "test": "react-scripts test --env=jsdom --coverage",
+        "pretest:final": "npm run deploy-contracts && npm run test-config",
+        "test:final": "react-scripts test --env=jsdom --coverage",
+        "posttest:final": "DEPLOY_ACTION=stop scripts/local_with_node.sh",
         "docs": "typedoc --out docs ./src",
         "start": "react-scripts start",
         "build": "react-scripts build",

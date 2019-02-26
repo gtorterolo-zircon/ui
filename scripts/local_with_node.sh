@@ -9,6 +9,8 @@ set -m
 ganache_port=8545
 
 ganache_running() {
+    # verify if there is any server running on localhost
+    # on port $ganache_port
     nc -z localhost "$ganache_port"
 }
 
@@ -27,15 +29,35 @@ start_ganache() {
         --account="0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501209,1000000000000000000000000"
     )
 
+    # move to contracts folder so it can deploy the contracts to the network
     cd ../Contracts
+    # run ganache-cli and put it on background so we can use the shell to deploy the contracts
     ganache-cli --host 0.0.0.0 --port "$ganache_port" "${accounts[@]}" &
+    # get pid of ganache-cli
+    export GANACHE_SHELL_PID=$!
+    # wait for 10 seconds to let ganache start
     sleep 10
-    truffle deploy --network development
+    # save a variable to know if the ganache instance was started by this script
+    export USE_GANACHE_INSTANCE=script
 }
 
-if ganache_running; then
-    echo "Using existing ganache instance"
-else
-    echo "Starting our own ganache instance"
-    start_ganache
+# if we are running the script in start mode
+if [[ $DEPLOY_ACTION = "start" ]]; then
+    # if there is a ganache instance running, let's use it
+    # other wise, let's start one
+    if ganache_running; then
+        echo "Using existing ganache instance"
+        export USE_GANACHE_INSTANCE=external
+    else
+        echo "Starting our own ganache instance"
+        start_ganache
+        truffle deploy --network development
+    fi
+# if we are running the script in stop mode
+elif [[ $DEPLOY_ACTION = "stop" ]]; then
+    if [[ $USE_GANACHE_INSTANCE = "script" ]]; then
+        # if the instance was started using this script then
+        # kill using pid
+        kill -9 GANACHE_SHELL_PID
+    fi
 fi

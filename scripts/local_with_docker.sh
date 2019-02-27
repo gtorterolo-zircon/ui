@@ -23,12 +23,24 @@ start_ganache() {
         --account="0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501208,1000000000000000000000000"
         --account="0x2bdd21761a483f71054e14f5b827213567971c676928d9a1808cbfa4b7501209,1000000000000000000000000"
     )
-
+    # start an instance docker container with ganache-cli
     docker run --rm -d -p 8545:8545 --name cementdao-local-ganache trufflesuite/ganache-cli:v6.3.0 -a 10 "${accounts[@]}"
+    # if there's a link file for contracts, remove to create a new one, clean
+    if [[ -e ./src/contracts ]]; then
+        rm -f ./src/contracts
+    fi
+    # create the new link
     npm run link-contracts
+    # wait for 10 seconds, so ganache can fully start
     sleep 10
+    # move to contracts folder (the folders follow a structure, see documentation fro more info)
     cd ../Contracts
-    truffle deploy --network development
+    # remove a ./build folder if it exists
+    if [[ -e ./build ]]; then
+        rm -rf ./build
+    fi
+    #deploy the contracts
+    npx truffle deploy --network development
 }
 
 if ganache_running; then

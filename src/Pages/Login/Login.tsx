@@ -2,12 +2,28 @@ import React, { Component } from 'react';
 
 // import Logo from '../../Assets/cementDAO-logo.png';
 import Logo from '../../Assets/img/cement-logo.svg';
-import sliderNext from '../../Assets/img/slider-next.svg';
 import loginImg1 from '../../Assets/img/homepage-slider-img-1.svg';
+import sliderNext from '../../Assets/img/slider-next.svg';
 
 import './Login.css';
 
 class Login extends Component {
+    constructor(props: any) {
+        super(props);
+    }
+
+    public handleLogin = async (event: any) => {
+        event.preventDefault();
+        // verify if window have ethereum property
+        if (window.hasOwnProperty('ethereum')) {
+            // by default the window class does not have ethereum property
+            (window as any).ethereum.enable().then(() => {
+                // go to mixr page
+                window.location.href = '/mixr';
+            });
+        }
+    }
+
     public render() {
         return (
             <div>
@@ -25,7 +41,13 @@ class Login extends Component {
                                     <br />
                                     STABLECOIN NOW
                                 </p>
-                                <button type="button" className="Login__grid-left-button">METAMASK</button>
+                                <button
+                                    type="button"
+                                    className="Login__grid-left-button"
+                                    onClick={this.handleLogin}
+                                >
+                                    METAMASK
+                                </button>
                                 <div>
                                     <p className="Login__grid-left-CTA">
                                         Don
@@ -48,7 +70,7 @@ class Login extends Component {
 
                     </div>
                     <div className="Login__grid-right">
-                        <img className="Login__grid-right-logo" src={loginImg1}  alt="cementDAO logo" />
+                        <img className="Login__grid-right-logo" src={loginImg1} alt="cementDAO logo" />
                         <p className="Login__grid-right-title">CEMENT IS A BASKET OF MANY STABLECOINS</p>
                         <p className="Login__grid-right-content">
                             Stablecoin holders can deposit their stablecoins into the
@@ -57,7 +79,7 @@ class Login extends Component {
                             protection from risk.
                         </p>
                         <div className="Login__button-flex">
-                            <img className="Login__button" src={sliderNext} alt="slider next"/>
+                            <img className="Login__button" src={sliderNext} alt="slider next" />
                         </div>
                     </div>
                 </div>

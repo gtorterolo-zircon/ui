@@ -4,6 +4,7 @@ const BigNumber = require('bignumber.js');
 const SampleERC20Contract = require('../src/contracts/SampleERC20.json');
 const MIXRContract = require('../src/contracts/MIXR.json');
 const FixidityLibMockContract = require('../src/contracts/FixidityLibMock.json');
+const FeesbMockContract = require('../src/contracts/FeesMock.json');
 
 
 // eslint-disable-next-line no-unused-vars
@@ -59,10 +60,15 @@ const configContracts = async () => {
     ContractFixidityLibMock.setProvider(web3.currentProvider);
     const fixidityLibMock = await ContractFixidityLibMock.deployed();
 
+    // load fixidity
+    const ContractFeesbMock = truffleContract(FeesbMockContract);
+    ContractFeesbMock.setProvider(web3.currentProvider);
+    const feesbMock = await ContractFeesbMock.deployed();
+
     // load variables
     const fixed1 = new BigNumber(await fixidityLibMock.fixed1());
-    const DEPOSIT = await mixr.DEPOSIT();
-    const REDEMPTION = await mixr.REDEMPTION();
+    const DEPOSIT = await feesbMock.DEPOSIT();
+    const REDEMPTION = await feesbMock.REDEMPTION();
 
     console.log('Setting permitions ...');
     // deploy mixr and sample erc20
@@ -71,7 +77,7 @@ const configContracts = async () => {
     });
 
     // approve tokens
-    await mixr.approveToken(someERC20.address, {
+    await mixr.registerToken(someERC20.address, {
         from: governor,
     });
 
@@ -113,7 +119,7 @@ const configContracts = async () => {
     );
 
     // set account to receive fees
-    await mixr.setAccountForFees(walletFees, { from: governor });
+    await mixr.setStakeholderAccount(walletFees, { from: governor });
 };
 
 configContracts().then(() => {

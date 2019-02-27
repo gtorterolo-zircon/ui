@@ -7,8 +7,8 @@ import getWeb3 from '../../utils/getWeb3';
 
 import './Wallet.css';
 
-import DepositBtn from '../../Assets/img/deposit-btn.svg';
 import plusButton from '../../Assets/img/action-plus.svg';
+import DepositBtn from '../../Assets/img/deposit-btn.svg';
 
 /**
  * Interface for wallet definition
@@ -53,7 +53,7 @@ interface IERC20Type {
  * Interface for mixr contract definition
  */
 interface IMIXRContractType extends IERC20Type {
-    getApprovedTokens: () => Promise<[[string], number]>;
+    getRegisteredTokens: () => Promise<[[string], number]>;
 }
 /**
  * Interface for wallet component state definition
@@ -211,7 +211,7 @@ class Wallet extends Component<{}, IWalletState> {
                 await mixrContract.balanceOf(userAccount),
             ).dividedBy(10 ** mixrDecimals);
             // same as above!
-            const approved: [[string], number] = await mixrContract.getApprovedTokens();
+            const approved: [[string], number] = await mixrContract.getRegisteredTokens();
             const approvedTokensAddress: [string] = approved[0];
             const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
             // save in a state array to render

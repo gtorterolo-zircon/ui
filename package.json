@@ -11,9 +11,12 @@
     "scripts": {
         "docker": "npm run deploy-contracts && npm run start",
         "deploy-network": "scripts/local_with_docker.sh",
-        "deploy-contracts": "scripts/local_with_node.sh",
+        "deploy-contracts": "DEPLOY_ACTION=start scripts/local_with_node.sh",
         "test-config": "node -r esm __test-config__/config.js",
         "test": "react-scripts test --env=jsdom --coverage",
+        "pretest:final": "npm run deploy-contracts && npm run test-config",
+        "test:final": "react-scripts test --env=jsdom --coverage",
+        "posttest:final": "DEPLOY_ACTION=stop scripts/local_with_node.sh",
         "docs": "typedoc --out docs ./src",
         "start": "react-scripts start",
         "build": "react-scripts build",
@@ -31,7 +34,7 @@
         "react-dom": "^16.8.2",
         "react-router-dom": "^4.3.1",
         "react-scripts": "2.1.5",
-        "truffle-contract": "^4.0.5",
+        "truffle-contract": "4.0.5",
         "typescript": "3.3.3",
         "web3": "1.0.0-beta.35"
     },
@@ -45,11 +48,12 @@
         "eslint-plugin-jsx-a11y": "^6.2.1",
         "eslint-plugin-react": "^7.12.4",
         "jest": "^23.0.0",
-        "run-script-os": "^1.0.5",
+        "run-script-os": "1.0.3",
         "tslint-react": "3.6.0",
-        "typedoc": "^0.14.2",
+        "tslint": "5.13.0",
         "typescript-tslint-plugin": "0.3.1",
-        "esm": "3.2.6"
+        "typedoc": "^0.14.2",
+        "esm": "^3.2.0"
     },
     "eslintConfig": {
         "extends": "react-app"

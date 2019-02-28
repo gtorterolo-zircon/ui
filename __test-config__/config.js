@@ -4,6 +4,7 @@ const BigNumber = require('bignumber.js');
 const SampleERC20Contract = require('../src/contracts/SampleERC20.json');
 const MIXRContract = require('../src/contracts/MIXR.json');
 const FixidityLibMockContract = require('../src/contracts/FixidityLibMock.json');
+const FeesbMockContract = require('../src/contracts/FeesMock.json');
 
 
 // eslint-disable-next-line no-unused-vars
@@ -23,7 +24,8 @@ const tokenNumber = (decimals, tokens) => new BigNumber(10)
     .toString(10);
 
 // eslint-disable-next-line no-unused-vars
-const configContracts = () => new Promise(async (resolve, reject) => {
+const configContracts = async () => {
+    console.log('Starting ...');
     // load web3 and the usar account
     const web3 = await getWeb3();
     const accounts = await web3.eth.getAccounts();
@@ -58,20 +60,29 @@ const configContracts = () => new Promise(async (resolve, reject) => {
     ContractFixidityLibMock.setProvider(web3.currentProvider);
     const fixidityLibMock = await ContractFixidityLibMock.deployed();
 
+    // load fixidity
+    const ContractFeesbMock = truffleContract(FeesbMockContract);
+    ContractFeesbMock.setProvider(web3.currentProvider);
+    const feesbMock = await ContractFeesbMock.deployed();
+
     // load variables
     const fixed1 = new BigNumber(await fixidityLibMock.fixed1());
-    const DEPOSIT = await mixr.DEPOSIT();
-    const REDEMPTION = await mixr.REDEMPTION();
+    const DEPOSIT = await feesbMock.DEPOSIT();
+    const REDEMPTION = await feesbMock.REDEMPTION();
 
+    console.log('Setting permitions ...');
     // deploy mixr and sample erc20
     await mixr.addGovernor(governor, {
         from: owner,
     });
 
     // approve tokens
-    await mixr.approveToken(someERC20.address, {
+    await mixr.registerToken(someERC20.address, {
         from: governor,
     });
+
+    console.log('Setting proportion ...');
+    // set proportion
     await mixr.setTokensTargetProportion(
         [someERC20.address],
         [fixed1.toString(10)],
@@ -99,6 +110,7 @@ const configContracts = () => new Promise(async (resolve, reject) => {
         },
     );
 
+    console.log(`Sending some tokens to ${user} ...`);
     // send tokens to user to use in tests
     await someERC20.transfer(
         user,
@@ -107,11 +119,9 @@ const configContracts = () => new Promise(async (resolve, reject) => {
     );
 
     // set account to receive fees
-    await mixr.setAccountForFees(walletFees, { from: governor });
-    resolve();
-});
+    await mixr.setStakeholderAccount(walletFees, { from: governor });
+};
 
-Promise.all([configContracts]).then(() => {
-    // eslint-disable-next-line no-console
-    console.log('Finished with success!');
+configContracts().then(() => {
+    console.log('Success!');
 });

@@ -1,23 +1,37 @@
 import React, { Component } from 'react';
+
+import BlockchainGeneric from '../../Common/BlockchainGeneric';
+import { IBlockchainState } from '../../Common/CommonInterfaces';
+import MIXRAsset from '../../Components/MIXR-Asset/MIXR-Asset';
 import Navbar from '../../Containers/Navbar/Navbar';
 import Wallet from '../../Containers/Wallet/Wallet';
-import MIXRAsset from '../../Components/MIXR-Asset/MIXR-Asset';
 
-import StartMixing from '../../Components/StartMixing/StartMixing';
 import warningLogo from '../../Assets/img/invalid-name.svg';
+import StartMixing from '../../Components/StartMixing/StartMixing';
 
 import Popup from '../../Components/Popup/Popup';
 
 
 import './MIXR.css';
 
+/**
+ * IAsset interface
+ * TODO: comment!
+ */
 interface IAsset {
     assetName: string;
     fee: string;
     receive: string;
     total: string;
 }
-interface IMIXRState {
+/**
+ * This is the state variables for mixr component
+ * It also extends IBlockchainState so it can use
+ * state variables blockchain related and load
+ * information using state. The information is loaded
+ * when the component loads.
+ */
+interface IMIXRState extends IBlockchainState {
     coinSelect?: string;
     coinAmount?: number;
     haveValidFunds?: boolean;
@@ -26,7 +40,15 @@ interface IMIXRState {
     assets?: IAsset[];
     isMixing?: boolean;
 }
+
+/**
+ * This is the MIXR class. This component renders the page to
+ * exchange assets.
+ */
 class MIXR extends Component<{}, IMIXRState> {
+    /**
+     * @ignore
+     */
     constructor(props: any) {
         super(props);
         this.state = {
@@ -36,6 +58,21 @@ class MIXR extends Component<{}, IMIXRState> {
             selectedAssetCreate: '',
             selectedAssetExchange: '',
         };
+    }
+
+    /**
+     * @ignore
+     */
+    public async componentDidMount() {
+        await BlockchainGeneric.onLoad().then((result) => {
+            this.setState({
+                IERC20ABI: result.IERC20ABI,
+                mixrContract: result.mixrContract,
+                userAccount: result.userAccount,
+                walletInfo: result.walletInfo,
+                web3: result.web3,
+            });
+        });
     }
 
     public handleChange = (event: any) => {
@@ -60,11 +97,6 @@ class MIXR extends Component<{}, IMIXRState> {
             },
         ];
         this.setState({ assets: dummyData });
-    }
-
-    public loadCoins = () => {
-        // TODO: load coins from blockchain
-        return ['Tether', 'Paxos'];
     }
 
     public render() {
@@ -117,7 +149,7 @@ class MIXR extends Component<{}, IMIXRState> {
                         value={coinSelect}
                         onChange={this.handleChange}
                     >
-                        {this.renderCoins()}
+                        {this.renderAssets()}
                     </select>
 
                     <input
@@ -158,9 +190,21 @@ class MIXR extends Component<{}, IMIXRState> {
         </div>;
     }
 
-    private renderCoins = () => {
-        return this.loadCoins().map((element) => {
-            return <option key={element} value={element.toLowerCase()}>{element}</option>
+    /**
+     * Using state variables it renders the asset names in the dropdown
+     * @returns The mapped elements into html <option /> tag
+     */
+    private renderAssets = () => {
+        const { walletInfo } = this.state;
+        if (walletInfo === undefined) {
+            return [];
+        }
+        const assetName: string[] = [];
+        for (const element of walletInfo) {
+            assetName.push(element.name);
+        }
+        return assetName.map((element) => {
+            return <option key={element} value={element.toLowerCase()}>{element}</option>;
         });
     }
 
@@ -178,21 +222,13 @@ class MIXR extends Component<{}, IMIXRState> {
             return null;
         }
         let assetsMap;
-        const mixrAsset = (element: IAsset) => <MIXRAsset
-            key={element.assetName}
-            assetName={element.assetName}
-            receive={element.receive}
-            fee={element.fee}
-            total={element.total}
-            click={() => this.filterAssetHandler(false, element.assetName)}
-        />;
         if (selectedAssetExchange === '') {
             if (selectedAssetCreate !== '') {
                 const element = assets.filter((asset) => asset.assetName === selectedAssetCreate)[0];
-                assetsMap = mixrAsset(element);
+                assetsMap = this.mixrAsset(element);
             } else {
                 assetsMap = assets.map((element) => {
-                    return mixrAsset(element);
+                    return this.mixrAsset(element);
                 });
             }
         }
@@ -218,21 +254,13 @@ class MIXR extends Component<{}, IMIXRState> {
             return null;
         }
         let assetsMap;
-        const mixrAsset = (element: IAsset) => <MIXRAsset
-            key={element.assetName}
-            assetName={element.assetName}
-            receive={element.receive}
-            fee={element.fee}
-            total={element.total}
-            click={() => this.filterAssetHandler(true, element.assetName)}
-        />;
         if (selectedAssetCreate === '') {
             if (selectedAssetExchange !== '') {
                 const element = assets.filter((asset) => asset.assetName === selectedAssetExchange)[0];
-                assetsMap = mixrAsset(element);
+                assetsMap = this.mixrAsset(element);
             } else {
                 assetsMap = assets.map((element) => {
-                    return mixrAsset(element);
+                    return this.mixrAsset(element);
                 });
             }
         }
@@ -266,6 +294,22 @@ class MIXR extends Component<{}, IMIXRState> {
             </div>
         </React.Fragment>;
     }
+
+    /**
+     * Renders a MIXR assets using the given information of the parameter
+     * It will render a MIXRAsset component. See the component for more info.
+     * @param asset asset info being rendered
+     * @returns a MIXRAsset to be put in html
+     */
+    private mixrAsset = (asset: IAsset) => <MIXRAsset
+        key={asset.assetName}
+        assetName={asset.assetName}
+        receive={asset.receive}
+        fee={asset.fee}
+        total={asset.total}
+        // tslint:disable-next-line jsx-no-lambda
+        click={() => this.filterAssetHandler(true, asset.assetName)}
+    />
 }
 
 export default MIXR;

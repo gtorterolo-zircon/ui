@@ -34,7 +34,7 @@ interface IAsset {
  * when the component loads.
  */
 interface IMIXRState extends IBlockchainState {
-    coinSelect?: string;
+    assetSelect?: string;
     assetAmount?: string;
     haveValidFunds?: boolean;
     selectedAssetCreate?: string;
@@ -54,9 +54,10 @@ class MIXR extends Component<{}, IMIXRState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            coinSelect: 'empty',
+            assetAmount: '',
+            assetSelect: 'empty',
             haveValidFunds: false,
-            isMixing: false,
+            isMixing: true,
             selectedAssetCreate: '',
             selectedAssetExchange: '',
         };
@@ -75,16 +76,6 @@ class MIXR extends Component<{}, IMIXRState> {
                 web3: result.web3,
             });
         });
-    }
-
-    public handleChange = (event: any) => {
-        this.setState({ [event.target.name]: event.target.value });
-    }
-
-    public handleSubmit = (event: any) => {
-        // TODO: load coins and prices
-        event.preventDefault();
-        this.setState({ assetAmount: '55' });
     }
 
     public render() {
@@ -121,12 +112,29 @@ class MIXR extends Component<{}, IMIXRState> {
         );
     }
 
+    private handleChange = (event: any) => {
+        // we could use a generic setState using the target.name
+        // but it would lead us to an error. See more
+        // https://stackoverflow.com/a/37427579
+        if (event.target.name === 'assetAmount') {
+            this.setState({ assetAmount: event.target.value });
+        } else if (event.target.name === 'assetSelect') {
+            this.setState({ assetSelect: event.target.value });
+        }
+    }
+
+    private handleSubmit = (event: any) => {
+        // TODO: load coins and prices
+        event.preventDefault();
+        this.setState({ assetAmount: '55' });
+    }
+
     private startMixing = () => {
         this.setState({isMixing: true});
     }
 
     private renderMixing = () => {
-        const { assetAmount, coinSelect } = this.state;
+        const { assetAmount, assetSelect } = this.state;
         return <React.Fragment>
             <div className="MIXR-Input">
                 <p className="MIXR-Input__title">CREATE NEW MIX TOKEN OR EXCHANGE STABLECOINS</p>
@@ -135,10 +143,11 @@ class MIXR extends Component<{}, IMIXRState> {
 
                     <select
                         className="MIXR-Input__coin-input"
-                        name="coinSelect"
-                        value={coinSelect}
+                        name="assetSelect"
+                        value={assetSelect}
                         onChange={this.handleChange}
                     >
+                        <option value="empty">Select</option>
                         {this.renderAssets()}
                     </select>
                     <div className="MIXR-Input__coin-amount-container">
@@ -242,10 +251,11 @@ class MIXR extends Component<{}, IMIXRState> {
      *
      */
     private renderExchange = () => {
-        const { selectedAssetCreate, selectedAssetExchange, assetAmount } = this.state;
+        const { selectedAssetCreate, selectedAssetExchange, assetSelect, assetAmount } = this.state;
         if (
             selectedAssetCreate === undefined ||
             selectedAssetExchange === undefined ||
+            assetSelect === undefined ||
             assetAmount === undefined
         ) {
             return null;
@@ -255,20 +265,25 @@ class MIXR extends Component<{}, IMIXRState> {
         }
         let assetsMap;
 
-        const dummyData = [
-            {
+        const dummyData: IAsset[] = [];
+        // TODO: load from .env file
+        // if mix is selected, the user is redeeming
+        // if any other select, is because it's a deposit
+        if (assetSelect === 'mix') {
+            dummyData.push({
                 assetName: 'MIXUSD',
                 fee: '0.00000018',
                 receive: assetAmount,
                 total: assetAmount,
-            },
-            {
+            });
+        } else {
+            dummyData.push({
                 assetName: 'MIXEURO',
                 fee: '0.00000018',
                 receive: assetAmount,
                 total: assetAmount,
-            },
-        ];
+            });
+        }
 
         if (selectedAssetCreate === '') {
             if (selectedAssetExchange !== '') {

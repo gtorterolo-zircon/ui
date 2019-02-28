@@ -115,15 +115,20 @@ class MIXR extends Component<{}, IMIXRState> {
                     <div className="MIXR__basket-composition" />
                 </div>
                 {/* Error popup  */}
-                <Popup
-                    status='error'
+                {/* <Popup
+                    status="error"
                     color={false}
-                />
+                /> */}
                 {/* In Progress popup */}
                 {/* <Popup
-                    status='inProgess'
+                    status="inProgess"
                     color={true}
                 /> */}
+                {/* Success popup  */}
+                <Popup
+                    status="success"
+                    color={true}
+                />
             </div>
         );
     }

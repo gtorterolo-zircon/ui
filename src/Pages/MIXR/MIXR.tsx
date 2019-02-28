@@ -35,7 +35,7 @@ interface IAsset {
  */
 interface IMIXRState extends IBlockchainState {
     coinSelect?: string;
-    coinAmount?: number;
+    assetAmount?: string;
     haveValidFunds?: boolean;
     selectedAssetCreate?: string;
     selectedAssetExchange?: string;
@@ -84,21 +84,7 @@ class MIXR extends Component<{}, IMIXRState> {
     public handleSubmit = (event: any) => {
         // TODO: load coins and prices
         event.preventDefault();
-        const dummyData = [
-            {
-                assetName: 'MIXUSD',
-                fee: '0.00000018',
-                receive: '32.000',
-                total: '31.221',
-            },
-            {
-                assetName: 'MIXEURO',
-                fee: '0.00000018',
-                receive: '32.000',
-                total: '31.221',
-            },
-        ];
-        this.setState({ assets: dummyData });
+        this.setState({ assetAmount: '55' });
     }
 
     public render() {
@@ -135,15 +121,12 @@ class MIXR extends Component<{}, IMIXRState> {
         );
     }
 
-
-
-
     private startMixing = () => {
         this.setState({isMixing: true});
     }
 
     private renderMixing = () => {
-        const { coinAmount, coinSelect } = this.state;
+        const { assetAmount, coinSelect } = this.state;
         return <React.Fragment>
             <div className="MIXR-Input">
                 <p className="MIXR-Input__title">CREATE NEW MIX TOKEN OR EXCHANGE STABLECOINS</p>
@@ -164,8 +147,8 @@ class MIXR extends Component<{}, IMIXRState> {
                             autoComplete="off"
                             placeholder="Send Amount"
                             type="text"
-                            name="coinAmount"
-                            value={coinAmount}
+                            name="assetAmount"
+                            value={assetAmount}
                             onChange={this.handleChange}
                         />
                         <button className="MIXR-Input__max-button"><img src={MaxButton} /></button>
@@ -259,17 +242,40 @@ class MIXR extends Component<{}, IMIXRState> {
      *
      */
     private renderExchange = () => {
-        const { assets, selectedAssetCreate, selectedAssetExchange } = this.state;
-        if (assets === null || assets === undefined) {
+        const { selectedAssetCreate, selectedAssetExchange, assetAmount } = this.state;
+        if (
+            selectedAssetCreate === undefined ||
+            selectedAssetExchange === undefined ||
+            assetAmount === undefined
+        ) {
             return null;
         }
+        if (assetAmount.length < 1) {
+            return;
+        }
         let assetsMap;
+
+        const dummyData = [
+            {
+                assetName: 'MIXUSD',
+                fee: '0.00000018',
+                receive: assetAmount,
+                total: assetAmount,
+            },
+            {
+                assetName: 'MIXEURO',
+                fee: '0.00000018',
+                receive: assetAmount,
+                total: assetAmount,
+            },
+        ];
+
         if (selectedAssetCreate === '') {
             if (selectedAssetExchange !== '') {
-                const element = assets.filter((asset) => asset.assetName === selectedAssetExchange)[0];
+                const element = dummyData.filter((asset) => asset.assetName === selectedAssetExchange)[0];
                 assetsMap = this.mixrAsset(element);
             } else {
-                assetsMap = assets.map((element) => {
+                assetsMap = dummyData.map((element) => {
                     return this.mixrAsset(element);
                 });
             }

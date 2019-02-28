@@ -6,6 +6,9 @@ import MIXRAsset from '../../Components/MIXR-Asset/MIXR-Asset';
 import StartMixing from '../../Components/StartMixing/StartMixing';
 import warningLogo from '../../Assets/img/invalid-name.svg';
 
+import Popup from '../../Components/Popup/Popup';
+
+
 import './MIXR.css';
 
 interface IAsset {
@@ -79,9 +82,22 @@ class MIXR extends Component<{}, IMIXRState> {
                     </div>
                     <div className="MIXR__basket-composition" />
                 </div>
+                {/* Error popup  */}
+                <Popup
+                    status='error'
+                    color={false}
+                />
+                {/* In Progress popup */}
+                {/* <Popup
+                    status='inProgess'
+                    color={true}
+                /> */}
             </div>
         );
     }
+
+
+
 
     private startMixing = () => {
         this.setState({isMixing: true});
@@ -193,7 +209,9 @@ class MIXR extends Component<{}, IMIXRState> {
             </React.Fragment>
         </React.Fragment>;
     }
-
+    /**
+     *
+     */
     private renderExchange = () => {
         const { assets, selectedAssetCreate, selectedAssetExchange } = this.state;
         if (assets === null || assets === undefined) {

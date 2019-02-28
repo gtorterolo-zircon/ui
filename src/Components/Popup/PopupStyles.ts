@@ -39,8 +39,11 @@ export  const Popup__message = styled.div `
     padding-top: 50px;
 `;
 
-export const Popup__title = styled.p `
-    font-size: 24px;
+export const Popup__title_white = styled.p `
+    margin-bottom: 24px;
+    font-size: 20px;
+    letter-spacing: 4px;
+    color: #fff;
 `;
 
 export const Popup__title_red = styled.p `

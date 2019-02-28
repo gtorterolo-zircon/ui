@@ -125,10 +125,10 @@ class MIXR extends Component<{}, IMIXRState> {
                     color={true}
                 /> */}
                 {/* Success popup  */}
-                <Popup
+                {/* <Popup
                     status="success"
                     color={true}
-                />
+                /> */}
             </div>
         );
     }

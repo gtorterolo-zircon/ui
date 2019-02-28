@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import {PopupDiv, Popup__image, Popup__content, Popup__close_button, Popup__message, Popup__content_cancelled, Popup__title, Popup__content_inProgress, Popup__content_inProgressTitle, Popup__content_inProgressGrid, Popup__content_inProgressSpan, Popup__InProgressIcon, Popup__title_red, Popup__viewTransaction} from './PopupStyles';
+import {PopupDiv, Popup__image, Popup__content, Popup__close_button, Popup__message, Popup__content_cancelled, Popup__title_white, Popup__content_inProgress, Popup__content_inProgressTitle, Popup__content_inProgressGrid, Popup__content_inProgressSpan, Popup__InProgressIcon, Popup__title_red, Popup__viewTransaction} from './PopupStyles';
 
 
 import ErrorPopupImg from '../../Assets/img/popup-images/error-popup-image.svg';
@@ -106,7 +106,7 @@ class Popup extends Component<IPopupProps, {}> {
     private successContent = () => {
         return <React.Fragment>
             <Popup__message>
-                <img src={inProgessTitle} alt="" />
+                <Popup__title_white>success</Popup__title_white>
                 <Popup__content_inProgressTitle>
                     Your transaction has been processed
                 </Popup__content_inProgressTitle>

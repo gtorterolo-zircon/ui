@@ -7,8 +7,8 @@ import getWeb3 from '../../utils/getWeb3';
 
 import './Wallet.css';
 
-import plusButton from '../../Assets/img/action-plus.svg';
-import DepositBtn from '../../Assets/img/deposit-btn.svg';
+import plusButton from '../../Assets/img/wallet/action-plus.svg';
+import DepositBtn from '../../Assets/img/wallet/deposit-btn.svg';
 
 /**
  * Interface for wallet definition

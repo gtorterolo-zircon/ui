@@ -27,6 +27,9 @@ enum TransactionStatus {
     Success,
     Fail,
 }
+/**
+ * Defenition of fee types
+ */
 enum FeeType {
     REDEMPTION = -1,
     TRANSFER = 0,
@@ -96,6 +99,9 @@ class MIXR extends Component<{}, IMIXRState> {
         });
     }
 
+    /**
+     * @ignore
+     */
     public render() {
         const { isMixing } = this.state;
         return (
@@ -130,6 +136,9 @@ class MIXR extends Component<{}, IMIXRState> {
         );
     }
 
+    /**
+     * Handle fields changes
+     */
     private handleChange = (event: any) => {
         // we could use a generic setState using the target.name
         // but it would lead us to an error. See more
@@ -141,9 +150,13 @@ class MIXR extends Component<{}, IMIXRState> {
             });
         } else if (event.target.name === 'assetSelect') {
             this.setState({ assetSelect: event.target.value });
+            // TODO: inject update
         }
     }
 
+    /**
+     * @ignore
+     */
     private handleSubmit = (event: any) => {
         // TODO: load coins and prices
         event.preventDefault();
@@ -191,12 +204,18 @@ class MIXR extends Component<{}, IMIXRState> {
         </React.Fragment>;
     }
 
+    /**
+     * Called when onClick to reset selection
+     * Cleans selection variables values
+     */
     private changeSelection = () => {
         this.setState({ selectedAssetCreate: '', selectedAssetExchange: '' });
     }
 
+    /**
+     * Method called when onClick from confirm button transaction
+     */
     private confirmTransaction = () => {
-        // TODO: confirm transaction
         const {
             assetAmount,
             assetSelect,
@@ -209,6 +228,7 @@ class MIXR extends Component<{}, IMIXRState> {
             web3,
         } = this.state;
 
+        // since this variables can be undefined, let's check their values
         if (
             assetAmount === undefined ||
             assetSelect === undefined ||
@@ -229,36 +249,11 @@ class MIXR extends Component<{}, IMIXRState> {
         const mixrDecimals = 24;
         //
         if (selectedAssetExchange.toLowerCase() === 'mix') {
-            // get address using token name
+            // if I click in MIX is because I'm doing a deposit
+            // get address using selected token name
             const assetAddress = (
                 walletInfo.filter((element) =>
                     element.name.toLowerCase() === assetSelect.toLowerCase(),
-                )[0]
-            ).address;
-            // approve and deposit
-            // TODO: needs to use convertTokenAmount method
-            const amountInBasketWei = new BigNumber(tokens * 10 ** 24).toString(10);
-            mixrContract.approve(
-                mixrContract.address,
-                amountInBasketWei,
-                {
-                    from: userAccount,
-                },
-            ).then(async () => {
-                // redeem
-                await mixrContract.redeemMIXR(
-                    assetAddress,
-                    amountInBasketWei,
-                    {
-                        from: userAccount,
-                    },
-                );
-            });
-        } else {
-            // get address using token name
-            const assetAddress = (
-                walletInfo.filter((element) =>
-                    element.name.toLowerCase() === selectedAssetExchange.toLowerCase(),
                 )[0]
             ).address;
             // get contract using abi
@@ -281,9 +276,40 @@ class MIXR extends Component<{}, IMIXRState> {
                         });
                     });
             });
+        } else {
+            // otherwise it's a redeem action
+            // get address using of selected token name
+            const assetAddress = (
+                walletInfo.filter((element) =>
+                    element.name.toLowerCase() === selectedAssetExchange.toLowerCase(),
+                )[0]
+            ).address;
+            // define amount
+            // TODO: needs to use convertTokenAmount method
+            const amountInBasketWei = new BigNumber(tokens * 10 ** 24).toString(10);
+            // approve transaction
+            mixrContract.approve(
+                mixrContract.address,
+                amountInBasketWei,
+                {
+                    from: userAccount,
+                },
+            ).then(async () => {
+                // redeem
+                await mixrContract.redeemMIXR(
+                    assetAddress,
+                    amountInBasketWei,
+                    {
+                        from: userAccount,
+                    },
+                );
+            });
         }
     }
 
+    /**
+     * Render the selection choice after select one option
+     */
     private renderSelectionChoice = () => {
         const { selectedAssetCreate, selectedAssetExchange } = this.state;
         if (selectedAssetCreate === '' && selectedAssetExchange === '') {
@@ -351,6 +377,11 @@ class MIXR extends Component<{}, IMIXRState> {
         </React.Fragment>;
     }
 
+    /**
+     * Generate data to render assets, according to asset amount and select assets
+     * @param assetAmount amount use in exchange (from input)
+     * @returns Returns a promise with an array of MIXRComponents
+     */
     private generateDataToRenderExchange = async (assetAmount: string): Promise<any[]> => {
         const {
             mixrContract,
@@ -359,6 +390,8 @@ class MIXR extends Component<{}, IMIXRState> {
             assetSelect,
             walletInfo,
         } = this.state;
+
+        // since this variables can be undefined, let's check their values
         if (
             mixrContract === undefined ||
             selectedAssetCreate === undefined ||
@@ -371,9 +404,9 @@ class MIXR extends Component<{}, IMIXRState> {
         if (assetAmount.length < 1) {
             return [];
         }
-        let assetsMap: any[] = [];
 
-        const dummyData: IAsset[] = [];
+        let assetsMap: any[] = [];
+        const assetsData: IAsset[] = [];
         // if mix is selected, the user is redeeming
         // if any other select, is because it's a deposit
         for (const element of walletInfo) {
@@ -381,7 +414,18 @@ class MIXR extends Component<{}, IMIXRState> {
                 continue;
             }
             let estimatedFee;
-            if (element.name.toLowerCase() === 'mix') {
+            if (assetSelect.toLowerCase() === 'mix') {
+                estimatedFee = new BigNumber(
+                    await mixrContract.estimateFee(
+                        element.address,
+                        mixrContract.address,
+                        new BigNumber(parseInt(assetAmount, 10) * 10 ** 18).toString(10),
+                        FeeType.REDEMPTION,
+                    ),
+                    // TODO: var .env with MIX decimals number
+                ).dividedBy(10 ** 24);
+            } else {
+                // if it's a deposit, it's always MIX
                 const assetAddress = (
                     walletInfo.filter((wElement) =>
                         wElement.name.toLowerCase() === assetSelect.toLowerCase(),
@@ -392,23 +436,13 @@ class MIXR extends Component<{}, IMIXRState> {
                         assetAddress,
                         mixrContract.address,
                         new BigNumber(parseInt(assetAmount, 10) * 10 ** 18).toString(10),
-                        FeeType.REDEMPTION,
-                    ),
-                    // TODO: var .env with MIX decimals number
-                ).dividedBy(10 ** 24);
-            } else {
-                estimatedFee = new BigNumber(
-                    await mixrContract.estimateFee(
-                        element.address,
-                        mixrContract.address,
-                        assetAmount,
                         FeeType.DEPOSIT,
                     ),
                     // TODO: var .env with MIX decimals number
                 ).dividedBy(10 ** 24);
             }
 
-            dummyData.push({
+            assetsData.push({
                 assetName: element.name,
                 fee: estimatedFee.toString(),
                 receive: new BigNumber(assetAmount).minus(estimatedFee).toString(),
@@ -418,10 +452,10 @@ class MIXR extends Component<{}, IMIXRState> {
 
         if (selectedAssetCreate === '') {
             if (selectedAssetExchange !== '') {
-                const element = dummyData.filter((asset) => asset.assetName === selectedAssetExchange)[0];
+                const element = assetsData.filter((asset) => asset.assetName === selectedAssetExchange)[0];
                 assetsMap = [this.mixrAsset(element)];
             } else {
-                assetsMap = dummyData.map((element) => {
+                assetsMap = assetsData.map((element) => {
                     return this.mixrAsset(element);
                 });
             }

@@ -18,9 +18,9 @@
     display: flex;
     flex-direction: column;
     align-content: space-between;
-    padding-left: 110px;
+    padding-left: 90px;
     height: calc(100vh - 80px);
-    padding-top: 80px;
+    padding-top: 20px;
 
 }
 
@@ -39,32 +39,44 @@
 }
 
 .Login__grid-left-title {
-    font-size: 28px;
-    font-weight: 600;
-    line-height: 36px;
+    font-size: 20px;
+    line-height: 24px;
     margin-bottom: 40px;
+    font-weight: 100;
 }
 
 .Login__grid-left-button {
-    height: 60px;
+    height: 50px;
     background: #000;
     color: #fff;
     font-size: 18px;
     line-height: 50px;
-    width: 260px;
+    width: 200px;
     font-weight: 500;
     cursor: pointer;
+}
+
+.Login__grid-left-CTA-container {
+    margin-bottom: 80px;
 }
 
 .Login__grid-left-CTA {
     color: #585858;
     margin-top: 40px;
     line-height: 20px;
+    font-size: 13px;
+}
+
+.Login__grid-left-CTA--small {
+    color: #585858;
+    line-height: 14px;
+    font-size: 12px;
 }
 
 .Login__grid-left-CTA--underline {
     text-decoration: underline;
     cursor: pointer;
+    line-height: 20px;
 }
 
 

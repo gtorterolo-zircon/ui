@@ -11,6 +11,8 @@ import StartMixing from '../../Components/StartMixing/StartMixing';
 
 import Popup from '../../Components/Popup/Popup';
 
+import MaxButton from '../../Assets/img/button-max.svg';
+
 
 import './MIXR.css';
 
@@ -156,15 +158,18 @@ class MIXR extends Component<{}, IMIXRState> {
                     >
                         {this.renderAssets()}
                     </select>
-
-                    <input
-                        placeholder="Send Amount"
-                        type="text"
-                        name="coinAmount"
-                        value={coinAmount}
-                        onChange={this.handleChange}
-                    />
-                    <button>max</button>
+                    <div className="MIXR-Input__coin-amount-container">
+                        <input
+                            className="MIXR-Input__coin-amount"
+                            autoComplete="off"
+                            placeholder="Send Amount"
+                            type="text"
+                            name="coinAmount"
+                            value={coinAmount}
+                            onChange={this.handleChange}
+                        />
+                        <button className="MIXR-Input__max-button"><img src={MaxButton} /></button>
+                    </div>
                 </form>
             </div>
             {this.renderWarningBalance()}

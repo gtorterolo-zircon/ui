@@ -48,22 +48,20 @@ class Login extends Component {
                                 >
                                     METAMASK
                                 </button>
-                                <div>
+                                <div className="Login__grid-left-CTA-container">
                                     <p className="Login__grid-left-CTA">
                                         Don
                                         <span>&#39;</span>
                                         t have a Metamask account?
                                         <br />
                                         <a href="https://metamask.io/" target="_blank">
-                                            <span className="Login__grid-left-CTA--underline">Create one now</span>
+                                            <span className="Login__grid-left-CTA--underline">CREATE ONE NOW</span>
                                         </a>
                                     </p>
                                 </div>
-                            </div>
-
-                            <div className="Login__grid-left-bottom-container">
-                                &copy; Copyright 2019 by 1A1Z Ltd. All rights reserved.
-                                <span className="Login__grid-left-bottom-container--underline">Terms of Service</span>
+                                <span className="Login__grid-left-CTA--small Login__grid-left-CTA--underline">Terms of Service</span>
+                                <p className="Login__grid-left-CTA--small">&copy; Copyright 2019 by 1A1Z Ltd.</p>
+                                <p className="Login__grid-left-CTA--small">All rights reserved.</p>
                             </div>
 
                         </div>

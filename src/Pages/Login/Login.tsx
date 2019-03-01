@@ -5,6 +5,8 @@ import Logo from '../../Assets/img/cement-logo.svg';
 import loginImg1 from '../../Assets/img/homepage-slider-img-1.svg';
 import sliderNext from '../../Assets/img/slider-next.svg';
 
+import MetamaskLogo from '../../Assets/img/metamask-logo.svg';
+
 import './Login.css';
 
 class Login extends Component {
@@ -27,7 +29,6 @@ class Login extends Component {
     public render() {
         return (
             <div>
-                <div className="Login__grid">
 
                     <div className="Login__grid-left">
                         <img className="Login__logo" src={Logo} alt="cementDAO logo" />
@@ -46,6 +47,9 @@ class Login extends Component {
                                     className="Login__grid-left-button"
                                     onClick={this.handleLogin}
                                 >
+                                <span>
+                                    <img className="Login__grid-left-button-logo" src={MetamaskLogo} />
+                                </span>
                                     METAMASK
                                 </button>
                                 <div className="Login__grid-left-CTA-container">
@@ -67,6 +71,9 @@ class Login extends Component {
                         </div>
 
                     </div>
+
+                <div className="Login__grid">
+                    <div className="Login__grid-right"></div>
                     <div className="Login__grid-right">
                         <img className="Login__grid-right-logo" src={loginImg1} alt="cementDAO logo" />
                         <p className="Login__grid-right-title">CEMENT IS A BASKET OF MANY STABLECOINS</p>

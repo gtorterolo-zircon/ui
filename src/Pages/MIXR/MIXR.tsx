@@ -1,4 +1,6 @@
+import BigNumber from 'bignumber.js';
 import React, { Component } from 'react';
+import ReactDOM from 'react-dom';
 
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
 import { IBlockchainState } from '../../Common/CommonInterfaces';
@@ -118,6 +120,9 @@ class MIXR extends Component<{}, IMIXRState> {
         // https://stackoverflow.com/a/37427579
         if (event.target.name === 'assetAmount') {
             this.setState({ assetAmount: event.target.value });
+            this.generateDataToRenderExchange(event.target.value).then((assetsMap) => {
+                this.renderExchange(assetsMap);
+            });
         } else if (event.target.name === 'assetSelect') {
             this.setState({ assetSelect: event.target.value });
         }
@@ -130,7 +135,7 @@ class MIXR extends Component<{}, IMIXRState> {
     }
 
     private startMixing = () => {
-        this.setState({isMixing: true});
+        this.setState({ isMixing: true });
     }
 
     private renderMixing = () => {
@@ -166,7 +171,7 @@ class MIXR extends Component<{}, IMIXRState> {
             </div>
             {this.renderWarningBalance()}
             {this.renderCreate()}
-            {this.renderExchange()}
+            <div id="renderExchange" />
             {this.renderSelectionChoice()}
         </React.Fragment>;
     }
@@ -247,40 +252,52 @@ class MIXR extends Component<{}, IMIXRState> {
             </React.Fragment>
         </React.Fragment>;
     }
-    /**
-     *
-     */
-    private renderExchange = () => {
-        const { selectedAssetCreate, selectedAssetExchange, assetSelect, assetAmount } = this.state;
+
+    private generateDataToRenderExchange = async (assetAmount: string): Promise<any[]> => {
+        const {
+            mixrContract,
+            selectedAssetCreate,
+            selectedAssetExchange,
+            assetSelect,
+            walletInfo,
+        } = this.state;
         if (
+            mixrContract === undefined ||
             selectedAssetCreate === undefined ||
             selectedAssetExchange === undefined ||
-            assetSelect === undefined ||
-            assetAmount === undefined
+            walletInfo === undefined ||
+            assetSelect === undefined
         ) {
-            return null;
+            return [];
         }
         if (assetAmount.length < 1) {
-            return;
+            return [];
         }
-        let assetsMap;
+        let assetsMap: any[] = [];
 
         const dummyData: IAsset[] = [];
         // TODO: load from .env file
         // if mix is selected, the user is redeeming
         // if any other select, is because it's a deposit
-        if (assetSelect === 'mix') {
+        for (const element of walletInfo) {
+            if (element.name.toLowerCase() === assetSelect.toLowerCase()) {
+                continue;
+            }
+
+            const estimatedFee = new BigNumber(
+                await mixrContract.estimateFee(
+                    element.address,
+                    mixrContract.address,
+                    assetAmount,
+                    1,
+                ),
+                // TODO: var .env with MIX decimals number
+            ).dividedBy(10 ** 24);
+
             dummyData.push({
-                assetName: 'MIXUSD',
-                fee: '0.00000018',
-                receive: assetAmount,
-                total: assetAmount,
-            });
-        } else {
-            dummyData.push({
-                assetName: 'MIXEURO',
-                fee: '0.00000018',
-                receive: assetAmount,
+                assetName: element.name,
+                fee: estimatedFee.toString(),
+                receive: new BigNumber(assetAmount).minus(estimatedFee).toString(),
                 total: assetAmount,
             });
         }
@@ -288,24 +305,37 @@ class MIXR extends Component<{}, IMIXRState> {
         if (selectedAssetCreate === '') {
             if (selectedAssetExchange !== '') {
                 const element = dummyData.filter((asset) => asset.assetName === selectedAssetExchange)[0];
-                assetsMap = this.mixrAsset(element);
+                assetsMap = [this.mixrAsset(element)];
             } else {
                 assetsMap = dummyData.map((element) => {
                     return this.mixrAsset(element);
                 });
             }
         }
-        return <React.Fragment>
-            {/* stablecoin title */}
-            <p className="MIXR-New-Token__title MIXR-New-Token__title--padding-top">
-                EXCHANGE
-            <span className="MIXR-New-Token__title--light"> FOR STABLECOIN</span>
-            </p>
-            {/* mixr asset component */}
+        return assetsMap;
+    }
+    /**
+     *
+     */
+    private renderExchange = (assetsMap: any[]) => {
+        const node = document.getElementById('renderExchange');
+        if (assetsMap.length === 0) {
+            ReactDOM.unmountComponentAtNode(node);
+            return;
+        }
+        ReactDOM.render(
             <React.Fragment>
-                {assetsMap}
-            </React.Fragment>
-        </React.Fragment>;
+                {/* stablecoin title */}
+                <p className="MIXR-New-Token__title MIXR-New-Token__title--padding-top">
+                    EXCHANGE
+                <span className="MIXR-New-Token__title--light"> FOR STABLECOIN</span>
+                </p>
+                {/* mixr asset component */}
+                <React.Fragment>
+                    {assetsMap}
+                </React.Fragment>
+            </React.Fragment>, node,
+        );
     }
 
     private renderWarningBalance = () => {

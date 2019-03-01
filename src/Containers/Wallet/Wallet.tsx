@@ -98,10 +98,10 @@ class Wallet extends Component<{}, IWalletState> {
                     <React.Fragment key={element.name}>
                         <div className="Wallet__grid-item">{element.name}</div>
                         <div>
-                            <p className="Wallet__grid-item">{element.value}</p>
+                            <p className="Wallet__grid-item">{element.balance}</p>
                             <p className="Wallet__grid-item--small">
                                 $
-                                {element.priceUSD}
+                                {element.balance}
                             </p>
                         </div>
                         <div>

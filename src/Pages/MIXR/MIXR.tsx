@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
-import { IBlockchainState } from '../../Common/CommonInterfaces';
+import { IBlockchainState, IWalletType } from '../../Common/CommonInterfaces';
 import MIXRAsset from '../../Components/MIXR-Asset/MIXR-Asset';
 import Navbar from '../../Containers/Navbar/Navbar';
 import Wallet from '../../Containers/Wallet/Wallet';
@@ -18,6 +18,15 @@ import MaxButton from '../../Assets/img/button-max.svg';
 
 import './MIXR.css';
 
+/**
+ * Transaction values defenition
+ */
+enum TransactionStatus {
+    None,
+    Pendding,
+    Success,
+    Fail,
+}
 /**
  * IAsset interface
  * TODO: comment!
@@ -43,6 +52,7 @@ interface IMIXRState extends IBlockchainState {
     selectedAssetExchange?: string;
     assets?: IAsset[];
     isMixing?: boolean;
+    transactionStatus: TransactionStatus;
 }
 
 /**
@@ -62,6 +72,7 @@ class MIXR extends Component<{}, IMIXRState> {
             isMixing: true,
             selectedAssetCreate: '',
             selectedAssetExchange: '',
+            transactionStatus: TransactionStatus.None,
         };
     }
 
@@ -131,7 +142,6 @@ class MIXR extends Component<{}, IMIXRState> {
     private handleSubmit = (event: any) => {
         // TODO: load coins and prices
         event.preventDefault();
-        this.setState({ assetAmount: '55' });
     }
 
     private startMixing = () => {
@@ -182,8 +192,62 @@ class MIXR extends Component<{}, IMIXRState> {
 
     private confirmTransaction = () => {
         // TODO: confirm transaction
-        const { selectedAssetCreate, selectedAssetExchange } = this.state;
-        alert('clicked' + selectedAssetCreate + ' ' + selectedAssetExchange);
+        const {
+            assetAmount,
+            mixrContract,
+            selectedAssetCreate,
+            selectedAssetExchange,
+            walletInfo,
+            userAccount,
+            IERC20ABI,
+            web3,
+        } = this.state;
+
+        if (
+            assetAmount === undefined ||
+            userAccount === undefined ||
+            mixrContract === undefined ||
+            selectedAssetCreate === undefined ||
+            selectedAssetExchange === undefined ||
+            IERC20ABI === undefined ||
+            web3 === undefined ||
+            walletInfo === undefined
+        ) {
+            return;
+        }
+
+        // get address using token name
+        const assetAddress = (
+            walletInfo.filter((element) =>
+                element.name.toLowerCase() === selectedAssetExchange.toLowerCase(),
+            )[0]
+        ).address;
+
+        // get contract using abi
+        const ERC = new web3.eth.Contract(IERC20ABI, assetAddress);
+
+        // TODO: get real decimals from system maybe mixr from .env file
+        const someERC20Decimals = 18;
+        const tokens = parseInt(assetAmount, 10);
+        const mixrDecimals = 24;
+        // define amounts
+        const tokensToDeposit = new BigNumber(10).pow(someERC20Decimals)
+            .multipliedBy(tokens).toString(10);
+        const MIXToMint = new BigNumber(10).pow(mixrDecimals).multipliedBy(tokens);
+        // approve mix tokens
+        mixrContract.approve(mixrContract.address, MIXToMint.toString(10), {
+            from: userAccount,
+        }).then(() => {
+            // approve token
+            ERC.methods.approve(mixrContract.address, tokensToDeposit)
+                .send({ from: userAccount })
+                .then(async (receipt: any) => {
+                    // deposit
+                    await mixrContract.depositToken(assetAddress, tokensToDeposit, {
+                        from: userAccount,
+                    });
+                });
+        });
     }
 
     private renderSelectionChoice = () => {
@@ -276,7 +340,6 @@ class MIXR extends Component<{}, IMIXRState> {
         let assetsMap: any[] = [];
 
         const dummyData: IAsset[] = [];
-        // TODO: load from .env file
         // if mix is selected, the user is redeeming
         // if any other select, is because it's a deposit
         for (const element of walletInfo) {

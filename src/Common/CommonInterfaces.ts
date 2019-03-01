@@ -5,11 +5,13 @@
 interface IERC20Calls {
     // although we should not use any, it needs to be
     call: () => Promise<any>;
+    send: (options: object) => Promise<any>;
 }
 export interface IERC20TypeDefault {
     (address: string): IERC20Type;
     methods: IERC20TypeDefault;
     balanceOf: (user: string) => IERC20Calls;
+    approve: (address: string, amount: string) => IERC20Calls;
 }
 /**
  * Interfaces for web3 definition
@@ -55,6 +57,8 @@ export interface IMIXRContractType extends IERC20Type {
         transactionType: number,
     ) => Promise<number>;
     getRegisteredTokens: () => Promise<[[string], number]>;
+    depositToken: (token: string, depositInTokenWei: string, options?: any) => Promise<void>;
+    approve: (address: string, amount: string, options: object) => Promise<void>;
 }
 /**
  * TODO:

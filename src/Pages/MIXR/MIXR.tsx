@@ -27,6 +27,11 @@ enum TransactionStatus {
     Success,
     Fail,
 }
+enum FeeType {
+    REDEMPTION = -1,
+    TRANSFER = 0,
+    DEPOSIT = 1,
+}
 /**
  * IAsset interface
  * TODO: comment!
@@ -194,6 +199,7 @@ class MIXR extends Component<{}, IMIXRState> {
         // TODO: confirm transaction
         const {
             assetAmount,
+            assetSelect,
             mixrContract,
             selectedAssetCreate,
             selectedAssetExchange,
@@ -205,6 +211,7 @@ class MIXR extends Component<{}, IMIXRState> {
 
         if (
             assetAmount === undefined ||
+            assetSelect === undefined ||
             userAccount === undefined ||
             mixrContract === undefined ||
             selectedAssetCreate === undefined ||
@@ -216,38 +223,65 @@ class MIXR extends Component<{}, IMIXRState> {
             return;
         }
 
-        // get address using token name
-        const assetAddress = (
-            walletInfo.filter((element) =>
-                element.name.toLowerCase() === selectedAssetExchange.toLowerCase(),
-            )[0]
-        ).address;
-
-        // get contract using abi
-        const ERC = new web3.eth.Contract(IERC20ABI, assetAddress);
-
         // TODO: get real decimals from system maybe mixr from .env file
         const someERC20Decimals = 18;
         const tokens = parseInt(assetAmount, 10);
         const mixrDecimals = 24;
-        // define amounts
-        const tokensToDeposit = new BigNumber(10).pow(someERC20Decimals)
-            .multipliedBy(tokens).toString(10);
-        const MIXToMint = new BigNumber(10).pow(mixrDecimals).multipliedBy(tokens);
-        // approve mix tokens
-        mixrContract.approve(mixrContract.address, MIXToMint.toString(10), {
-            from: userAccount,
-        }).then(() => {
-            // approve token
-            ERC.methods.approve(mixrContract.address, tokensToDeposit)
-                .send({ from: userAccount })
-                .then(async (receipt: any) => {
-                    // deposit
-                    await mixrContract.depositToken(assetAddress, tokensToDeposit, {
+        //
+        if (selectedAssetExchange.toLowerCase() === 'mix') {
+            // get address using token name
+            const assetAddress = (
+                walletInfo.filter((element) =>
+                    element.name.toLowerCase() === assetSelect.toLowerCase(),
+                )[0]
+            ).address;
+            // approve and deposit
+            // TODO: needs to use convertTokenAmount method
+            const amountInBasketWei = new BigNumber(tokens * 10 ** 24).toString(10);
+            mixrContract.approve(
+                mixrContract.address,
+                amountInBasketWei,
+                {
+                    from: userAccount,
+                },
+            ).then(async () => {
+                // redeem
+                await mixrContract.redeemMIXR(
+                    assetAddress,
+                    amountInBasketWei,
+                    {
                         from: userAccount,
+                    },
+                );
+            });
+        } else {
+            // get address using token name
+            const assetAddress = (
+                walletInfo.filter((element) =>
+                    element.name.toLowerCase() === selectedAssetExchange.toLowerCase(),
+                )[0]
+            ).address;
+            // get contract using abi
+            const ERC = new web3.eth.Contract(IERC20ABI, assetAddress);
+            // define amounts
+            const tokensToDeposit = new BigNumber(10).pow(someERC20Decimals)
+                .multipliedBy(tokens).toString(10);
+            const MIXToMint = new BigNumber(10).pow(mixrDecimals).multipliedBy(tokens);
+            // approve mix tokens
+            mixrContract.approve(mixrContract.address, MIXToMint.toString(10), {
+                from: userAccount,
+            }).then(() => {
+                // approve token
+                ERC.methods.approve(mixrContract.address, tokensToDeposit)
+                    .send({ from: userAccount })
+                    .then(async (receipt: any) => {
+                        // deposit
+                        await mixrContract.depositToken(assetAddress, tokensToDeposit, {
+                            from: userAccount,
+                        });
                     });
-                });
-        });
+            });
+        }
     }
 
     private renderSelectionChoice = () => {
@@ -346,16 +380,33 @@ class MIXR extends Component<{}, IMIXRState> {
             if (element.name.toLowerCase() === assetSelect.toLowerCase()) {
                 continue;
             }
-
-            const estimatedFee = new BigNumber(
-                await mixrContract.estimateFee(
-                    element.address,
-                    mixrContract.address,
-                    assetAmount,
-                    1,
-                ),
-                // TODO: var .env with MIX decimals number
-            ).dividedBy(10 ** 24);
+            let estimatedFee;
+            if (element.name.toLowerCase() === 'mix') {
+                const assetAddress = (
+                    walletInfo.filter((wElement) =>
+                        wElement.name.toLowerCase() === assetSelect.toLowerCase(),
+                    )[0]
+                ).address;
+                estimatedFee = new BigNumber(
+                    await mixrContract.estimateFee(
+                        assetAddress,
+                        mixrContract.address,
+                        new BigNumber(parseInt(assetAmount, 10) * 10 ** 18).toString(10),
+                        FeeType.REDEMPTION,
+                    ),
+                    // TODO: var .env with MIX decimals number
+                ).dividedBy(10 ** 24);
+            } else {
+                estimatedFee = new BigNumber(
+                    await mixrContract.estimateFee(
+                        element.address,
+                        mixrContract.address,
+                        assetAmount,
+                        FeeType.DEPOSIT,
+                    ),
+                    // TODO: var .env with MIX decimals number
+                ).dividedBy(10 ** 24);
+            }
 
             dummyData.push({
                 assetName: element.name,

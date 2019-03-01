@@ -37,11 +37,23 @@ export interface IERC20Type {
 /**
  * Interface for wallet definition
  */
-export interface IWalletType { name: string; priceUSD: number; value: number; }
+export interface IWalletType {
+    name: string;
+    address: string;
+    balance: number;
+}
 /**
  * Interface for mixr contract definition
  */
 export interface IMIXRContractType extends IERC20Type {
+    address: string;
+    DEPOSIT: () => Promise<number>;
+    estimateFee: (
+        token: string,
+        basket: string,
+        transactionAmount: string,
+        transactionType: number,
+    ) => Promise<number>;
     getRegisteredTokens: () => Promise<[[string], number]>;
 }
 /**

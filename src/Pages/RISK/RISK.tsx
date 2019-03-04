@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import Navbar from '../../Containers/Navbar/Navbar';
+import Navbar from '../../Components/Navbar/Navbar';
 
 
 class RISK extends Component {

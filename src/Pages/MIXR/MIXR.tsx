@@ -5,8 +5,8 @@ import ReactDOM from 'react-dom';
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
 import { IBlockchainState, IWalletType } from '../../Common/CommonInterfaces';
 import MIXRAsset from '../../Components/MIXR-Asset/MIXR-Asset';
-import Navbar from '../../Containers/Navbar/Navbar';
-import Wallet from '../../Containers/Wallet/Wallet';
+import Navbar from '../../Components/Navbar/Navbar';
+import Wallet from '../../Components/Wallet/Wallet';
 
 import warningLogo from '../../Assets/img/invalid-name.svg';
 import StartMixing from '../../Components/StartMixing/StartMixing';

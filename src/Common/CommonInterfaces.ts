@@ -60,6 +60,7 @@ export interface IMIXRContractType extends IERC20Type {
     depositToken: (token: string, depositInTokenWei: string, options?: any) => Promise<void>;
     redeemMIXR: (token: string, redemptionInBasketWei: string, options?: any) => Promise<void>;
     approve: (address: string, amount: string, options: object) => Promise<void>;
+    registerToken: (address: string, options: object) => Promise<void>;
 }
 /**
  * TODO:

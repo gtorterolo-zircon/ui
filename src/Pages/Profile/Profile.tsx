@@ -4,6 +4,11 @@ import { Card, Heading, Input, PublicAddress, Text } from 'rimble-ui';
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
 import { IBlockchainState } from '../../Common/CommonInterfaces';
 
+import Navbar from '../../Components/Navbar/Navbar';
+
+import './Profile.css';
+
+
 interface IProfile extends IBlockchainState {
     addressToApprove: string;
     amountToApprove: string;
@@ -51,34 +56,59 @@ class Profile extends Component<{}, IProfile> {
             return null;
         }
         return (
-            <div>
-                <PublicAddress address={userAccount} />
+            <div className="Profile">
+            <Navbar />
+            <div className="Profile__grid">
+                <div className="Profile__main">
+                    {/* <Wallet /> */}
+                </div>
+                <div className="Profile__main">
+                <div>
+                <p className="Profile-Input__title">PUBLIC ADDRESS </p>
+                <input className="Profile__input-address" defaultValue={userAccount} />
+
+
                 <form onSubmit={this.handleSubmit}>
-                    <Input
-                        type="text"
-                        placeholder="Address to approve"
-                        name="addressToApprove"
-                        onChange={this.handleChange}
-                    /><br />
-                    <Input
-                        type="text"
-                        placeholder="Address to approve"
-                        name="addressToApprove"
-                        onChange={this.handleChange}
-                    /><br />
-                    <Input
-                        type="number"
-                        placeholder="Amount to approve"
-                        name="inTokenToApprove"
-                        onChange={this.handleChange}
-                    /><br />
-                    <Input type="submit" value="SUBMIT" />
+                    <p className="Profile-Input__title">PUBLIC ADDRESSES TO APPROVE</p>
+
+                    <div className="Profile__inputs-grid">
+                        <input
+                            className="Profile__input-approvals"
+                            type="text"
+                            placeholder="Address to approve"
+                            name="addressToApprove"
+                            onChange={this.handleChange}
+                        />
+                        <input
+                            className="Profile__input-approvals"
+                            type="text"
+                            placeholder="Address to approve"
+                            name="addressToApprove"
+                            onChange={this.handleChange}
+                        />
+                        <p className="Profile-Input__title Profile-Input__title--padding">AMOUNT TO APPROVE</p>
+                        <div />
+                        <input
+                            className="Profile__input-approvals"
+                            type="number"
+                            placeholder="Amount to approve"
+                            name="inTokenToApprove"
+                            onChange={this.handleChange}
+                        />
+                        <div />
+                        <div />
+                        <div className="Profile__button-grid">
+                            <button className="Profile__button" type="submit">SUBMIT</button>
+                        </div>
+                    </div>
                 </form>
-                <Card>
-                    <Heading.h3>Approvals</Heading.h3>
-                    <Text.span>xx tokens</Text.span>
-                </Card>
             </div>
+                </div>
+                <div className="MIXR__basket-composition" />
+            </div>
+
+        </div>
+
         );
     }
 

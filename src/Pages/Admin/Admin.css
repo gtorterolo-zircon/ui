@@ -1,0 +1,9 @@
+* {
+    margin: 0px;
+}
+aside {
+    width: 20%;
+    height: 300px;
+    float: left;
+    background-color: #f1f1f1;
+}

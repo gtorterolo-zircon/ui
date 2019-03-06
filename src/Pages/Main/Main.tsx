@@ -19,6 +19,7 @@ function Main() {
                 <Route path="/bild" component={BILD} />
                 <Route path="/risk" component={RISK} />
                 <Route path="/admin" component={Admin} />
+                <Route path="/profile" component={Profile} />
             </Switch>
         </main>
     );

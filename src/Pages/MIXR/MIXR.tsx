@@ -65,13 +65,13 @@ interface IAsset {
  * when the component loads.
  */
 interface IMIXRState extends IBlockchainState {
-    assetSelect?: string;
-    assetAmount?: string;
+    assetSelect: string;
+    assetAmount: string;
     haveValidFunds: boolean;
-    selectedAssetCreate?: string;
-    selectedAssetExchange?: string;
-    assets?: IAsset[];
-    isMixing?: boolean;
+    selectedAssetCreate: string;
+    selectedAssetExchange: string;
+    assets: IAsset[];
+    isMixing: boolean;
     transactionStatus: TransactionStatus;
 }
 
@@ -88,6 +88,7 @@ class MIXR extends Component<{}, IMIXRState> {
         this.state = {
             assetAmount: '',
             assetSelect: 'empty',
+            assets: [],
             haveValidFunds: true,
             isMixing: true,
             selectedAssetCreate: '',
@@ -169,27 +170,34 @@ class MIXR extends Component<{}, IMIXRState> {
         if (assetSelect === undefined || assetAmount === undefined) {
             return;
         }
-        // anonymous function to render new prices
-        const updatePrices = (amount: string, asset: string) => this
-            .generateDataToRenderExchange(amount).then((assetsMap) => {
-                if (asset === 'mix') {
-                    this.renderCreate([]);
-                    this.renderExchange(assetsMap);
-                // in case of moving the default selection
-                } else if (asset !== 'empty') {
-                    this.renderCreate(assetsMap);
-                    this.renderExchange([]);
-                }
-            });
 
         // update states
         if (event.target.name === 'assetAmount') {
             this.setState({ assetAmount: event.target.value });
-            updatePrices(event.target.value, assetSelect);
+            this.updateAssetsPrice(event.target.value, assetSelect);
         } else if (event.target.name === 'assetSelect') {
             this.setState({ assetSelect: event.target.value });
-            updatePrices(assetAmount, event.target.value);
+            // TODO: not updating correctly!
+            this.updateAssetsPrice(assetAmount, event.target.value);
         }
+    }
+
+    /**
+     * Given asset and amount information, get and render
+     * @param amount asset amount to exchange
+     * @param asset asset to ecxhange
+     */
+    private updateAssetsPrice = (amount: string, asset: string): void => {
+        this.generateDataToRenderExchange(amount).then((assetsMap) => {
+            if (asset === 'mix') {
+                this.renderCreate([]);
+                this.renderExchange(assetsMap);
+            // in case of moving the default selection
+            } else if (asset !== 'empty') {
+                this.renderCreate(assetsMap);
+                this.renderExchange([]);
+            }
+        });
     }
 
     /**
@@ -231,7 +239,12 @@ class MIXR extends Component<{}, IMIXRState> {
                             value={assetAmount}
                             onChange={this.handleChange}
                         />
-                        <button className="MIXR-Input__max-button"><img src={MaxButton} /></button>
+                        <button
+                            onClick={this.fetchAssetMax}
+                            className="MIXR-Input__max-button"
+                        >
+                            <img src={MaxButton} />
+                        </button>
                     </div>
                 </form>
             </div>
@@ -240,6 +253,25 @@ class MIXR extends Component<{}, IMIXRState> {
             <div id="renderExchange" />
             {this.renderSelectionChoice()}
         </React.Fragment>;
+    }
+
+    /**
+     * Fetch max amount for selected asset
+     */
+    private fetchAssetMax = (event: any) => {
+        const { assetSelect, walletInfo } = this.state;
+        if (assetSelect.length > 0) {
+            if (walletInfo === undefined) {
+                return;
+            }
+            // get asset max from user's balance
+            const max = walletInfo.filter(
+                (wallet) => wallet.name.toLowerCase() === assetSelect.toLowerCase(),
+            )[0].balance;
+            this.setState({ assetAmount: max.toString() });
+            this.updateAssetsPrice(max.toString(), assetSelect);
+        }
+        event.preventDefault();
     }
 
     /**

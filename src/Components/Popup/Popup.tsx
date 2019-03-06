@@ -24,15 +24,13 @@ import whiteCloseButton from '../../Assets/img/popup-images/white-close-button.s
  */
 interface IPopupProps {
     status: string;
-    color: boolean;
-
+    clickClose: object;
 }
 
 /**
  * This class receives two props
  * @status this variable determines if the popup is success,
  * error or inProgress.
- * @color this determines the background color of the popup.
  */
 
 class Popup extends Component<IPopupProps, {}> {
@@ -59,7 +57,7 @@ class Popup extends Component<IPopupProps, {}> {
          */
         return (
             <PopupDiv>
-                <Popup__content background={this.props.color}>
+                <Popup__content background={this.props.status !== 'error'}>
 
                     <Popup__image src={image} />
                     <div>{content}
@@ -77,7 +75,7 @@ class Popup extends Component<IPopupProps, {}> {
 
     private blackCloseButton = () => {
         return <React.Fragment>
-            <Popup__close_button src={blackCloseButton} alt="" />
+            <Popup__close_button onClick={this.props.clickClose as any} src={blackCloseButton} alt="" />
         </React.Fragment>;
     }
 
@@ -87,7 +85,7 @@ class Popup extends Component<IPopupProps, {}> {
 
     private whiteCloseButton = () => {
         return <React.Fragment>
-            <Popup__close_button src={whiteCloseButton} alt="" />
+            <Popup__close_button onClick={this.props.clickClose as any} src={whiteCloseButton} alt="" />
         </React.Fragment>;
     }
 

@@ -35,7 +35,7 @@ const logger = createLogger({
  */
 enum TransactionStatus {
     None,
-    Pendding,
+    Pending,
     Success,
     Fail,
 }
@@ -131,23 +131,31 @@ class MIXR extends Component<{}, IMIXRState> {
                     </div>
                     <div className="MIXR__basket-composition" />
                 </div>
-                {/* Error popup  */}
-                {/* <Popup
-                    status="error"
-                    color={false}
-                /> */}
-                {/* In Progress popup */}
-                {/* <Popup
-                    status="inProgess"
-                    color={true}
-                /> */}
-                {/* Success popup  */}
-                {/* <Popup
-                    status="success"
-                    color={true}
-                /> */}
+                {this.renderPopUp()}
             </div>
         );
+    }
+
+    /**
+     * Close transaction related pop up
+     */
+    private closePopUp = () => {
+        this.setState({ transactionStatus: TransactionStatus.None });
+    }
+
+    /**
+     * Renders popup according to component state
+     */
+    private renderPopUp = () => {
+        const { transactionStatus } = this.state;
+        switch (transactionStatus) {
+            case TransactionStatus.Pending:
+                return <Popup status="inProgess" clickClose={this.closePopUp} />;
+            case TransactionStatus.Success:
+                return <Popup status="success" clickClose={this.closePopUp} />;
+            case TransactionStatus.Fail:
+                return <Popup status="error" clickClose={this.closePopUp} />;
+        }
     }
 
     /**
@@ -280,13 +288,18 @@ class MIXR extends Component<{}, IMIXRState> {
             mixrContract.approve(mixrContract.address, MIXToMint.toString(10), {
                 from: userAccount,
             }).then(() => {
+                this.setState({ transactionStatus: TransactionStatus.Pending });
                 // approve token
                 ERC.methods.approve(mixrContract.address, tokensToDeposit)
                     .send({ from: userAccount })
                     .then(async (receipt: any) => {
                         // deposit
-                        await mixrContract.depositToken(assetAddress, tokensToDeposit, {
+                        mixrContract.depositToken(assetAddress, tokensToDeposit, {
                             from: userAccount,
+                        }).then(() => {
+                            this.setState({ transactionStatus: TransactionStatus.Success});
+                        }).catch(() => {
+                            this.setState({ transactionStatus: TransactionStatus.Fail});
                         });
                     });
             });

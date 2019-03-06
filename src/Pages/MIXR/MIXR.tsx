@@ -165,14 +165,30 @@ class MIXR extends Component<{}, IMIXRState> {
         // we could use a generic setState using the target.name
         // but it would lead us to an error. See more
         // https://stackoverflow.com/a/37427579
+        const { assetSelect, assetAmount } = this.state;
+        if (assetSelect === undefined || assetAmount === undefined) {
+            return;
+        }
+        // anonymous function to render new prices
+        const updatePrices = (amount: string, asset: string) => this
+            .generateDataToRenderExchange(amount).then((assetsMap) => {
+                if (asset === 'mix') {
+                    this.renderCreate([]);
+                    this.renderExchange(assetsMap);
+                // in case of moving the default selection
+                } else if (asset !== 'empty') {
+                    this.renderCreate(assetsMap);
+                    this.renderExchange([]);
+                }
+            });
+
+        // update states
         if (event.target.name === 'assetAmount') {
             this.setState({ assetAmount: event.target.value });
-            this.generateDataToRenderExchange(event.target.value).then((assetsMap) => {
-                this.renderExchange(assetsMap);
-            });
+            updatePrices(event.target.value, assetSelect);
         } else if (event.target.name === 'assetSelect') {
             this.setState({ assetSelect: event.target.value });
-            // TODO: inject update
+            updatePrices(assetAmount, event.target.value);
         }
     }
 
@@ -220,7 +236,7 @@ class MIXR extends Component<{}, IMIXRState> {
                 </form>
             </div>
             {this.renderWarningBalance()}
-            {this.renderCreate()}
+            <div id="renderCreate" />
             <div id="renderExchange" />
             {this.renderSelectionChoice()}
         </React.Fragment>;
@@ -374,36 +390,6 @@ class MIXR extends Component<{}, IMIXRState> {
         }
     }
 
-    private renderCreate = () => {
-        const { assets, selectedAssetCreate, selectedAssetExchange } = this.state;
-        if (assets === null || assets === undefined) {
-            return null;
-        }
-        let assetsMap;
-        if (selectedAssetExchange === '') {
-            if (selectedAssetCreate !== '') {
-                const element = assets.filter((asset) => asset.assetName === selectedAssetCreate)[0];
-                assetsMap = this.mixrAsset(element);
-            } else {
-                assetsMap = assets.map((element) => {
-                    return this.mixrAsset(element);
-                });
-            }
-        }
-        return <React.Fragment>
-            {/* new mix token title */}
-            <div className="MIXR-New-Token">
-                <p className="MIXR-New-Token__title">
-                    CREATE
-            <span className="MIXR-New-Token__title--light"> NEW MIX TOKEN</span></p>
-            </div>
-            {/* mixr asset component */}
-            <React.Fragment>
-                {assetsMap}
-            </React.Fragment>
-        </React.Fragment>;
-    }
-
     /**
      * Generate data to render assets, according to asset amount and select assets
      * @param assetAmount amount use in exchange (from input)
@@ -501,8 +487,34 @@ class MIXR extends Component<{}, IMIXRState> {
         }
         return assetsMap;
     }
+
     /**
-     *
+     * Render create
+     */
+    private renderCreate = (assetsMap: any[]) => {
+        const node = document.getElementById('renderCreate');
+        if (assetsMap.length === 0) {
+            ReactDOM.unmountComponentAtNode(node);
+            return;
+        }
+        ReactDOM.render(
+            <React.Fragment>
+                {/* new mix token title */}
+                <div className="MIXR-New-Token">
+                    <p className="MIXR-New-Token__title">
+                        CREATE
+                <span className="MIXR-New-Token__title--light"> NEW MIX TOKEN</span></p>
+                </div>
+                {/* mixr asset component */}
+                <React.Fragment>
+                    {assetsMap}
+                </React.Fragment>
+            </React.Fragment>, node,
+        );
+    }
+
+    /**
+     * Render exchange
      */
     private renderExchange = (assetsMap: any[]) => {
         const node = document.getElementById('renderExchange');

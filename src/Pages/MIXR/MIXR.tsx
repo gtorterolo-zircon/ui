@@ -67,7 +67,7 @@ interface IAsset {
 interface IMIXRState extends IBlockchainState {
     assetSelect?: string;
     assetAmount?: string;
-    haveValidFunds?: boolean;
+    haveValidFunds: boolean;
     selectedAssetCreate?: string;
     selectedAssetExchange?: string;
     assets?: IAsset[];
@@ -88,7 +88,7 @@ class MIXR extends Component<{}, IMIXRState> {
         this.state = {
             assetAmount: '',
             assetSelect: 'empty',
-            haveValidFunds: false,
+            haveValidFunds: true,
             isMixing: true,
             selectedAssetCreate: '',
             selectedAssetExchange: '',
@@ -297,9 +297,9 @@ class MIXR extends Component<{}, IMIXRState> {
                         mixrContract.depositToken(assetAddress, tokensToDeposit, {
                             from: userAccount,
                         }).then(() => {
-                            this.setState({ transactionStatus: TransactionStatus.Success});
+                            this.setState({ transactionStatus: TransactionStatus.Success });
                         }).catch(() => {
-                            this.setState({ transactionStatus: TransactionStatus.Fail});
+                            this.setState({ transactionStatus: TransactionStatus.Fail });
                         });
                     });
             });
@@ -441,34 +441,46 @@ class MIXR extends Component<{}, IMIXRState> {
                 continue;
             }
             let estimatedFee;
+
+            // get selected asset balance
+            const assetBalance = (
+                walletInfo.filter((wElement) =>
+                    wElement.name.toLowerCase() === assetSelect.toLowerCase(),
+                )[0]
+            ).balance;
+            // verify balance
+            if (assetBalance < parseInt(assetAmount, 10)) {
+                this.setState({ haveValidFunds: false });
+                return [];
+            }
+            // create variables
+            let feeType: FeeType;
+            let assetAddress: string;
+            // if the asset selected is mix
             if (assetSelect.toLowerCase() === 'mix') {
-                estimatedFee = new BigNumber(
-                    await mixrContract.estimateFee(
-                        element.address,
-                        mixrContract.address,
-                        new BigNumber(parseInt(assetAmount, 10) * 10 ** 18).toString(10),
-                        FeeType.REDEMPTION,
-                    ),
-                    // TODO: var .env with MIX decimals number
-                ).dividedBy(10 ** 24);
+                assetAddress = element.address;
+                feeType = FeeType.REDEMPTION;
             } else {
                 // if it's a deposit, it's always MIX
-                const assetAddress = (
+                assetAddress = (
                     walletInfo.filter((wElement) =>
                         wElement.name.toLowerCase() === assetSelect.toLowerCase(),
                     )[0]
                 ).address;
-                estimatedFee = new BigNumber(
-                    await mixrContract.estimateFee(
-                        assetAddress,
-                        mixrContract.address,
-                        new BigNumber(parseInt(assetAmount, 10) * 10 ** 18).toString(10),
-                        FeeType.DEPOSIT,
-                    ),
-                    // TODO: var .env with MIX decimals number
-                ).dividedBy(10 ** 24);
+                feeType = FeeType.DEPOSIT;
             }
 
+            estimatedFee = new BigNumber(
+                await mixrContract.estimateFee(
+                    assetAddress,
+                    mixrContract.address,
+                    new BigNumber(parseInt(assetAmount, 10) * 10 ** 18).toString(10),
+                    feeType,
+                ),
+                // TODO: var .env with MIX decimals number
+            ).dividedBy(10 ** 24);
+
+            this.setState({ haveValidFunds: true });
             assetsData.push({
                 assetName: element.name,
                 fee: estimatedFee.toString(),

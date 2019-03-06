@@ -1,9 +1,10 @@
 import BigNumber from 'bignumber.js';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
+import { createLogger, transports, format } from 'winston';
 
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
-import { IBlockchainState, IWalletType } from '../../Common/CommonInterfaces';
+import { IBlockchainState } from '../../Common/CommonInterfaces';
 import MIXRAsset from '../../Components/MIXR-Asset/MIXR-Asset';
 import Navbar from '../../Components/Navbar/Navbar';
 import Wallet from '../../Components/Wallet/Wallet';
@@ -17,6 +18,17 @@ import MaxButton from '../../Assets/img/button-max.svg';
 
 
 import './MIXR.css';
+
+const logger = createLogger({
+    format: format.combine(
+        format.timestamp(),
+        format.json(),
+    ),
+    level: 'debug',
+    transports: [
+        new transports.Console(),
+    ],
+});
 
 /**
  * Transaction values defenition
@@ -88,6 +100,7 @@ class MIXR extends Component<{}, IMIXRState> {
      * @ignore
      */
     public async componentDidMount() {
+        logger.info('[START] componentDidMount');
         await BlockchainGeneric.onLoad().then((result) => {
             this.setState({
                 IERC20ABI: result.IERC20ABI,
@@ -97,6 +110,7 @@ class MIXR extends Component<{}, IMIXRState> {
                 web3: result.web3,
             });
         });
+        logger.info('[END] componentDidMount');
     }
 
     /**

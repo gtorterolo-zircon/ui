@@ -23,8 +23,12 @@ interface IWeb3Eth {
     Contract: IWeb3EthContract;
     getAccounts: () => Promise<string[]>;
 }
+interface IWeb3Utils {
+    hexToUtf8: (data: string) => string;
+}
 export interface IWeb3Type {
     eth: IWeb3Eth;
+    utils: IWeb3Utils;
     currentProvider?: object;
 }
 /**
@@ -61,6 +65,7 @@ export interface IMIXRContractType extends IERC20Type {
     redeemMIXR: (token: string, redemptionInBasketWei: string, options?: any) => Promise<void>;
     approve: (address: string, amount: string, options: object) => Promise<void>;
     registerToken: (address: string, options: object) => Promise<void>;
+    getName: (address: string) => Promise<string>;
 }
 /**
  * TODO:

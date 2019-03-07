@@ -178,7 +178,7 @@ class MIXR extends Component<{}, IMIXRState> {
         } else if (event.target.name === 'assetSelect') {
             this.setState({ assetSelect: event.target.value });
             // TODO: not updating correctly!
-            this.updateAssetsPrice(assetAmount, event.target.value);
+            // this.updateAssetsPrice(assetAmount, event.target.value);
         }
     }
 

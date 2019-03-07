@@ -85,10 +85,11 @@ class BlockchainGeneric {
                     await ERC.methods.balanceOf(userAccount).call(),
                 ).dividedBy(10 ** sampleDecimals);
                 // add it to the array
+                const tokenName = web3.utils.hexToUtf8(await mixrContract.getName(approvedTokensAddress[i]));
                 walletInfo.push({
                     address: approvedTokensAddress[i],
                     balance: sampleBalance.toNumber(),
-                    name: 'SIMPLE',
+                    name: tokenName,
                 });
             }
             // resolve with info

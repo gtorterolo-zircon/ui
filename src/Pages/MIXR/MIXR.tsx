@@ -390,9 +390,14 @@ class MIXR extends Component<{}, IMIXRState> {
         if (selectedAssetCreate === '' && selectedAssetExchange === '') {
             return null;
         }
-        return <div>
-            <p className="MIXR-Input__title" onClick={this.changeSelection}>change selection</p>
-            <button onClick={this.confirmTransaction}>CONFIRM</button>
+        return <div className="MIXR__selection">
+            <p
+                className="MIXR-Input__title MIXR-Input__title--vertical-align"
+                onClick={this.changeSelection}
+            >
+                CHANGE SELECTION
+            </p>
+            <button  className="MIXR__selection-button" onClick={this.confirmTransaction}>CONFIRM</button>
         </div>;
     }
 

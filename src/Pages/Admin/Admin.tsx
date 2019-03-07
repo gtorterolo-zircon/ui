@@ -5,6 +5,8 @@ import { Input } from 'rimble-ui';
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
 import { IBlockchainState } from '../../Common/CommonInterfaces';
 
+import Navbar from '../../Components/Navbar/Navbar';
+
 import './Admin.css';
 
 
@@ -71,15 +73,37 @@ class Admin extends Component<{}, IAdmin> {
         // TODO: verify if userAccount is in governors list
         // and if true, return a message saying the user is not allowed
         return (
-            <div>
-                <aside>
+            <div className="Admin">
+            <Navbar />
+            <div className="Admin__grid">
+                <div className="Admin__main">
                     <ul>
-                        <li key="adderc20" onClick={this.handleClick} >Add ERC20</li>
+                        <li
+                            className="Admin-Input__title Admin-Input__title--big"
+                            key="adderc20"
+                            onClick={this.handleClick}
+                        >
+                        Add ERC20
+                        </li>
+                        <li
+                            className="Admin-Input__title Admin-Input__title--big"
+                            key="setTarget"
+                            onClick={this.handleClick}
+                        >
+                        Set Target Proportion
+                        </li>
                     </ul>
-                </aside>
-                {actionRender}
-                <ul id="tokensList" />
+                </div>
+                <div className="Admin__main">
+                    <div>
+                        {actionRender}
+                        <ul id="tokensList" />
+                    </div>
+                </div>
+                <div  />
             </div>
+
+        </div>
         );
     }
 
@@ -149,30 +173,41 @@ function RegisterTokens(props: any) {
     /**
      * @ignore
      */
+    // TODO reorder
     return (
         <form onSubmit={handleSubmit}>
-            <Input
-                type="text"
-                placeholder="Address"
-                name="erc20Address"
-                value={erc20Address}
-                onChange={handleChange}
-            /><br />
-            <Input
-                type="text"
-                placeholder="Name"
-                name="erc20Name"
-                value={erc20Name}
-                onChange={handleChange}
-            /><br />
-            <Input
-                type="number"
-                placeholder="Decimals"
-                name="erc20Decimals"
-                value={erc20Decimals}
-                onChange={handleChange}
-            /><br />
-            <Input type="submit" value="SUBMIT" />
+            <div className="Admin__inputs-grid">
+
+                <input
+                    className="Admin__input-approvals"
+                    type="text"
+                    placeholder="Address"
+                    name="erc20Address"
+                    value={erc20Address}
+                    onChange={handleChange}
+                />
+                <input
+                    className="Admin__input-approvals"
+                    type="text"
+                    placeholder="Name"
+                    name="erc20Name"
+                    value={erc20Name}
+                    onChange={handleChange}
+                />
+                <input
+                    className="Admin__input-approvals"
+                    type="number"
+                    placeholder="Decimals"
+                    name="erc20Decimals"
+                    value={erc20Decimals}
+                    onChange={handleChange}
+                />
+                <div />
+                <div />
+                <div className="Admin__button-grid">
+                    <button className="Admin__button" type="submit">SUBMIT</button>
+                </div>
+            </div>
         </form>
     );
 }

@@ -59,6 +59,11 @@
 
 }
 
+.MIXR-Input__title--vertical-align {
+    line-height: 36px;
+    cursor: pointer;
+}
+
 select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -179,4 +184,23 @@ select {
 
 input {
     outline: none;
+}
+
+.MIXR__selection {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: 20px;
+    width: 414px;
+}
+
+.MIXR__selection-button {
+    height: 36px;
+    width: 100px;
+    margin-left: 140px;
+    background: #64e36b;
+    font-weight: 500;
+    border: none;
+    border-radius: 3px;
+    font-size: 13px;
+    cursor: pointer;
 }

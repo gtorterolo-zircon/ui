@@ -58,7 +58,8 @@
         "tslint": "5.13.0",
         "tslint-react": "3.6.0",
         "typedoc": "^0.14.2",
-        "typescript-tslint-plugin": "0.3.1"
+        "typescript-tslint-plugin": "0.3.1",
+        "portscanner": "2.2.0"
     },
     "eslintConfig": {
         "extends": "react-app"

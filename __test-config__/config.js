@@ -1,6 +1,9 @@
 const Web3 = require('web3');
 const truffleContract = require('truffle-contract');
 const BigNumber = require('bignumber.js');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const portscanner = require('portscanner');
+
 const SampleERC20Contract = require('../src/contracts/SampleERC20.json');
 const MIXRContract = require('../src/contracts/MIXR.json');
 const FixidityLibMockContract = require('../src/contracts/FixidityLibMock.json');
@@ -9,13 +12,19 @@ const FeesbMockContract = require('../src/contracts/FeesMock.json');
 
 // eslint-disable-next-line no-unused-vars
 const getWeb3 = () => new Promise((resolve, reject) => {
-    const provider = new Web3.providers.HttpProvider(
-        'http://127.0.0.1:9545',
-    );
-    const web3 = new Web3(provider);
-    // eslint-disable-next-line no-console
-    console.log('No web3 instance injected, using Local web3.');
-    resolve(web3);
+    let port;
+    // we should have a standard port but meeh.
+    portscanner.checkPortStatus(8545, '127.0.0.1', (error, status) => {
+        // Status is 'open' if currently in use or 'closed' if available
+        port = (status === 'open') ? 8545 : 9545;
+        const provider = new Web3.providers.HttpProvider(
+            `http://127.0.0.1:${port}`,
+        );
+        const web3 = new Web3(provider);
+        // eslint-disable-next-line no-console
+        console.log('No web3 instance injected, using Local web3.');
+        resolve(web3);
+    });
 });
 
 const tokenNumber = (decimals, tokens) => new BigNumber(10)

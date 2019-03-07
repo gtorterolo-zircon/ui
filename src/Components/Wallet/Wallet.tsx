@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import ActionMenu from '../../Components/ActionMenu/ActionMenu';
+
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
 import {
     IBlockchainState,
@@ -10,7 +12,6 @@ import {
 
 import './Wallet.css';
 
-import plusButton from '../../Assets/img/wallet/action-plus.svg';
 import DepositBtn from '../../Assets/img/wallet/deposit-btn.svg';
 
 
@@ -73,7 +74,7 @@ class Wallet extends Component<{}, IWalletState> {
                         {this.renderWalletInfo()}
                     </div>
                     <div>
-                        <img className="Wallet__plus" src={plusButton} alt="plus button" />
+                        <ActionMenu />
                     </div>
                 </div>
             </div>

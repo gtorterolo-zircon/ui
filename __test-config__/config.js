@@ -130,7 +130,7 @@ const configContracts = async () => {
 
 
     // add first token
-    await mixr.registerTokenWithDecimals(ERC20Sample.address, web3.utils.utf8ToHex('SAMPLE'), 18, { from: governor });
+    await mixr.registerStandardToken(ERC20Sample.address, web3.utils.utf8ToHex('SAMPLE'), 18, { from: governor });
     await mixr.setTokensTargetProportion(
         [
             ERC20Sample.address,
@@ -152,7 +152,7 @@ const configContracts = async () => {
 
 
     // add second token
-    await mixr.registerTokenWithDecimals(ERC20Complex.address, web3.utils.utf8ToHex('COMPLEX'), 18, { from: governor });
+    await mixr.registerStandardToken(ERC20Complex.address, web3.utils.utf8ToHex('COMPLEX'), 18, { from: governor });
     await mixr.setTokensTargetProportion(
         [
             ERC20Sample.address,
@@ -176,7 +176,7 @@ const configContracts = async () => {
 
 
     // add second token
-    await mixr.registerTokenWithDecimals(ERC20Rare.address, web3.utils.utf8ToHex('RARE'), 18, { from: governor });
+    await mixr.registerStandardToken(ERC20Rare.address, web3.utils.utf8ToHex('RARE'), 18, { from: governor });
     await mixr.setTokensTargetProportion(
         [
             ERC20Sample.address,
@@ -202,7 +202,7 @@ const configContracts = async () => {
 
 
     // add second token
-    await mixr.registerTokenWithDecimals(ERC20Cosmic.address, web3.utils.utf8ToHex('COSMIC'), 18, { from: governor });
+    await mixr.registerStandardToken(ERC20Cosmic.address, web3.utils.utf8ToHex('COSMIC'), 18, { from: governor });
     await mixr.setTokensTargetProportion(
         [
             ERC20Sample.address,
@@ -230,7 +230,7 @@ const configContracts = async () => {
 
 
     // add second token
-    await mixr.registerTokenWithDecimals(ERC20Galactic.address, web3.utils.utf8ToHex('GALACTIC'), 18, { from: governor });
+    await mixr.registerStandardToken(ERC20Galactic.address, web3.utils.utf8ToHex('GALACTIC'), 18, { from: governor });
     await mixr.setTokensTargetProportion(
         [
             ERC20Sample.address,

@@ -162,7 +162,7 @@ function RegisterTokens(props: any) {
         if (mixrContract === undefined) {
             return;
         }
-        mixrContract.registerToken(erc20Address, {
+        mixrContract.registerDetailedToken(erc20Address, {
             from: userAccount,
         }).then(() => {
             console.log('registered!');

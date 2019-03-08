@@ -1,9 +1,9 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import { Card, Heading, Input, PublicAddress, Text } from 'rimble-ui';
 import BigNumber from 'bignumber.js';
 
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
-import { IBlockchainState } from '../../Common/CommonInterfaces';
+import { IBlockchainState, IMIXRContractType, IWeb3Type } from '../../Common/CommonInterfaces';
 
 import Navbar from '../../Components/Navbar/Navbar';
 
@@ -133,10 +133,40 @@ class Profile extends Component<{}, IProfile> {
  * React Hook to handle approvals
  * @param props Properties sent to hook
  */
-function ApproveHook(props: any) {
+function ApproveHook(
+    props: { mixrContract: IMIXRContractType, userAccount: string, IERC20ABI: object, web3: IWeb3Type },
+) {
+    const [load, setLoad] = useState(false);
     const [addressToApprove, setAddressToApprove] = useState('');
     const [amountToApprove, setAmountToApprove] = useState('');
     const [inTokenToApprove, setInTokenToApprove] = useState('');
+    const [availableTokens, setAvailableTokens] = useState([{}] as [{ address: string, name: string}]);
+
+    useEffect(() => {
+        if (load === false) {
+            getAvailableTokens().then((result) => {
+                setAvailableTokens(result);
+            });
+            setLoad(true);
+        }
+    });
+
+    async function getAvailableTokens() {
+        const { mixrContract } = props;
+
+        const tokensAvailable: [{ address: string, name: string }] = [{} as any];
+        tokensAvailable.pop();
+        const approved: [[string], number] = await mixrContract.getRegisteredTokens();
+        const approvedTokensAddress: [string] = approved[0];
+        const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
+        // iterate over accepted tokens to add them of state component for rendering
+        for (let i = 0; i < totalApprovedTokens; i += 1) {
+            // get token info
+            const name = await mixrContract.getName(approvedTokensAddress[i]);
+            tokensAvailable.push({ address: approvedTokensAddress[i], name });
+        }
+        return tokensAvailable;
+    }
 
     /**
      * Handle interface user changes
@@ -176,6 +206,20 @@ function ApproveHook(props: any) {
         }
     }
 
+    /**
+     * Render available tokens from state
+     */
+    function renderAvailableTokens() {
+        if (availableTokens[0].address === undefined) {
+            return null;
+        }
+        return availableTokens.map((token) => {
+            return (
+                <option value={token.address} key={token.address}>{props.web3.utils.hexToUtf8(token.name)}</option>
+            );
+        });
+    }
+
     return (<form onSubmit={handleSubmit}>
         <p className="Profile-Input__title--big Profile-Input__title--padding">
             APPROVE
@@ -184,14 +228,10 @@ function ApproveHook(props: any) {
         <p className="Profile-Input__title">PUBLIC ADDRESSES TO APPROVE</p>
 
         <div className="Profile__inputs-grid">
-            <input
-                className="Profile__input-approvals"
-                type="text"
-                placeholder="Token Address"
-                name="inTokenToApprove"
-                onChange={handleChange}
-                required={true}
-            />
+            <select value={inTokenToApprove} name="inTokenToApprove" onChange={handleChange} required={true}>
+                <option disabled={true} selected={true}>Select Token</option>
+                {renderAvailableTokens()}
+            </select>
             <input
                 className="Profile__input-approvals"
                 type="text"
@@ -266,7 +306,7 @@ function AllowanceHook(props: any) {
     return (
         <React.Fragment>
             <p className="Profile-Input__title--big Profile-Input__title--padding">
-            ALLOWANCE
+                ALLOWANCE
             </p>
             <br />
             <form>

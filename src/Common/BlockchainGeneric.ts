@@ -71,7 +71,7 @@ class BlockchainGeneric {
             const walletInfo: IWalletType[] = [
                 {
                     address: mixrContract.address,
-                    balance: mixrBalance.toNumber(),
+                    balance: mixrBalance.dp(2).toNumber(),
                     name: 'MIX',
                 },
             ];
@@ -88,7 +88,7 @@ class BlockchainGeneric {
                 const tokenName = web3.utils.hexToUtf8(await mixrContract.getName(approvedTokensAddress[i]));
                 walletInfo.push({
                     address: approvedTokensAddress[i],
-                    balance: sampleBalance.toNumber(),
+                    balance: sampleBalance.dp(2).toNumber(),
                     name: tokenName,
                 });
             }

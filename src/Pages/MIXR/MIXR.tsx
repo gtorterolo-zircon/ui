@@ -506,8 +506,8 @@ class MIXR extends Component<{}, IMIXRState> {
             this.setState({ haveValidFunds: true });
             assetsData.push({
                 assetName: element.name,
-                fee: estimatedFee.toString(),
-                receive: new BigNumber(assetAmount).minus(estimatedFee).toString(),
+                fee: estimatedFee.toFixed(2),
+                receive: new BigNumber(assetAmount).minus(estimatedFee).toFixed(2),
                 total: assetAmount,
             });
         }

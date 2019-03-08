@@ -91,16 +91,18 @@ class Profile extends Component<{}, IProfile> {
                     <div className="Profile__main">
                         <ul>
                             <li
+                                className="Profile-Input__title--big Profile-Input__title--padding"
                                 data-id="approve"
                                 onClick={this.handleClick}
                             >
-                                Approve
+                                APPROVE
                             </li>
                             <li
+                                className="Profile-Input__title--big Profile-Input__title--padding"
                                 data-id="allowance"
                                 onClick={this.handleClick}
                             >
-                                Allowance
+                                ALLOWANCE
                             </li>
                         </ul>
                     </div>
@@ -165,6 +167,10 @@ function ApproveHook(props: any) {
     }
 
     return (<form onSubmit={handleSubmit}>
+        <p className="Profile-Input__title--big Profile-Input__title--padding">
+            APPROVE
+        </p>
+        <br />
         <p className="Profile-Input__title">PUBLIC ADDRESSES TO APPROVE</p>
 
         <div className="Profile__inputs-grid">
@@ -209,10 +215,21 @@ function ApproveHook(props: any) {
  */
 function AllowanceHook(props: any) {
     return (
-        <form>
-            <Input type="text" placeholder="Address to verify" />
-            <input className="Profile__button" type="submit" value="SUBMIT" />
-        </form>
+        <React.Fragment>
+            <p className="Profile-Input__title--big Profile-Input__title--padding">
+            ALLOWANCE
+            </p>
+            <br />
+            <form>
+                <input className="Profile__input-approvals--full-width" type="text" placeholder="Address to verify" />
+                <div className="Profile__inputs-grid">
+                    <div />
+                    <div className="Profile__button-grid">
+                        <input className="Profile__button" type="submit" value="SUBMIT" />
+                    </div>
+                </div>
+            </form>
+        </React.Fragment>
     );
 }
 

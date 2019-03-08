@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import Slider from "react-slick";
+
 import LoginOverlay from '../../Components/LoginOverlay/LoginOverlay';
 
 import loginImg1 from '../../Assets/img/homepage-slider-img-1.svg';
@@ -10,6 +12,7 @@ import './Login.css';
 class Login extends Component {
     constructor(props: any) {
         super(props);
+
     }
 
     public handleLogin = async (event: any) => {

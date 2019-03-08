@@ -24,6 +24,21 @@
 
 }
 
+.Profile-Input__title--big {
+    font-size: 16px;
+    letter-spacing: 1.4px;
+    color: #00d0de;
+    font-weight: 300;
+    opacity: 0.6;
+
+}
+
+
+.Profile-Input__title--big:focus  {
+    opacity: 1;
+
+}
+
 .Profile-Input__title--padding {
     padding: 10px 0px;
 }
@@ -60,6 +75,15 @@ input {
 
 .Profile__input-approvals{
     width: 96%;
+    height: 36px;
+    border: none;
+    border-radius: 3px;
+    padding-left: 10px;
+    font-size: 14px;
+}
+
+.Profile__input-approvals--full-width {
+    width: 98%;
     height: 36px;
     border: none;
     border-radius: 3px;

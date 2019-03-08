@@ -1,6 +1,6 @@
+import BigNumber from 'bignumber.js';
 import React, { Component, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Input } from 'rimble-ui';
 
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
 import { IBlockchainState } from '../../Common/CommonInterfaces';
@@ -16,6 +16,7 @@ import './Admin.css';
 enum TypeAction {
     None = 0,
     RegisterToken = 1,
+    SetTargetProportion = 2,
 }
 /**
  * Admin Interface
@@ -36,7 +37,7 @@ class Admin extends Component<{}, IAdmin> {
     constructor(props: any) {
         super(props);
         this.state = {
-            action: TypeAction.None,
+            action: TypeAction.SetTargetProportion,
             isGovernor: false,
         };
     }
@@ -79,13 +80,18 @@ class Admin extends Component<{}, IAdmin> {
         let actionRender = null;
         switch (action) {
             case TypeAction.RegisterToken:
-                actionRender = <RegisterTokens
+                actionRender = <RegisterTokensHook
                     mixrContract={mixrContract}
                     userAccount={userAccount}
                 />;
+                break;
+            case TypeAction.SetTargetProportion:
+                actionRender = <SetTargetProportionHook
+                    mixrContract={mixrContract}
+                    userAccount={userAccount}
+                />;
+                break;
         }
-        // TODO: verify if userAccount is in governors list
-        // and if true, return a message saying the user is not allowed
         return (
             <div className="Admin">
                 <Navbar />
@@ -94,14 +100,14 @@ class Admin extends Component<{}, IAdmin> {
                         <ul>
                             <li
                                 className="Admin-Input__title Admin-Input__title--big"
-                                data-id="adderc20"
+                                data-id="addErc20StableCoin"
                                 onClick={this.handleClick}
                             >
-                                Add ERC20
+                                Add ERC20 StableCoin
                             </li>
                             <li
                                 className="Admin-Input__title Admin-Input__title--big"
-                                data-id="setTarget"
+                                data-id="setTargetProportion"
                                 onClick={this.handleClick}
                             >
                                 Set Target Proportion
@@ -122,7 +128,15 @@ class Admin extends Component<{}, IAdmin> {
     }
 
     private handleClick = (event: any) => {
-        this.setState({ action: TypeAction.RegisterToken });
+        const actionId = event.target.dataset.id;
+        switch (actionId) {
+            case 'addErc20StableCoin':
+                this.setState({ action: TypeAction.RegisterToken });
+                break;
+            case 'setTargetProportion':
+                this.setState({ action: TypeAction.SetTargetProportion });
+                break;
+        }
         event.preventDefault();
     }
 
@@ -146,7 +160,7 @@ class Admin extends Component<{}, IAdmin> {
  * React Hook to handle token registry
  * @param props Properties sent to hook
  */
-function RegisterTokens(props: any) {
+function RegisterTokensHook(props: any) {
     const [erc20Address, setErc20Address] = useState('');
     const [erc20Name, setErc20Name] = useState('');
     const [erc20Decimals, setErc20Decimals] = useState('');
@@ -187,7 +201,6 @@ function RegisterTokens(props: any) {
     /**
      * @ignore
      */
-    // TODO reorder
     return (
         <form onSubmit={handleSubmit}>
             <div className="Admin__inputs-grid">
@@ -216,12 +229,95 @@ function RegisterTokens(props: any) {
                     value={erc20Decimals}
                     onChange={handleChange}
                 />
-                <div />
-                <div />
                 <div className="Admin__button-grid">
-                    <button className="Admin__button" type="submit">SUBMIT</button>
+                    <input className="Admin__button" type="submit" value="SUBMIT" />
                 </div>
             </div>
+        </form>
+    );
+}
+
+/**
+ * React Hook to handle set target proportion
+ * @param props Properties sent to hook
+ */
+function SetTargetProportionHook(props: any) {
+    const [load, setLoad] = useState(false);
+    const [tokensProportions, setTokensProportions] = useState([{}] as [{ address: string, proportion: number }]);
+
+    useEffect(() => {
+        if (load === false) {
+            getTokenProportions().then((result) => {
+                setTokensProportions(result);
+            });
+            setLoad(true);
+        }
+    });
+
+    /**
+     * Handle interface user changes
+     */
+    function handleChange(event: any) {
+        // TODO:
+    }
+
+    /**
+     * Handle interface user submit
+     */
+    function handleSubmit(event: any) {
+        // TODO:
+        event.preventDefault();
+    }
+
+    /**
+     * Get token information async to render
+     */
+    async function getTokenProportions() {
+        const { mixrContract } = props;
+
+        const tokensAndPorportions: [{ address: string, proportion: number }] = [{} as any];
+        tokensAndPorportions.pop();
+        const approved: [[string], number] = await mixrContract.getRegisteredTokens();
+        const approvedTokensAddress: [string] = approved[0];
+        const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
+        // iterate over accepted tokens to add them of state component for rendering
+        for (let i = 0; i < totalApprovedTokens; i += 1) {
+            // get token info
+            const proportion = await mixrContract.getTargetProportion(approvedTokensAddress[i]);
+            tokensAndPorportions.push({ address: approvedTokensAddress[i], proportion });
+        }
+        return tokensAndPorportions;
+    }
+
+    /**
+     * Transform json array in HTML
+     */
+    function renderTokensProportions() {
+        if (tokensProportions[0].address === undefined) {
+            return null;
+        }
+        return tokensProportions.map((token) => {
+            return (
+                <li key={token.address}>
+                    <p>{token.address}</p>
+                    <input
+                        name={token.address}
+                        type="text"
+                        value={token.proportion}
+                        placeholder="proportion"
+                        onChange={handleChange}
+                    />;
+                </li>
+            );
+        });
+    }
+
+    return (
+        <form onSubmit={handleSubmit}>
+            <ul>
+                {renderTokensProportions()}
+            </ul>
+            <input type="submit" value="SUBMIT" />
         </form>
     );
 }

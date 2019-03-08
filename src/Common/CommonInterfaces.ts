@@ -67,6 +67,7 @@ export interface IMIXRContractType extends IERC20Type {
     registerDetailedToken: (address: string, options: object) => Promise<void>;
     getName: (address: string) => Promise<string>;
     isGovernor: (address: string) => Promise<boolean>;
+    getTargetProportion: (address: string) => Promise<string>;
 }
 /**
  * TODO:

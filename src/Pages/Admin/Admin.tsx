@@ -22,6 +22,7 @@ enum TypeAction {
  */
 interface IAdmin extends IBlockchainState {
     action: TypeAction;
+    isGovernor: boolean;
 }
 /**
  * Class Admin
@@ -36,6 +37,7 @@ class Admin extends Component<{}, IAdmin> {
         super(props);
         this.state = {
             action: TypeAction.None,
+            isGovernor: false,
         };
     }
 
@@ -50,7 +52,16 @@ class Admin extends Component<{}, IAdmin> {
                 userAccount: result.userAccount,
                 walletInfo: result.walletInfo,
                 web3: result.web3,
-            }, this.updateRegisteredTokens);
+            });
+            if (result.userAccount === undefined || result.mixrContract === undefined) {
+                return;
+            }
+            result.mixrContract.isGovernor(result.userAccount).then((isGovernor) => {
+                this.setState({ isGovernor });
+                if (isGovernor) {
+                    this.updateRegisteredTokens();
+                }
+            });
         });
     }
 
@@ -58,9 +69,12 @@ class Admin extends Component<{}, IAdmin> {
      * @ignore
      */
     public render() {
-        const { mixrContract, userAccount, action } = this.state;
-        if (userAccount === undefined || mixrContract === undefined) {
+        const { mixrContract, userAccount, action, isGovernor } = this.state;
+        if (userAccount === undefined || mixrContract === undefined || isGovernor === undefined) {
             return null;
+        }
+        if (isGovernor === false) {
+            return <p>You are not allowed!</p>;
         }
         let actionRender = null;
         switch (action) {
@@ -74,36 +88,36 @@ class Admin extends Component<{}, IAdmin> {
         // and if true, return a message saying the user is not allowed
         return (
             <div className="Admin">
-            <Navbar />
-            <div className="Admin__grid">
-                <div className="Admin__main">
-                    <ul>
-                        <li
-                            className="Admin-Input__title Admin-Input__title--big"
-                            key="adderc20"
-                            onClick={this.handleClick}
-                        >
-                        Add ERC20
-                        </li>
-                        <li
-                            className="Admin-Input__title Admin-Input__title--big"
-                            key="setTarget"
-                            onClick={this.handleClick}
-                        >
-                        Set Target Proportion
-                        </li>
-                    </ul>
-                </div>
-                <div className="Admin__main">
-                    <div>
-                        {actionRender}
-                        <ul id="tokensList" />
+                <Navbar />
+                <div className="Admin__grid">
+                    <div className="Admin__main">
+                        <ul>
+                            <li
+                                className="Admin-Input__title Admin-Input__title--big"
+                                data-id="adderc20"
+                                onClick={this.handleClick}
+                            >
+                                Add ERC20
+                            </li>
+                            <li
+                                className="Admin-Input__title Admin-Input__title--big"
+                                data-id="setTarget"
+                                onClick={this.handleClick}
+                            >
+                                Set Target Proportion
+                            </li>
+                        </ul>
                     </div>
+                    <div className="Admin__main">
+                        <div>
+                            {actionRender}
+                            <ul id="tokensList" />
+                        </div>
+                    </div>
+                    <div />
                 </div>
-                <div  />
-            </div>
 
-        </div>
+            </div>
         );
     }
 

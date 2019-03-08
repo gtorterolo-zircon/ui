@@ -1,5 +1,6 @@
 import React, { Component, useState } from 'react';
 import { Card, Heading, Input, PublicAddress, Text } from 'rimble-ui';
+import BigNumber from 'bignumber.js';
 
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
 import { IBlockchainState } from '../../Common/CommonInterfaces';
@@ -155,15 +156,24 @@ function ApproveHook(props: any) {
      */
     function handleSubmit(event: any) {
         const {
+            mixrContract,
             userAccount,
             IERC20ABI,
             web3,
         } = props;
         const ERC = new web3.eth.Contract(IERC20ABI, inTokenToApprove);
-        ERC.methods.approve(addressToApprove, amountToApprove).send({
-            from: userAccount,
-        });
-        event.preventDefault();
+        try {
+            mixrContract.getDecimals(inTokenToApprove).then((decimals: string) => {
+                ERC.methods.approve(
+                    addressToApprove,
+                    new BigNumber(amountToApprove).multipliedBy(decimals).toString(),
+                ).send({
+                    from: userAccount,
+                });
+            });
+        } catch (e) {
+            alert('Token is not registered!');
+        }
     }
 
     return (<form onSubmit={handleSubmit}>
@@ -177,8 +187,8 @@ function ApproveHook(props: any) {
             <input
                 className="Profile__input-approvals"
                 type="text"
-                placeholder="Address to approve"
-                name="addressToApprove"
+                placeholder="Token Address"
+                name="inTokenToApprove"
                 onChange={handleChange}
                 required={true}
             />
@@ -196,7 +206,7 @@ function ApproveHook(props: any) {
                 className="Profile__input-approvals"
                 type="number"
                 placeholder="Amount to approve"
-                name="inTokenToApprove"
+                name="amountToApprove"
                 onChange={handleChange}
                 required={true}
             />
@@ -214,6 +224,45 @@ function ApproveHook(props: any) {
  * @param props Properties sent to hook
  */
 function AllowanceHook(props: any) {
+    const [addressToVerify, setAddressToVerify] = useState('');
+    const [inTokenToApprove, setInTokenToApprove] = useState('');
+
+    /**
+     * Handle interface user changes
+     */
+    function handleChange(event: any) {
+        if (event.target.name === 'addressToVerify') {
+            setAddressToVerify(event.target.value);
+        } else if (event.target.name === 'inTokenToApprove') {
+            setInTokenToApprove(event.target.value);
+        }
+    }
+
+    /**
+     * Handle interface user submit
+     */
+    function handleSubmit(event: any) {
+        const {
+            mixrContract,
+            userAccount,
+            IERC20ABI,
+            web3,
+        } = props;
+        try {
+            const ERC = new web3.eth.Contract(IERC20ABI, inTokenToApprove);
+            ERC.methods.allowance(userAccount, addressToVerify).call().then(async (allowed: string) => {
+                // TODO: let's have a proper popup
+                alert(
+                    new BigNumber(allowed)
+                        .dividedBy(await mixrContract.getDecimals(inTokenToApprove)).toNumber(),
+                );
+            });
+        } catch (e) {
+            alert('Token is not registered!');
+        }
+        event.preventDefault();
+    }
+
     return (
         <React.Fragment>
             <p className="Profile-Input__title--big Profile-Input__title--padding">
@@ -221,7 +270,20 @@ function AllowanceHook(props: any) {
             </p>
             <br />
             <form>
-                <input className="Profile__input-approvals--full-width" type="text" placeholder="Address to verify" />
+                <input
+                    className="Profile__input-approvals--full-width"
+                    type="text"
+                    name="inTokenToApprove"
+                    onChange={handleChange}
+                    placeholder="Token Address"
+                />
+                <input
+                    className="Profile__input-approvals--full-width"
+                    type="text"
+                    name="addressToVerify"
+                    onChange={handleChange}
+                    placeholder="Address to verify"
+                />
                 <div className="Profile__inputs-grid">
                     <div />
                     <div className="Profile__button-grid">

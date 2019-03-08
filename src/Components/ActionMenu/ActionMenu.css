@@ -1,6 +1,6 @@
 .Action-Menu__plus {
     position: absolute;
-    bottom: 141px;
+    bottom: 101px;
     left: 20px;
     height: 36px;
     width: 36px;
@@ -9,7 +9,7 @@
 
 .Action-Menu__minus {
     position: absolute;
-    bottom: 141px;
+    bottom: 101px;
     left: 20px;
     height: 36px;
     width: 36px;
@@ -18,7 +18,7 @@
 
 .Action-Menu__copy-address {
     position: absolute;
-    bottom: 166px;
+    bottom: 126px;
     left: 46px;
     height: 36px;
     width: 36px;
@@ -27,7 +27,7 @@
 
 .Action-Menu__help {
     position: absolute;
-    bottom: 141px;
+    bottom: 101px;
     left: 73px;
     height: 36px;
     width: 36px;
@@ -36,7 +36,7 @@
 
 .Action-Menu__logout {
     position: absolute;
-    bottom: 116px;
+    bottom: 76px;
     left: 46px;
     height: 36px;
     width: 36px;

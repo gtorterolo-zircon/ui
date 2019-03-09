@@ -1,6 +1,5 @@
-import React, { Component, useEffect, useState } from 'react';
-import { Card, Heading, Input, PublicAddress, Text } from 'rimble-ui';
 import BigNumber from 'bignumber.js';
+import React, { Component, useEffect, useState } from 'react';
 
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
 import { IBlockchainState, IMIXRContractType, IWeb3Type } from '../../Common/CommonInterfaces';
@@ -139,8 +138,8 @@ function ApproveHook(
     const [load, setLoad] = useState(false);
     const [addressToApprove, setAddressToApprove] = useState('');
     const [amountToApprove, setAmountToApprove] = useState('');
-    const [inTokenToApprove, setInTokenToApprove] = useState('');
-    const [availableTokens, setAvailableTokens] = useState([{}] as [{ address: string, name: string}]);
+    const [inTokenToApprove, setInTokenToApprove] = useState('default');
+    const [availableTokens, setAvailableTokens] = useState([{}] as [{ address: string, name: string }]);
 
     useEffect(() => {
         if (load === false) {
@@ -179,6 +178,7 @@ function ApproveHook(
         } else if (event.target.name === 'inTokenToApprove') {
             setInTokenToApprove(event.target.value);
         }
+        event.preventDefault();
     }
 
     /**
@@ -196,7 +196,7 @@ function ApproveHook(
             mixrContract.getDecimals(inTokenToApprove).then((decimals: string) => {
                 ERC.methods.approve(
                     addressToApprove,
-                    new BigNumber(amountToApprove).multipliedBy(decimals).toString(),
+                    new BigNumber(amountToApprove).multipliedBy(10 ** parseInt(decimals, 10)).toString(),
                 ).send({
                     from: userAccount,
                 });
@@ -204,6 +204,7 @@ function ApproveHook(
         } catch (e) {
             alert('Token is not registered!');
         }
+        event.preventDefault();
     }
 
     /**
@@ -220,43 +221,50 @@ function ApproveHook(
         });
     }
 
-    return (<form onSubmit={handleSubmit}>
-        <p className="Profile-Input__title--big Profile-Input__title--padding">
-            APPROVE
-        </p>
-        <br />
-        <p className="Profile-Input__title">PUBLIC ADDRESSES TO APPROVE</p>
+    return (
+        <React.Fragment>
+            <form onSubmit={handleSubmit}>
+                <p className="Profile-Input__title--big Profile-Input__title--padding">
+                    APPROVE
+                </p>
+                <br />
+                <p className="Profile-Input__title">PUBLIC ADDRESSES TO APPROVE</p>
 
-        <div className="Profile__inputs-grid">
-            <select value={inTokenToApprove} name="inTokenToApprove" onChange={handleChange} required={true}>
-                <option disabled={true} selected={true}>Select Token</option>
-                {renderAvailableTokens()}
-            </select>
-            <input
-                className="Profile__input-approvals"
-                type="text"
-                placeholder="Address to approve"
-                name="addressToApprove"
-                onChange={handleChange}
-                required={true}
-            />
-            <p className="Profile-Input__title Profile-Input__title--padding">AMOUNT TO APPROVE</p>
-            <div />
-            <input
-                className="Profile__input-approvals"
-                type="number"
-                placeholder="Amount to approve"
-                name="amountToApprove"
-                onChange={handleChange}
-                required={true}
-            />
-            <div />
-            <div />
-            <div className="Profile__button-grid">
-                <input className="Profile__button" type="submit" value="SUBMIT" />
-            </div>
-        </div>
-    </form>);
+                <div className="Profile__inputs-grid">
+                    <select
+                        value={inTokenToApprove}
+                        name="inTokenToApprove"
+                        onChange={handleChange}
+                        required={true}
+                    >
+                        <option disabled={true} value="default">Select Token</option>
+                        {renderAvailableTokens()}
+                    </select>
+                    <input
+                        className="Profile__input-approvals"
+                        type="text"
+                        placeholder="Address to approve"
+                        name="addressToApprove"
+                        value={addressToApprove}
+                        onChange={handleChange}
+                        required={true}
+                    />
+                    <p className="Profile-Input__title Profile-Input__title--padding">AMOUNT TO APPROVE</p>
+                    <input
+                        className="Profile__input-approvals"
+                        type="number"
+                        placeholder="Amount to approve"
+                        name="amountToApprove"
+                        value={amountToApprove}
+                        onChange={handleChange}
+                        required={true}
+                    />
+                    <div className="Profile__button-grid">
+                        <input className="Profile__button" type="submit" value="SUBMIT" />
+                    </div>
+                </div>
+            </form>
+        </React.Fragment>);
 }
 
 /**
@@ -265,7 +273,35 @@ function ApproveHook(
  */
 function AllowanceHook(props: any) {
     const [addressToVerify, setAddressToVerify] = useState('');
-    const [inTokenToApprove, setInTokenToApprove] = useState('');
+    const [inTokenToApprove, setInTokenToApprove] = useState('default');
+    const [load, setLoad] = useState(false);
+    const [availableTokens, setAvailableTokens] = useState([{}] as [{ address: string, name: string }]);
+
+    useEffect(() => {
+        if (load === false) {
+            getAvailableTokens().then((result) => {
+                setAvailableTokens(result);
+            });
+            setLoad(true);
+        }
+    });
+
+    async function getAvailableTokens() {
+        const { mixrContract } = props;
+
+        const tokensAvailable: [{ address: string, name: string }] = [{} as any];
+        tokensAvailable.pop();
+        const approved: [[string], number] = await mixrContract.getRegisteredTokens();
+        const approvedTokensAddress: [string] = approved[0];
+        const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
+        // iterate over accepted tokens to add them of state component for rendering
+        for (let i = 0; i < totalApprovedTokens; i += 1) {
+            // get token info
+            const name = await mixrContract.getName(approvedTokensAddress[i]);
+            tokensAvailable.push({ address: approvedTokensAddress[i], name });
+        }
+        return tokensAvailable;
+    }
 
     /**
      * Handle interface user changes
@@ -276,6 +312,7 @@ function AllowanceHook(props: any) {
         } else if (event.target.name === 'inTokenToApprove') {
             setInTokenToApprove(event.target.value);
         }
+        event.preventDefault();
     }
 
     /**
@@ -294,7 +331,9 @@ function AllowanceHook(props: any) {
                 // TODO: let's have a proper popup
                 alert(
                     new BigNumber(allowed)
-                        .dividedBy(await mixrContract.getDecimals(inTokenToApprove)).toNumber(),
+                        .dividedBy(
+                            10 ** new BigNumber(await mixrContract.getDecimals(inTokenToApprove)).toNumber()
+                        ).toNumber(),
                 );
             });
         } catch (e) {
@@ -303,29 +342,46 @@ function AllowanceHook(props: any) {
         event.preventDefault();
     }
 
+    /**
+     * Render available tokens from state
+     */
+    function renderAvailableTokens() {
+        if (availableTokens[0].address === undefined) {
+            return null;
+        }
+        return availableTokens.map((token) => {
+            return (
+                <option value={token.address} key={token.address}>{props.web3.utils.hexToUtf8(token.name)}</option>
+            );
+        });
+    }
+
     return (
         <React.Fragment>
             <p className="Profile-Input__title--big Profile-Input__title--padding">
                 ALLOWANCE
             </p>
             <br />
-            <form>
-                <input
+            <form onSubmit={handleSubmit}>
+                <select
                     className="Profile__input-approvals--full-width"
-                    type="text"
+                    value={inTokenToApprove}
                     name="inTokenToApprove"
                     onChange={handleChange}
-                    placeholder="Token Address"
-                />
+                    required={true}
+                >
+                    <option disabled={true} value="default">Select Token</option>
+                    {renderAvailableTokens()}
+                </select>
                 <input
                     className="Profile__input-approvals--full-width"
                     type="text"
                     name="addressToVerify"
+                    value={addressToVerify}
                     onChange={handleChange}
                     placeholder="Address to verify"
                 />
                 <div className="Profile__inputs-grid">
-                    <div />
                     <div className="Profile__button-grid">
                         <input className="Profile__button" type="submit" value="SUBMIT" />
                     </div>

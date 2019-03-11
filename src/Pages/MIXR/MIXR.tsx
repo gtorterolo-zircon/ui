@@ -90,7 +90,7 @@ class MIXR extends Component<{}, IMIXRState> {
             assetSelect: 'empty',
             assets: [],
             haveValidFunds: true,
-            isMixing: true,
+            isMixing: false,
             selectedAssetCreate: '',
             selectedAssetExchange: '',
             transactionStatus: TransactionStatus.None,

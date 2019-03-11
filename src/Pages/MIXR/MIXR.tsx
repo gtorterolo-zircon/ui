@@ -226,7 +226,7 @@ class MIXR extends Component<{}, IMIXRState> {
                         value={assetSelect}
                         onChange={this.handleChange}
                     >
-                        <option value="empty">Select</option>
+                        <option value="empty">Select Coin To Convert</option>
                         {this.renderAssets()}
                     </select>
                     <div className="MIXR-Input__coin-amount-container">

@@ -5,3 +5,4 @@ declare module 'react-dom';
 declare module 'rimble-ui';
 declare module 'react-copy-to-clipboard';
 declare module 'react-slick';
+declare module 'react-responsive-carousel';

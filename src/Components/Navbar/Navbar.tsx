@@ -1,7 +1,7 @@
 /* eslint-disable react/prefer-stateless-function */
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import Sidebar from '../Sidebar/Sidebar';
+import Sidebar from '../../Components/Sidebar/Sidebar';
 
 import Logo from '../../Assets/img/cement-logo.svg';
 import MenuIcon from '../../Assets/img/hamburger-menu-icon.svg';

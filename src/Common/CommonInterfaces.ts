@@ -5,11 +5,13 @@
 interface IERC20Calls {
     // although we should not use any, it needs to be
     call: () => Promise<any>;
+    send: (options: object) => Promise<any>;
 }
 export interface IERC20TypeDefault {
     (address: string): IERC20Type;
     methods: IERC20TypeDefault;
     balanceOf: (user: string) => IERC20Calls;
+    approve: (address: string, amount: string) => IERC20Calls;
 }
 /**
  * Interfaces for web3 definition
@@ -21,8 +23,12 @@ interface IWeb3Eth {
     Contract: IWeb3EthContract;
     getAccounts: () => Promise<string[]>;
 }
+interface IWeb3Utils {
+    hexToUtf8: (data: string) => string;
+}
 export interface IWeb3Type {
     eth: IWeb3Eth;
+    utils: IWeb3Utils;
     currentProvider?: object;
 }
 /**
@@ -37,12 +43,32 @@ export interface IERC20Type {
 /**
  * Interface for wallet definition
  */
-export interface IWalletType { name: string; priceUSD: number; value: number; }
+export interface IWalletType {
+    name: string;
+    address: string;
+    balance: number;
+}
 /**
  * Interface for mixr contract definition
  */
 export interface IMIXRContractType extends IERC20Type {
+    address: string;
+    DEPOSIT: () => Promise<number>;
+    estimateFee: (
+        token: string,
+        basket: string,
+        transactionAmount: string,
+        transactionType: number,
+    ) => Promise<number>;
     getRegisteredTokens: () => Promise<[[string], number]>;
+    depositToken: (token: string, depositInTokenWei: string, options?: any) => Promise<void>;
+    redeemMIXR: (token: string, redemptionInBasketWei: string, options?: any) => Promise<void>;
+    approve: (address: string, amount: string, options: object) => Promise<void>;
+    registerDetailedToken: (address: string, options: object) => Promise<void>;
+    getName: (address: string) => Promise<string>;
+    getDecimals: (address: string) => Promise<string>;
+    isGovernor: (address: string) => Promise<boolean>;
+    getTargetProportion: (address: string) => Promise<string>;
 }
 /**
  * TODO:

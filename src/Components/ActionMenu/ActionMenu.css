@@ -1,0 +1,44 @@
+.Action-Menu__plus {
+    position: absolute;
+    bottom: 101px;
+    left: 20px;
+    height: 36px;
+    width: 36px;
+    cursor: pointer;
+}
+
+.Action-Menu__minus {
+    position: absolute;
+    bottom: 101px;
+    left: 20px;
+    height: 36px;
+    width: 36px;
+    cursor: pointer;
+}
+
+.Action-Menu__copy-address {
+    position: absolute;
+    bottom: 126px;
+    left: 46px;
+    height: 36px;
+    width: 36px;
+    cursor: pointer;
+}
+
+.Action-Menu__help {
+    position: absolute;
+    bottom: 101px;
+    left: 73px;
+    height: 36px;
+    width: 36px;
+    cursor: pointer;
+}
+
+.Action-Menu__logout {
+    position: absolute;
+    bottom: 76px;
+    left: 46px;
+    height: 36px;
+    width: 36px;
+    cursor: pointer;
+}

@@ -43,10 +43,11 @@
 
 .MIXR-Input__grid {
     display: grid;
-    grid-template-columns: 52% 30% 10%;
+    grid-template-columns: 56% auto;
     grid-column-gap: 14px;
     padding-bottom: 30px;
     padding-top: 30px;
+    padding-right: 20px;
 }
 
 .MIXR-Input__title {
@@ -58,6 +59,11 @@
 
 }
 
+.MIXR-Input__title--vertical-align {
+    line-height: 36px;
+    cursor: pointer;
+}
+
 select {
     -webkit-appearance: none;
     -moz-appearance: none;
@@ -67,10 +73,24 @@ select {
 
 .MIXR-Input__coin-input {
     height: 30px;
-    border-radius: 2px;
+    border-radius: 3px;
     border: 1.2px solid;
     outline: none;
     background: #fff;
+}
+
+.MIXR-Input__coin-amount {
+    width: 95%;
+    height: 26px;
+    border-radius: 2px;
+    border: none;
+    background: #fff;
+    padding-left: 10px;
+}
+
+
+.MIXR-Input__coin-amount-container {
+    position: relative;
 }
 
 .MIXR-Input__coin-option-container {
@@ -78,6 +98,14 @@ select {
     background: #fff;
 }
 
+.MIXR-Input__max-button {
+    position: absolute;
+    top: 6px;
+    right: 0;
+    outline: none;
+    border: none;
+    background: #fff;
+}
 
 /* MIXR-New-Token css */
 
@@ -101,6 +129,7 @@ select {
 }
 
 .MIXR-Asset__grid {
+    position: relative;
     display: grid;
     grid-template-columns: 1fr 1fr 52px 1fr;
     max-width: 70%;
@@ -153,3 +182,25 @@ select {
     font-size: 11px;
 }
 
+input {
+    outline: none;
+}
+
+.MIXR__selection {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: 20px;
+    width: 414px;
+}
+
+.MIXR__selection-button {
+    height: 36px;
+    width: 100px;
+    margin-left: 140px;
+    background: #64e36b;
+    font-weight: 500;
+    border: none;
+    border-radius: 3px;
+    font-size: 13px;
+    cursor: pointer;
+}

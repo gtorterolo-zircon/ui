@@ -1,106 +1,43 @@
 .Login__grid {
     display: grid;
-    grid-template-columns: 44vw auto;
+    grid-template-columns: 40vw auto;
 }
 
-.Login__grid-left {
-    background: #fff;
+
+/**************************************************************
+LOGIN BACKGROUND
+**************************************************************/
+.Login__grid-inner {
+    background: #FF8400;
     height: 100vh;
 }
 
-.Login__logo {
-    padding: 10px 30px;
-    height: 60px;
-    width: 200px;
-}
-
-.Login__grid-left-outer-container {
-    display: flex;
-    flex-direction: column;
-    align-content: space-between;
-    padding-left: 110px;
-    height: calc(100vh - 80px);
-    padding-top: 80px;
-
-}
-
-.Login__grid-left-top-container {
-    flex-grow: 1;
-}
-
-.Login__grid-left-bottom-container {
-    margin-bottom: 120px;
-    font-size: 10px;
-}
-
-.Login__grid-left-bottom-container--underline {
-    text-decoration: underline;
-    padding-left: 4px;
-}
-
-.Login__grid-left-title {
-    font-size: 28px;
-    font-weight: 600;
-    line-height: 36px;
-    margin-bottom: 40px;
-}
-
-.Login__grid-left-button {
-    height: 60px;
-    background: #000;
-    color: #fff;
-    font-size: 18px;
-    line-height: 50px;
-    width: 260px;
-    font-weight: 500;
-    cursor: pointer;
-}
-
-.Login__grid-left-CTA {
-    color: #585858;
-    margin-top: 40px;
-    line-height: 20px;
-}
-
-.Login__grid-left-CTA--underline {
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-
-.Login__grid-right {
-    background: #999999;
-    height: 100vh;
-}
-
-
-
-.Login__grid-right-logo {
+.Login__grid-logo {
     display: block;
     margin: auto;
-    height: 240px;
+    height: 180px;
     width: 260px;
     margin-top: 100px;
 }
 
-.Login__grid-right-title {
-    font-weight: 600;
+.Login__grid-title {
+    font-weight: 100;
     color: #fff;
-    font-size: 18.5px;
+    font-size: 16px;
     word-spacing: 1.4px;
     letter-spacing: 2px;
     text-align: center;
-    margin-top: 70px;
+    margin-top: 40px;
 }
 
-.Login__grid-right-content {
+.Login__grid-content {
     margin: auto;
     margin-top: 20px;
     font-weight: 100;
     display: block;
     color: #fff;
-    width: 512px;
-    font-size: 14px;
+    width: 442px;
+    font-size: 12px;
     word-spacing: 4.8px;
     letter-spacing: 2.3px;
     line-height: 18px;
@@ -108,7 +45,7 @@
 }
 
 .Login__button-flex {
-    width: 512px;
+    width: 438px;
     margin: auto;
     position: relative;
     margin-top: 30px;

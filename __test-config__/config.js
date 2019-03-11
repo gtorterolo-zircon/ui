@@ -1,7 +1,10 @@
 const Web3 = require('web3');
 const truffleContract = require('truffle-contract');
 const BigNumber = require('bignumber.js');
-const SampleERC20Contract = require('../src/contracts/SampleERC20.json');
+// eslint-disable-next-line import/no-extraneous-dependencies
+const portscanner = require('portscanner');
+
+const SampleERC20Contract = require('../src/contracts/SampleDetailedERC20.json');
 const MIXRContract = require('../src/contracts/MIXR.json');
 const FixidityLibMockContract = require('../src/contracts/FixidityLibMock.json');
 const FeesbMockContract = require('../src/contracts/FeesMock.json');
@@ -9,13 +12,19 @@ const FeesbMockContract = require('../src/contracts/FeesMock.json');
 
 // eslint-disable-next-line no-unused-vars
 const getWeb3 = () => new Promise((resolve, reject) => {
-    const provider = new Web3.providers.HttpProvider(
-        'http://127.0.0.1:9545',
-    );
-    const web3 = new Web3(provider);
-    // eslint-disable-next-line no-console
-    console.log('No web3 instance injected, using Local web3.');
-    resolve(web3);
+    let port;
+    // we should have a standard port but meeh.
+    portscanner.checkPortStatus(8545, '127.0.0.1', (error, status) => {
+        // Status is 'open' if currently in use or 'closed' if available
+        port = (status === 'open') ? 8545 : 9545;
+        const provider = new Web3.providers.HttpProvider(
+            `http://127.0.0.1:${port}`,
+        );
+        const web3 = new Web3(provider);
+        // eslint-disable-next-line no-console
+        console.log('No web3 instance injected, using Local web3.');
+        resolve(web3);
+    });
 });
 
 const tokenNumber = (decimals, tokens) => new BigNumber(10)
@@ -37,8 +46,9 @@ const configContracts = async () => {
     const walletFees = accounts[3];
 
     // set some variables
-    // const mixrDecimals = 24;
-    const someERC20Decimals = 18;
+    const mixrDecimals = 24;
+    const defaultERC20Decimals = 18;
+    const tokensDeposit = 2;
 
     // verify web3
     if (web3 === undefined) {
@@ -53,7 +63,7 @@ const configContracts = async () => {
     // load the ERC20 sample
     const ContractSampleERC20 = truffleContract(SampleERC20Contract);
     ContractSampleERC20.setProvider(web3.currentProvider);
-    const someERC20 = await ContractSampleERC20.deployed();
+    const ERC20Sample = await ContractSampleERC20.deployed();
 
     // load fixidity
     const ContractFixidityLibMock = truffleContract(FixidityLibMockContract);
@@ -76,50 +86,37 @@ const configContracts = async () => {
         from: owner,
     });
 
-    // approve tokens
-    await mixr.registerToken(someERC20.address, {
-        from: governor,
-    });
-
     console.log('Setting proportion ...');
-    // set proportion
-    await mixr.setTokensTargetProportion(
-        [someERC20.address],
-        [fixed1.toString(10)],
-        {
-            from: governor,
-        },
-    );
-
+    console.log(`Sending some tokens to ${user} ...`);
     // set base fee
     const baseFee = new BigNumber(10).pow(23).toString(10);
-    await mixr.setTransactionFee(
-        someERC20.address,
-        baseFee,
-        DEPOSIT,
-        {
-            from: governor,
-        },
-    );
-    await mixr.setTransactionFee(
-        someERC20.address,
-        baseFee,
-        REDEMPTION,
-        {
-            from: governor,
-        },
-    );
-
-    console.log(`Sending some tokens to ${user} ...`);
-    // send tokens to user to use in tests
-    await someERC20.transfer(
-        user,
-        tokenNumber(someERC20Decimals, 100),
-        { from: governor },
-    );
-
     // set account to receive fees
     await mixr.setStakeholderAccount(walletFees, { from: governor });
+    // define amounts
+    const tokensToDeposit = tokenNumber(defaultERC20Decimals, tokensDeposit);
+    const MIXToMint = new BigNumber(10).pow(mixrDecimals).multipliedBy(tokensDeposit);
+
+
+    // add first token
+    await mixr.registerStandardToken(ERC20Sample.address, web3.utils.utf8ToHex('SAMPLE'), 18, { from: governor });
+    await mixr.setTokensTargetProportion(
+        [
+            ERC20Sample.address,
+        ],
+        [
+            fixed1.toString(10),
+        ],
+        { from: governor },
+    );
+    //
+    await mixr.setTransactionFee(ERC20Sample.address, baseFee, DEPOSIT, { from: governor });
+    await mixr.setTransactionFee(ERC20Sample.address, baseFee, REDEMPTION, { from: governor });
+    //
+    await ERC20Sample.transfer(user, tokenNumber(defaultERC20Decimals, 100), { from: governor });
+    // approve and deposit
+    await mixr.approve(mixr.address, MIXToMint.toString(10), { from: user });
+    await ERC20Sample.approve(mixr.address, tokensToDeposit.toString(10), { from: user });
+    await mixr.depositToken(ERC20Sample.address, tokensToDeposit.toString(10), { from: user });
 };
 
 configContracts().then(() => {

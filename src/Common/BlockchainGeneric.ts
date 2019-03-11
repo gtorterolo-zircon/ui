@@ -70,9 +70,9 @@ class BlockchainGeneric {
             // save in a state array to render
             const walletInfo: IWalletType[] = [
                 {
+                    address: mixrContract.address,
+                    balance: mixrBalance.dp(2).toNumber(),
                     name: 'MIX',
-                    priceUSD: mixrBalance.toNumber(),
-                    value: mixrBalance.toNumber(),
                 },
             ];
             // iterate over accepted tokens to add them of state component for rendering
@@ -85,10 +85,11 @@ class BlockchainGeneric {
                     await ERC.methods.balanceOf(userAccount).call(),
                 ).dividedBy(10 ** sampleDecimals);
                 // add it to the array
+                const tokenName = web3.utils.hexToUtf8(await mixrContract.getName(approvedTokensAddress[i]));
                 walletInfo.push({
-                    name: 'SAMPLE',
-                    priceUSD: sampleBalance.toNumber(),
-                    value: sampleBalance.toNumber(),
+                    address: approvedTokensAddress[i],
+                    balance: sampleBalance.dp(2).toNumber(),
+                    name: tokenName,
                 });
             }
             // resolve with info

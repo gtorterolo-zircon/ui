@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="40px" height="40px" viewBox="0 0 40 40" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.1 (72631) - https://sketchapp.com -->
+    <title>3</title>
+    <desc>Created with Sketch.</desc>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Transaction-Popup" transform="translate(-744.000000, -585.000000)">
+            <g id="Pop-up" transform="translate(176.000000, 236.000000)">
+                <g id="Steps" transform="translate(568.000000, 219.000000)">
+                    <g id="POPUP/3" transform="translate(0.000000, 130.000000)">
+                        <g id="3">
+                            <path d="M7,6.5 C6.72385763,6.5 6.5,6.72385763 6.5,7 L6.5,33 C6.5,33.2761424 6.72385763,33.5 7,33.5 L33,33.5 C33.2761424,33.5 33.5,33.2761424 33.5,33 L33.5,7 C33.5,6.72385763 33.2761424,6.5 33,6.5 L7,6.5 Z" id="Rectangle-Copy" stroke="#FFFFFF" fill-rule="nonzero" transform="translate(20.000000, 20.000000) rotate(-45.000000) translate(-20.000000, -20.000000) "></path>
+                            <path d="M19.76,24.568 C18.608,24.556 17.336,24.196 17.036,22.576 L17.744,22.252 L17.816,22.252 C17.948,23.404 18.836,23.8 19.772,23.8 C20.996,23.8 21.764,23.104 21.764,22.072 C21.764,21.076 21.068,20.5 19.868,20.5 L18.608,20.5 L18.608,19.744 L19.832,19.744 C20.588,19.744 21.5,19.132 21.5,18.148 C21.5,17.452 21.08,16.756 19.76,16.756 C18.872,16.756 17.9,17.224 17.78,18.304 L17.72,18.304 L17,18.112 C17.12,16.672 18.356,16 19.76,16 C21.764,16 22.436,17.044 22.436,18.112 C22.436,18.82 22.016,19.744 20.948,20.104 C21.956,20.26 22.688,21.04 22.688,22.096 C22.688,23.284 21.752,24.568 19.76,24.568 Z" fill="#FFFFFF"></path>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

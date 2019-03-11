@@ -117,6 +117,10 @@ class Admin extends Component<{}, IAdmin> {
                     <div className="Admin__main">
                         <div>
                             {actionRender}
+                            <p
+                            className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">
+                                TOKEN ADDRESSES
+                            </p>
                             <ul id="tokensList" />
                         </div>
                     </div>
@@ -150,7 +154,7 @@ class Admin extends Component<{}, IAdmin> {
         }
         mixrContract.getRegisteredTokens().then((tokens) => {
             const tokenMap = tokens[0];
-            const tokenElements = tokenMap.map((token) => <li key={token}>{token}</li>);
+            const tokenElements = tokenMap.map((token) => <li className="Admin-Input__title Admin-Input__title--padding" key={token}>{token}</li>);
             ReactDOM.render(tokenElements, document.getElementById('tokensList'));
         });
     }
@@ -202,38 +206,54 @@ function RegisterTokensHook(props: any) {
      * @ignore
      */
     return (
-        <form onSubmit={handleSubmit}>
-            <div className="Admin__inputs-grid">
+        <React.Fragment>
+            <p className="Admin-Input__title Admin-Input__title--big">ADD ERC20 STABLECOIN</p>
+            <form onSubmit={handleSubmit}>
+                <div className="Admin__inputs-grid">
 
-                <input
-                    className="Admin__input-approvals"
-                    type="text"
-                    placeholder="Address"
-                    name="erc20Address"
-                    value={erc20Address}
-                    onChange={handleChange}
-                />
-                <input
-                    className="Admin__input-approvals"
-                    type="text"
-                    placeholder="Name"
-                    name="erc20Name"
-                    value={erc20Name}
-                    onChange={handleChange}
-                />
-                <input
-                    className="Admin__input-approvals"
-                    type="number"
-                    placeholder="Decimals"
-                    name="erc20Decimals"
-                    value={erc20Decimals}
-                    onChange={handleChange}
-                />
-                <div className="Admin__button-grid">
-                    <input className="Admin__button" type="submit" value="SUBMIT" />
+                    <div>
+                        <p className="Admin-Input__title Admin-Input__title--padding">ADDRESS</p>
+                        <input
+                            className="Admin__input-approvals"
+                            type="text"
+                            placeholder="Address"
+                            name="erc20Address"
+                            value={erc20Address}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div>
+                        <p className="Admin-Input__title Admin-Input__title--padding">NAME</p>
+                        <input
+                            className="Admin__input-approvals"
+                            type="text"
+                            placeholder="Name"
+                            name="erc20Name"
+                            value={erc20Name}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div>
+                        <p className="Admin-Input__title Admin-Input__title--padding">DECIMALS</p>
+                        <input
+                            className="Admin__input-approvals"
+                            type="number"
+                            placeholder="Decimals"
+                            name="erc20Decimals"
+                            value={erc20Decimals}
+                            onChange={handleChange}
+                        />
+                    </div>
+                    <div />
+                    <div />
+                    <div className="Admin__button-grid">
+                        <input className="Admin__button" type="submit" value="SUBMIT" />
+                    </div>
                 </div>
-            </div>
-        </form>
+            </form>
+        </React.Fragment>
     );
 }
 
@@ -299,13 +319,14 @@ function SetTargetProportionHook(props: any) {
         return tokensProportions.map((token) => {
             return (
                 <li key={token.address}>
-                    <p>{token.address}</p>
+                    {/* <p>{token.address}</p> */}
                     <input
                         name={token.address}
                         type="text"
                         value={token.proportion}
                         placeholder="proportion"
                         onChange={handleChange}
+                        className="Admin__input-approvals--full-width"
                     />;
                 </li>
             );
@@ -315,9 +336,19 @@ function SetTargetProportionHook(props: any) {
     return (
         <form onSubmit={handleSubmit}>
             <ul>
+                <li
+                    className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding" >
+                    TOKEN PROPORTION
+                </li>
                 {renderTokensProportions()}
             </ul>
-            <input type="submit" value="SUBMIT" />
+            <div className="Admin__token-proportion-grid">
+                <div />
+                <div className="Admin__button-grid">
+                    <input className="Admin__button" type="submit" value="SUBMIT" />
+                </div>
+            </div>
+
         </form>
     );
 }

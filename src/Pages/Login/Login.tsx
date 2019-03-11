@@ -36,7 +36,7 @@ class Login extends Component {
 
                 {/* Login Background */}
                 <div className="Login__grid">
-                    <div className="Login__grid-inner"></div>
+                    <div className="Login__grid-inner" />
                     <div className="Login__grid-inner">
                         <img className="Login__grid-logo" src={loginImg1} alt="cementDAO logo" />
                         <p className="Login__grid-title">CEMENT IS A BASKET OF MANY STABLECOINS</p>

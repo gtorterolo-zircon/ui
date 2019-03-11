@@ -73,8 +73,24 @@ input {
     grid-gap: 10px;
 }
 
+.Admin__token-proportion-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-bottom: 10px;
+    grid-gap: 10px;
+}
+
 .Admin__input-approvals{
     width: 96%;
+    height: 36px;
+    border: none;
+    border-radius: 3px;
+    padding-left: 10px;
+    font-size: 14px;
+}
+
+.Admin__input-approvals--full-width {
+    width: 98%;
     height: 36px;
     border: none;
     border-radius: 3px;

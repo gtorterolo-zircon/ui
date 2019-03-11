@@ -236,8 +236,10 @@ function ApproveHook(
                         name="inTokenToApprove"
                         onChange={handleChange}
                         required={true}
+                        placeholder="Select Token"
+                        className="Profile__inputs-select"
                     >
-                        <option disabled={true} value="default">Select Token</option>
+                        {/* <option disabled={true} value="default">Select Token</option> */}
                         {renderAvailableTokens()}
                     </select>
                     <input
@@ -249,16 +251,20 @@ function ApproveHook(
                         onChange={handleChange}
                         required={true}
                     />
-                    <p className="Profile-Input__title Profile-Input__title--padding">AMOUNT TO APPROVE</p>
-                    <input
-                        className="Profile__input-approvals"
-                        type="number"
-                        placeholder="Amount to approve"
-                        name="amountToApprove"
-                        value={amountToApprove}
-                        onChange={handleChange}
-                        required={true}
-                    />
+                    <div>
+                        <p className="Profile-Input__title Profile-Input__title--padding">AMOUNT TO APPROVE</p>
+                        <input
+                            className="Profile__input-approvals"
+                            type="number"
+                            placeholder="Amount to approve"
+                            name="amountToApprove"
+                            value={amountToApprove}
+                            onChange={handleChange}
+                            required={true}
+                        />
+                    </div>
+                    <div />
+                    <div />
                     <div className="Profile__button-grid">
                         <input className="Profile__button" type="submit" value="SUBMIT" />
                     </div>
@@ -363,18 +369,25 @@ function AllowanceHook(props: any) {
             </p>
             <br />
             <form onSubmit={handleSubmit}>
+                <p className="Profile-Input__title Profile-Input__title--padding">
+                    TOKEN SELECT
+                </p>
                 <select
                     className="Profile__input-approvals--full-width"
                     value={inTokenToApprove}
                     name="inTokenToApprove"
                     onChange={handleChange}
                     required={true}
+                    placeholder="Select Token"
                 >
-                    <option disabled={true} value="default">Select Token</option>
+                    {/* <option disabled={true} value="default">Select Token</option> */}
                     {renderAvailableTokens()}
                 </select>
+                <p className="Profile-Input__title Profile-Input__title--padding">
+                    ADDRESS TO APPROVE
+                </p>
                 <input
-                    className="Profile__input-approvals--full-width"
+                    className="Profile__input-approvals"
                     type="text"
                     name="addressToVerify"
                     value={addressToVerify}
@@ -382,6 +395,7 @@ function AllowanceHook(props: any) {
                     placeholder="Address to verify"
                 />
                 <div className="Profile__inputs-grid">
+                    <div />
                     <div className="Profile__button-grid">
                         <input className="Profile__button" type="submit" value="SUBMIT" />
                     </div>

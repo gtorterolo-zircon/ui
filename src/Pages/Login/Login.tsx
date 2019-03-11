@@ -4,8 +4,13 @@ import Slider from "react-slick";
 
 import LoginOverlay from '../../Components/LoginOverlay/LoginOverlay';
 
-import loginImg1 from '../../Assets/img/homepage-slider-img-1.svg';
+import loginImg1 from '../../Assets/img/Login/login-img-1.svg';
+import loginImg2 from '../../Assets/img/Login/login-img-2.svg';
+import loginImg3 from '../../Assets/img/Login/login-img-3.svg';
+import loginImg4 from '../../Assets/img/Login/login-img-4.svg';
 import sliderNext from '../../Assets/img/slider-next.svg';
+
+import LoginBackground from '../../Components/LoginBackground/LoginBackground';
 
 import './Login.css';
 
@@ -58,71 +63,52 @@ class Login extends Component {
 
                 <Slider {...settings}>
                     <div>
-                        <div className="Login__grid">
-                            <div className="Login__grid-inner" />
-                            <div className="Login__grid-inner">
-                                <img className="Login__grid-logo" src={loginImg1} alt="cementDAO logo" />
-                                <p className="Login__grid-title">CEMENT IS A BASKET OF MANY STABLECOINS</p>
-                                <p className="Login__grid-content">
-                                    Stablecoin holders can deposit their stablecoins into the
-                                    Cement Mixer (that&#39;s what we&#39;re calling the basket), to
-                                    benefit from increased liquidity, greater stability and
-                                    protection from risk.
-                                </p>
-                                <div className="Login__button-flex">
-                                    <img className="Login__button" src={sliderNext} alt="slider next" />
-                                    <SlickArrowRight />
-                                </div>
-                            </div>
-                        </div>
+                        <LoginBackground
+                            background="#ff8400"
+                            title="CEMENT IS A BASKET OF MANY STABLECOINS"
+                            content="Stablecoin holders can deposit their stablecoins into the
+                            Cement Mixer (that&#39;s what we&#39;re calling the basket), to
+                            benefit from increased liquidity, greater stability and
+                            protection from risk."
+                            img={loginImg1}
+                            nextButton={sliderNext}
+                        />
                     </div>
                     <div>
-                        <div className="Login__grid">
-                            <div className="Login__grid-inner" />
-                            <div className="Login__grid-inner">
-                                <img className="Login__grid-logo" src={loginImg1} alt="cementDAO logo" />
-                                <p className="Login__grid-title">CEMENT IS A BASKET OF MANY STABLECOINS</p>
-                                <p className="Login__grid-content">
-
-                                </p>
-                                <div className="Login__button-flex">
-                                    <img className="Login__button" src={sliderNext} alt="slider next" />
-                                    <SlickArrowRight />
-                                </div>
-                            </div>
-                        </div>
+                        <LoginBackground
+                            background="#ff006c"
+                            title="ON DEMAND LIQUIDITY &
+                            DECENTRALIZED EXCHANGE"
+                            content="Deposit a stablecoin in the Mixer allows you to
+                             seamlessly exchange it for any other stablecoin in the Mixer.
+                             For example, a holder of TUSD can easily pay a provider that
+                             only accepts DAI."
+                            img={loginImg2}
+                            nextButton={sliderNext}
+                        />
                     </div>
                     <div>
-                        <div className="Login__grid">
-                            <div className="Login__grid-inner" />
-                            <div className="Login__grid-inner">
-                                <img className="Login__grid-logo" src={loginImg1} alt="cementDAO logo" />
-                                <p className="Login__grid-title">CEMENT IS A BASKET OF MANY STABLECOINS</p>
-                                <p className="Login__grid-content">
-
-                                </p>
-                                <div className="Login__button-flex">
-                                    <img className="Login__button" src={sliderNext} alt="slider next" />
-                                    <SlickArrowRight />
-                                </div>
-                            </div>
-                        </div>
+                        <LoginBackground
+                            background="#00d0de"
+                            title="THE COMMUNITY VOTES WHICH STABLE COINS ENTER THE MIXR"
+                            content="Members of the community vote for Rating Agents, who
+                            compete to identify the best stablecoin projects. Community votes
+                            determine which stablecoins are accepted or ejected from the Mixer."
+                            img={loginImg3}
+                            nextButton={sliderNext}
+                        />
                     </div>
                     <div>
-                        <div className="Login__grid">
-                            <div className="Login__grid-inner" />
-                            <div className="Login__grid-inner">
-                                <img className="Login__grid-logo" src={loginImg1} alt="cementDAO logo" />
-                                <p className="Login__grid-title">CEMENT IS A BASKET OF MANY STABLECOINS</p>
-                                <p className="Login__grid-content">
-
-                                </p>
-                                <div className="Login__button-flex">
-                                    <img className="Login__button" src={sliderNext} alt="slider next" />
-                                    <SlickArrowRight />
-                                </div>
-                            </div>
-                        </div>
+                        <LoginBackground
+                            background="#ff6272"
+                            title="MANAGING RISK AND REWARD BASED ON USER PREFERENCE"
+                            content="Cement creates a marketplace for risk. Our users are protected
+                            from the risk of failure of the underlying stablecoins and from the
+                            diversification of their exposure. Earn rewards, paid out from fees collected
+                            in the MIXR by absorbing this risk."
+                            img={loginImg4}
+                            nextButton={sliderNext}
+                        />
                     </div>
 
                 </Slider>

@@ -237,7 +237,6 @@ function ApproveHook(
                         onChange={handleChange}
                         required={true}
                         placeholder="Select Token"
-                        className="Profile__inputs-select"
                     >
                         {/* <option disabled={true} value="default">Select Token</option> */}
                         {renderAvailableTokens()}

@@ -16,7 +16,7 @@ class Navbar extends Component<any, any> {
         super(props);
         this.state = {
             sidebarOpen: false,
-        }
+        };
     }
 
     public sidebar = () => {
@@ -40,7 +40,7 @@ class Navbar extends Component<any, any> {
                     </div>
                 </div>
 
-                { this.state.sidebarOpen ?  <Sidebar click={this.sidebar} /> : null}
+                {this.state.sidebarOpen ?  <Sidebar click={this.sidebar} /> : null}
             </React.Fragment>
         );
     }

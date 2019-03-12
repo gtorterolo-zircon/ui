@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import Slider from "react-slick";
+import Carousel from 'react-slick';
 
 import LoginOverlay from '../../Components/LoginOverlay/LoginOverlay';
 
@@ -13,8 +13,6 @@ import sliderNext from '../../Assets/img/slider-next.svg';
 import LoginBackground from '../../Components/LoginBackground/LoginBackground';
 
 import './Login.css';
-
-
 
 class Login extends Component {
     constructor(props: any) {
@@ -36,22 +34,18 @@ class Login extends Component {
     }
 
 
+
+
     public render() {
-    const SlickArrowRight = ({ ...props }) => (
-      <button
-        {...props}
-        className="slick-next slick-arrow"
-      >
-        Next
-      </button>
-    );
 
     const settings = {
-            nextArrow: <SlickArrowRight />,
+            draggable: false,
+            infinite: true,
             slidesToScroll: 1,
             slidesToShow: 1,
             speed: 800,
         };
+        console.log(settings)
 
     return (
             <div>
@@ -61,7 +55,7 @@ class Login extends Component {
 
 
 
-                <Slider {...settings}>
+                <Carousel {...settings}>
                     <div>
                         <LoginBackground
                             background="#ff8400"
@@ -71,7 +65,7 @@ class Login extends Component {
                             benefit from increased liquidity, greater stability and
                             protection from risk."
                             img={loginImg1}
-                            nextButton={sliderNext}
+                            nextButtonImg={sliderNext}
                         />
                     </div>
                     <div>
@@ -85,6 +79,8 @@ class Login extends Component {
                              only accepts DAI."
                             img={loginImg2}
                             nextButton={sliderNext}
+                            nextButtonImg={sliderNext}
+
                         />
                     </div>
                     <div>
@@ -111,7 +107,7 @@ class Login extends Component {
                         />
                     </div>
 
-                </Slider>
+                </Carousel>
 
             </div>
         );

@@ -30,13 +30,13 @@
     cursor: pointer;
   }
 
-  .Sidebar_item {
+  .Sidebar__item {
       letter-spacing: 1.2px;
       margin-bottom: 20px;
       font-size: 14px;
   }
 
-  .Sidebar_copyright {
+  .Sidebar__copyright {
       font-size: 10px;
       text-align: center;
   }

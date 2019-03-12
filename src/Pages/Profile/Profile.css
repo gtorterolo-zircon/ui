@@ -43,16 +43,6 @@
     padding: 10px 0px;
 }
 
-select {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-}
-
-
-input {
-    outline: none;
-}
 
 .Profile__input-address {
     width: 98%;
@@ -72,11 +62,6 @@ input {
     margin-bottom: 20px;
     grid-gap: 10px;
 }
-
-.Profile__inputs-select {
-    outline: none;
-}
-
 
 .Profile__input-approvals--full-width {
     width: 100%;

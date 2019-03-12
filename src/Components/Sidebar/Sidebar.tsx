@@ -10,13 +10,13 @@ const Sidebar = (props: any) =>   (
                 <div className="Sidebar__container">
                     <div>
                         <p onClick={props.click} className="Sidebar__closebtn">&times;</p>
-                        <p className="Sidebar_item">ABOUT</p>
-                        <p className="Sidebar_item">LEGAL</p>
-                        <p className="Sidebar_item">TERMS</p>
-                        <p className="Sidebar_item">CONTACT</p>
+                        <p className="Sidebar__item">ABOUT</p>
+                        <p className="Sidebar__item">LEGAL</p>
+                        <p className="Sidebar__item">TERMS</p>
+                        <p className="Sidebar__item">CONTACT</p>
                     </div>
                     <div>
-                        <p className="Sidebar_copyright">
+                        <p className="Sidebar__copyright">
                             &#169; Copyright 2019 by 1A1Z Ltd. All rights reserved.
                         </p>
                     </div>

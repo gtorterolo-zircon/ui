@@ -40,7 +40,7 @@ enum TransactionStatus {
     Fail,
 }
 /**
- * Defenition of fee types
+ * Definition of fee types
  */
 enum FeeType {
     REDEMPTION = -1,

@@ -1,6 +1,6 @@
 /* eslint-disable react/prefer-stateless-function */
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Router } from 'react-router-dom';
 import Sidebar from '../../Components/Sidebar/Sidebar';
 
 import Logo from '../../Assets/img/cement-logo.svg';
@@ -23,6 +23,10 @@ class Navbar extends Component<any, any> {
         this.setState({sidebarOpen: !this.state.sidebarOpen});
     }
 
+    public reloadRoute = () => {
+        window.location.href = '/mixr';
+    }
+
     public render() {
         return (
             <React.Fragment>
@@ -31,7 +35,7 @@ class Navbar extends Component<any, any> {
                         <img className="Navbar__Logo" src={Logo} alt="cementDAO logo" />
                     </div>
                     <div className="Navbar__items-container">
-                        <Link to="/mixr" className="Navbar__item">MIXR</Link>
+                        <span onClick={this.reloadRoute} className="Navbar__item">MIXR</span>
                         <Link to="/bild" className="Navbar__item">BILD</Link>
                         <Link to="/risk" className="Navbar__item">RISK</Link>
                     </div>

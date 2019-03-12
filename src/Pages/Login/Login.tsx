@@ -33,27 +33,27 @@ class Login extends Component {
         }
     }
 
-
+    public Arrow = (props: any) => {
+        console.log(props);  // currentIndex: 1
+        return <div>Arrow</div>;
+     }
 
 
     public render() {
 
     const settings = {
-            draggable: false,
+            draggable: true,
             infinite: true,
             slidesToScroll: 1,
             slidesToShow: 1,
             speed: 800,
         };
-        console.log(settings)
 
     return (
             <div>
                 <LoginOverlay
                     click={this.handleLogin}
                 />
-
-
 
                 <Carousel {...settings}>
                     <div>
@@ -106,7 +106,6 @@ class Login extends Component {
                             nextButton={sliderNext}
                         />
                     </div>
-
                 </Carousel>
 
             </div>

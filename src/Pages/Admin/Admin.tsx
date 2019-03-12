@@ -147,11 +147,11 @@ class Admin extends Component<{}, IAdmin> {
                     <div className="Admin__main">
                         <div>
                             {actionRender}
-                            <p
+                            {/* <p
                             className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">
                                 TOKEN ADDRESSES
                             </p>
-                            <ul id="tokensList" />
+                            <ul id="tokensList" /> */}
                         </div>
                     </div>
                     <div />
@@ -163,7 +163,7 @@ class Admin extends Component<{}, IAdmin> {
 
     private handleClick = (event: any) => {
         const actionId = event.target.dataset.id;
-        alert(actionId);
+        // alert(actionId);
         switch (actionId) {
             case 'addErc20StableCoin':
                 this.setState({ action: TypeAction.RegisterToken });
@@ -382,7 +382,7 @@ function SetTargetProportionHook(props: any) {
         <form onSubmit={handleSubmit}>
             <ul>
                 <li
-                    className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding" >
+                    className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">
                     TOKEN PROPORTION
                 </li>
                 {renderTokensProportions()}
@@ -521,43 +521,53 @@ function SetBaseFeeHook(props: any) {
 
     return (
         <div>
-            Base fee deposit
+            <p className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">BASE FEE DEPOSIT</p>
             <form name="baseFeeDeposit" onSubmit={handleSubmit}>
-                <select
-                    name="baseFeeDepositToken"
-                    value={baseFeeDepositToken}
-                    onChange={handleChange}
-                    required={true}
-                >
-                    <option disabled={true} value="default">Select Token</option>
-                    {renderTokensNames()}
-                </select>
-                <input
-                    type="text"
-                    name="baseFeeDepositValue"
-                    value={baseFeeDepositValue}
-                    onChange={handleChange}
-                />
-                <input type="submit" value="send" />
+                <div className="Admin__inputs-grid">
+                    <select
+                        name="baseFeeDepositToken"
+                        value={baseFeeDepositToken}
+                        onChange={handleChange}
+                        required={true}
+                    >
+                        <option disabled={true} value="default">Select Token</option>
+                        {renderTokensNames()}
+                    </select>
+                    <input
+                        type="text"
+                        name="baseFeeDepositValue"
+                        value={baseFeeDepositValue}
+                        onChange={handleChange}
+                    />
+                    <div />
+                    <div className="Admin__button-grid">
+                        <input className="Admin__button" type="submit" value="SUBMIT" />
+                    </div>
+                </div>
             </form>
-            Base fee redemption
+            <p className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">BASE FEE REDEMPTION</p>
             <form name="baseFeeRedemption" onSubmit={handleSubmit}>
-                <select
-                    name="baseFeeRedemptionToken"
-                    value={baseFeeRedemptionToken}
-                    onChange={handleChange}
-                    required={true}
-                >
-                    <option disabled={true} value="default">Select Token</option>
-                    {renderTokensNames()}
-                </select>
-                <input
-                    type="text"
-                    name="baseFeeRedemptionValue"
-                    value={baseFeeRedemptionValue}
-                    onChange={handleChange}
-                />
-                <input type="submit" value="send" />
+                <div className="Admin__inputs-grid">
+                    <select
+                        name="baseFeeRedemptionToken"
+                        value={baseFeeRedemptionToken}
+                        onChange={handleChange}
+                        required={true}
+                    >
+                        <option disabled={true} value="default">Select Token</option>
+                        {renderTokensNames()}
+                    </select>
+                    <input
+                        type="text"
+                        name="baseFeeRedemptionValue"
+                        value={baseFeeRedemptionValue}
+                        onChange={handleChange}
+                    />
+                    <div />
+                    <div className="Admin__button-grid">
+                        <input className="Admin__button" type="submit" value="SUBMIT" />
+                    </div>
+                </div>
             </form>
         </div>
     );

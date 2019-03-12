@@ -6,6 +6,7 @@ const portscanner = require('portscanner');
 
 const SampleERC20Contract = require('../src/contracts/SampleDetailedERC20.json');
 const MIXRContract = require('../src/contracts/MIXR.json');
+const WhitelistContract = require('../src/contracts/Whitelist.json');
 const FixidityLibMockContract = require('../src/contracts/FixidityLibMock.json');
 const FeesbMockContract = require('../src/contracts/FeesMock.json');
 
@@ -60,6 +61,11 @@ const configContracts = async () => {
     ContractMIXR.setProvider(web3.currentProvider);
     const mixr = await ContractMIXR.deployed();
 
+    // load MIXR contract
+    const ContractWhitelist = truffleContract(WhitelistContract);
+    ContractWhitelist.setProvider(web3.currentProvider);
+    const whitelist = await ContractWhitelist.deployed();
+
     // load the ERC20 sample
     const ContractSampleERC20 = truffleContract(SampleERC20Contract);
     ContractSampleERC20.setProvider(web3.currentProvider);
@@ -82,7 +88,7 @@ const configContracts = async () => {
 
     console.log('Setting permitions ...');
     // deploy mixr and sample erc20
-    await mixr.addGovernor(governor, {
+    await whitelist.addGovernor(governor, {
         from: owner,
     });
 

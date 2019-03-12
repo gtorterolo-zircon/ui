@@ -524,21 +524,29 @@ function SetBaseFeeHook(props: any) {
             <p className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">BASE FEE DEPOSIT</p>
             <form name="baseFeeDeposit" onSubmit={handleSubmit}>
                 <div className="Admin__inputs-grid">
-                    <select
-                        name="baseFeeDepositToken"
-                        value={baseFeeDepositToken}
-                        onChange={handleChange}
-                        required={true}
-                    >
-                        <option disabled={true} value="default">Select Token</option>
-                        {renderTokensNames()}
-                    </select>
-                    <input
-                        type="text"
-                        name="baseFeeDepositValue"
-                        value={baseFeeDepositValue}
-                        onChange={handleChange}
-                    />
+                    <div>
+                        <p className="Admin-Input__title Admin-Input__title--padding">TOKEN SELECT</p>
+                        <select
+                            name="baseFeeDepositToken"
+                            value={baseFeeDepositToken}
+                            onChange={handleChange}
+                            required={true}
+                            className="Admin__input-approvals"
+                        >
+                            <option disabled={true} value="default">Select Token</option>
+                            {renderTokensNames()}
+                        </select>
+                    </div>
+                    <div>
+                        <p className="Admin-Input__title Admin-Input__title--padding">AMOUNT</p>
+                        <input
+                            type="text"
+                            name="baseFeeDepositValue"
+                            value={baseFeeDepositValue}
+                            onChange={handleChange}
+                            className="Admin__input-approvals"
+                        />
+                    </div>
                     <div />
                     <div className="Admin__button-grid">
                         <input className="Admin__button" type="submit" value="SUBMIT" />
@@ -548,21 +556,29 @@ function SetBaseFeeHook(props: any) {
             <p className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">BASE FEE REDEMPTION</p>
             <form name="baseFeeRedemption" onSubmit={handleSubmit}>
                 <div className="Admin__inputs-grid">
-                    <select
-                        name="baseFeeRedemptionToken"
-                        value={baseFeeRedemptionToken}
-                        onChange={handleChange}
-                        required={true}
-                    >
-                        <option disabled={true} value="default">Select Token</option>
-                        {renderTokensNames()}
-                    </select>
-                    <input
-                        type="text"
-                        name="baseFeeRedemptionValue"
-                        value={baseFeeRedemptionValue}
-                        onChange={handleChange}
-                    />
+                    <div>
+                        <p className="Admin-Input__title Admin-Input__title--padding">TOKEN SELECT</p>
+                        <select
+                            name="baseFeeRedemptionToken"
+                            value={baseFeeRedemptionToken}
+                            onChange={handleChange}
+                            required={true}
+                            className="Admin__input-approvals"
+                        >
+                            <option disabled={true} value="default">Select Token</option>
+                            {renderTokensNames()}
+                        </select>
+                    </div>
+                    <div>
+                        <p className="Admin-Input__title Admin-Input__title--padding">AMOUNT</p>
+                        <input
+                            type="text"
+                            name="baseFeeRedemptionValue"
+                            value={baseFeeRedemptionValue}
+                            onChange={handleChange}
+                            className="Admin__input-approvals"
+                        />
+                    </div>
                     <div />
                     <div className="Admin__button-grid">
                         <input className="Admin__button" type="submit" value="SUBMIT" />

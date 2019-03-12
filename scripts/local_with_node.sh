@@ -32,7 +32,7 @@ start_ganache() {
     # move to contracts folder so it can deploy the contracts to the network
     cd ../Contracts
     # run ganache-cli and put it on background so we can use the shell to deploy the contracts
-    ganache-cli --host 0.0.0.0 --port "$ganache_port" "${accounts[@]}" &
+    npx ganache-cli --host 0.0.0.0 --port "$ganache_port" "${accounts[@]}" &
     # get pid of ganache-cli
     export GANACHE_SHELL_PID=$!
     # wait for 10 seconds to let ganache start
@@ -51,7 +51,7 @@ if [[ $DEPLOY_ACTION = "start" ]]; then
     else
         echo "Starting our own ganache instance"
         start_ganache
-        truffle deploy --network development
+        npx truffle deploy --network development
     fi
 # if we are running the script in stop mode
 elif [[ $DEPLOY_ACTION = "stop" ]]; then

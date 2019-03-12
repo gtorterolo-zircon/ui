@@ -238,7 +238,7 @@ function ApproveHook(
                         required={true}
                         placeholder="Select Token"
                     >
-                        {/* <option disabled={true} value="default">Select Token</option> */}
+                        <option disabled={true} value="default">Select Token</option>
                         {renderAvailableTokens()}
                     </select>
                     <input
@@ -334,15 +334,12 @@ function AllowanceHook(props: any) {
             const ERC = new web3.eth.Contract(IERC20ABI, inTokenToApprove);
             ERC.methods.allowance(userAccount, addressToVerify).call().then(async (allowed: string) => {
                 // TODO: let's have a proper popup
-                alert(
-                    new BigNumber(allowed)
-                        .dividedBy(
-                            10 ** new BigNumber(await mixrContract.getDecimals(inTokenToApprove)).toNumber()
-                        ).toNumber(),
-                );
+                alert(new BigNumber(allowed).dividedBy(10 **
+                    new BigNumber(await mixrContract.getDecimals(inTokenToApprove)).toNumber(),
+                ).toNumber());
             });
         } catch (e) {
-            alert('Token is not registered!');
+            alert('Some error occurred!');
         }
         event.preventDefault();
     }
@@ -379,11 +376,11 @@ function AllowanceHook(props: any) {
                     required={true}
                     placeholder="Select Token"
                 >
-                    {/* <option disabled={true} value="default">Select Token</option> */}
+                    <option disabled={true} value="default">Select Token</option>
                     {renderAvailableTokens()}
                 </select>
                 <p className="Profile-Input__title Profile-Input__title--padding">
-                    ADDRESS TO APPROVE
+                    ADDRESS TO VERIFY
                 </p>
                 <input
                     className="Profile__input-approvals"

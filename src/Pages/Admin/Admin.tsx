@@ -3,7 +3,7 @@ import React, { Component, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
-import { IBlockchainState } from '../../Common/CommonInterfaces';
+import { IBlockchainState, IMIXRContractType, FeeType } from '../../Common/CommonInterfaces';
 
 import Navbar from '../../Components/Navbar/Navbar';
 
@@ -17,6 +17,7 @@ enum TypeAction {
     None = 0,
     RegisterToken = 1,
     SetTargetProportion = 2,
+    setBaseFee = 3,
 }
 /**
  * Admin Interface
@@ -54,10 +55,14 @@ class Admin extends Component<{}, IAdmin> {
                 walletInfo: result.walletInfo,
                 web3: result.web3,
             });
-            if (result.userAccount === undefined || result.mixrContract === undefined) {
+            if (
+                result.userAccount === undefined ||
+                result.whitelistContract === undefined ||
+                result.mixrContract === undefined
+            ) {
                 return;
             }
-            result.mixrContract.isGovernor(result.userAccount).then((isGovernor) => {
+            result.whitelistContract.isGovernor(result.userAccount).then((isGovernor) => {
                 this.setState({ isGovernor });
                 if (isGovernor) {
                     this.updateRegisteredTokens();
@@ -70,11 +75,22 @@ class Admin extends Component<{}, IAdmin> {
      * @ignore
      */
     public render() {
-        const { mixrContract, userAccount, action, isGovernor } = this.state;
-        if (userAccount === undefined || mixrContract === undefined || isGovernor === undefined) {
+        const {
+            mixrContract,
+            userAccount,
+            action,
+            isGovernor,
+            web3,
+        } = this.state;
+        if (
+            userAccount === undefined ||
+            mixrContract === undefined ||
+            web3 === undefined ||
+            isGovernor === undefined
+        ) {
             return null;
         }
-        if (isGovernor === false) {
+        if (isGovernor === true) {
             return <p>You are not allowed!</p>;
         }
         let actionRender = null;
@@ -89,6 +105,13 @@ class Admin extends Component<{}, IAdmin> {
                 actionRender = <SetTargetProportionHook
                     mixrContract={mixrContract}
                     userAccount={userAccount}
+                />;
+                break;
+            case TypeAction.setBaseFee:
+                actionRender = <SetBaseFeeHook
+                    mixrContract={mixrContract}
+                    userAccount={userAccount}
+                    web3={web3}
                 />;
                 break;
         }
@@ -112,6 +135,13 @@ class Admin extends Component<{}, IAdmin> {
                             >
                                 Set Target Proportion
                             </li>
+                            <li
+                                className="Admin-Input__title Admin-Input__title--big"
+                                data-id="setBaseFee"
+                                onClick={this.handleClick}
+                            >
+                                Set Base Fee
+                            </li>
                         </ul>
                     </div>
                     <div className="Admin__main">
@@ -133,12 +163,16 @@ class Admin extends Component<{}, IAdmin> {
 
     private handleClick = (event: any) => {
         const actionId = event.target.dataset.id;
+        alert(actionId);
         switch (actionId) {
             case 'addErc20StableCoin':
                 this.setState({ action: TypeAction.RegisterToken });
                 break;
             case 'setTargetProportion':
                 this.setState({ action: TypeAction.SetTargetProportion });
+                break;
+            case 'setBaseFee':
+                this.setState({ action: TypeAction.setBaseFee });
                 break;
         }
         event.preventDefault();
@@ -263,7 +297,7 @@ function RegisterTokensHook(props: any) {
  */
 function SetTargetProportionHook(props: any) {
     const [load, setLoad] = useState(false);
-    const [tokensProportions, setTokensProportions] = useState([{}] as [{ address: string, proportion: number }]);
+    const [tokensProportions, setTokensProportions] = useState([{}] as [{ address: string, proportion: string }]);
 
     useEffect(() => {
         if (load === false) {
@@ -278,7 +312,16 @@ function SetTargetProportionHook(props: any) {
      * Handle interface user changes
      */
     function handleChange(event: any) {
-        // TODO:
+        const localChanges: [{ address: string, proportion: string }] = [] as any;
+        const totalTokens = tokensProportions.length;
+        for (let i = 0; i < totalTokens; i++) {
+            if (tokensProportions[i].address === event.target.name) {
+                localChanges[i] = { address: event.target.name, proportion: event.target.value };
+            } else {
+                localChanges[i] = tokensProportions[i];
+            }
+        }
+        setTokensProportions(localChanges);
     }
 
     /**
@@ -295,7 +338,7 @@ function SetTargetProportionHook(props: any) {
     async function getTokenProportions() {
         const { mixrContract } = props;
 
-        const tokensAndPorportions: [{ address: string, proportion: number }] = [{} as any];
+        const tokensAndPorportions: [{ address: string, proportion: string }] = [{} as any];
         tokensAndPorportions.pop();
         const approved: [[string], number] = await mixrContract.getRegisteredTokens();
         const approvedTokensAddress: [string] = approved[0];
@@ -303,7 +346,10 @@ function SetTargetProportionHook(props: any) {
         // iterate over accepted tokens to add them of state component for rendering
         for (let i = 0; i < totalApprovedTokens; i += 1) {
             // get token info
-            const proportion = await mixrContract.getTargetProportion(approvedTokensAddress[i]);
+            // TODO: mixr decimals!
+            const proportion = new BigNumber(
+                await mixrContract.getTargetProportion(approvedTokensAddress[i]),
+            ).dividedBy(10 ** 24).toString();
             tokensAndPorportions.push({ address: approvedTokensAddress[i], proportion });
         }
         return tokensAndPorportions;
@@ -313,24 +359,23 @@ function SetTargetProportionHook(props: any) {
      * Transform json array in HTML
      */
     function renderTokensProportions() {
-        if (tokensProportions[0].address === undefined) {
-            return null;
-        }
-        return tokensProportions.map((token) => {
-            return (
-                <li key={token.address}>
-                    {/* <p>{token.address}</p> */}
-                    <input
-                        name={token.address}
-                        type="text"
-                        value={token.proportion}
-                        placeholder="proportion"
-                        onChange={handleChange}
-                        className="Admin__input-approvals--full-width"
-                    />;
-                </li>
-            );
-        });
+        return (
+            tokensProportions.map((token) => {
+                return (
+                    <li key={token.address}>
+                        {/* <p>{token.address}</p> */}
+                        <input
+                            name={token.address}
+                            type="text"
+                            value={token.proportion}
+                            placeholder="proportion"
+                            onChange={handleChange}
+                            className="Admin__input-approvals--full-width"
+                        />;
+                    </li>
+                );
+            })
+        );
     }
 
     return (
@@ -350,6 +395,171 @@ function SetTargetProportionHook(props: any) {
             </div>
 
         </form>
+    );
+}
+
+/**
+ * React Hook to handle set the base fee for deposit
+ * @param props Properties sent to hook
+ */
+function SetBaseFeeHook(props: any) {
+    enum controlVarNames { baseFeeDepositToken = 'baseFeeDepositToken' };
+    const [load, setLoad] = useState(false);
+    const [tokensNames, setTokensNames] = useState([{}] as [{ address: string, name: string }]);
+    const [baseFeeDepositToken, setBaseFeeDepositToken] = useState('default');
+    const [baseFeeDepositValue, setBaseFeeDepositValue] = useState('');
+    const [baseFeeRedemptionToken, setBaseFeeRedemptionToken] = useState('default');
+    const [baseFeeRedemptionValue, setBaseFeeRedemptionValue] = useState('');
+
+    useEffect(() => {
+        if (load === false) {
+            getAvailableTokens().then((result) => {
+                setTokensNames(result);
+                setLoad(true);
+            });
+        }
+    });
+
+    /**
+     * Handle interface user changes
+     */
+    function handleChange(event: any) {
+        if (event.target.name === 'baseFeeDepositToken') {
+            setBaseFeeDepositToken(event.target.value);
+            updateBaseFeeValue(event.target.value, FeeType.DEPOSIT).then((result) => {
+                setBaseFeeDepositValue(result);
+            });
+        } else if (event.target.name === 'baseFeeDepositValue') {
+            setBaseFeeDepositValue(event.target.value);
+        } else if (event.target.name === 'baseFeeRedemptionToken') {
+            setBaseFeeRedemptionToken(event.target.value);
+            updateBaseFeeValue(event.target.value, FeeType.REDEMPTION).then((result) => {
+                setBaseFeeRedemptionValue(result);
+            });
+        } else if (event.target.name === 'baseFeeRedemptionValue') {
+            setBaseFeeRedemptionValue(event.target.value);
+        }
+    }
+
+    async function updateBaseFeeValue(tokenAddress: string, feeType: FeeType) {
+        const { mixrContract } = props;
+        let baseFee;
+        if (feeType === FeeType.DEPOSIT) {
+            baseFee = new BigNumber(
+                await (mixrContract as IMIXRContractType).getDepositFee(tokenAddress),
+                // TODO: mixr decimals!
+            ).dividedBy(10 ** 24).toString();
+        } else {
+            baseFee = new BigNumber(
+                await (mixrContract as IMIXRContractType).getRedemptionFee(tokenAddress),
+                // TODO: mixr decimals!
+            ).dividedBy(10 ** 24).toString();
+        }
+        return baseFee;
+    }
+
+    /**
+     * Handle interface user submit
+     */
+    function handleSubmit(event: any) {
+        const { mixrContract, userAccount } = props;
+        // TODO: working, but we might want a better way of doing it
+        // this prevents bignumber to exponentiate and result int something like 1e+23
+        BigNumber.config({ EXPONENTIAL_AT: 25 });
+        if (event.target.name === 'baseFeeDeposit') {
+            (mixrContract as IMIXRContractType).setTransactionFee(
+                baseFeeDepositToken,
+                new BigNumber(baseFeeDepositValue).multipliedBy(10 ** 24).toString(),
+                FeeType.DEPOSIT,
+                { from: userAccount },
+            );
+        } else if (event.target.name === 'baseFeeRedemption') {
+            (mixrContract as IMIXRContractType).setTransactionFee(
+                baseFeeRedemptionToken,
+                new BigNumber(baseFeeRedemptionValue).multipliedBy(10 ** 24).toString(),
+                FeeType.REDEMPTION,
+                { from: userAccount },
+            );
+        }
+        event.preventDefault();
+    }
+
+    /**
+     * Get token information async to render
+     */
+    async function getAvailableTokens() {
+        const { mixrContract } = props;
+
+        const tokensAndNames: [{ address: string, name: string }] = [{} as any];
+        tokensAndNames.pop();
+        const approved: [[string], number] = await mixrContract.getRegisteredTokens();
+        const approvedTokensAddress: [string] = approved[0];
+        const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
+        // iterate over accepted tokens to add them of state component for rendering
+        for (let i = 0; i < totalApprovedTokens; i += 1) {
+            // get token info
+            const name = await mixrContract.getName(approvedTokensAddress[i]);
+            tokensAndNames.push({ address: approvedTokensAddress[i], name });
+        }
+        return tokensAndNames;
+    }
+
+    /**
+     * Render available tokens from state
+     */
+    function renderTokensNames() {
+        const { web3 } = props;
+        if (tokensNames.length < 1 || tokensNames[0].address === undefined) {
+            return null;
+        }
+        return tokensNames.map((token) => {
+            return (
+                <option value={token.address} key={token.address}>{web3.utils.hexToUtf8(token.name)}</option>
+            );
+        });
+    }
+
+    return (
+        <div>
+            Base fee deposit
+            <form name="baseFeeDeposit" onSubmit={handleSubmit}>
+                <select
+                    name="baseFeeDepositToken"
+                    value={baseFeeDepositToken}
+                    onChange={handleChange}
+                    required={true}
+                >
+                    <option disabled={true} value="default">Select Token</option>
+                    {renderTokensNames()}
+                </select>
+                <input
+                    type="text"
+                    name="baseFeeDepositValue"
+                    value={baseFeeDepositValue}
+                    onChange={handleChange}
+                />
+                <input type="submit" value="send" />
+            </form>
+            Base fee redemption
+            <form name="baseFeeRedemption" onSubmit={handleSubmit}>
+                <select
+                    name="baseFeeRedemptionToken"
+                    value={baseFeeRedemptionToken}
+                    onChange={handleChange}
+                    required={true}
+                >
+                    <option disabled={true} value="default">Select Token</option>
+                    {renderTokensNames()}
+                </select>
+                <input
+                    type="text"
+                    name="baseFeeRedemptionValue"
+                    value={baseFeeRedemptionValue}
+                    onChange={handleChange}
+                />
+                <input type="submit" value="send" />
+            </form>
+        </div>
     );
 }
 

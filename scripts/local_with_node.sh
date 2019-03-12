@@ -51,7 +51,10 @@ if [[ $DEPLOY_ACTION = "start" ]]; then
     else
         echo "Starting our own ganache instance"
         start_ganache
+        # deploy contracts
         npx truffle deploy --network development
+        # deploy test tokens
+        npm run test-config
     fi
 # if we are running the script in stop mode
 elif [[ $DEPLOY_ACTION = "stop" ]]; then

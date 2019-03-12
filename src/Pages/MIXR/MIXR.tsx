@@ -1,10 +1,10 @@
 import BigNumber from 'bignumber.js';
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-import { createLogger, transports, format } from 'winston';
+import { createLogger, format, transports } from 'winston';
 
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
-import { IBlockchainState } from '../../Common/CommonInterfaces';
+import { FeeType, IBlockchainState } from '../../Common/CommonInterfaces';
 import MIXRAsset from '../../Components/MIXR-Asset/MIXR-Asset';
 import Navbar from '../../Components/Navbar/Navbar';
 import Wallet from '../../Components/Wallet/Wallet';
@@ -38,14 +38,6 @@ enum TransactionStatus {
     Pending,
     Success,
     Fail,
-}
-/**
- * Definition of fee types
- */
-enum FeeType {
-    REDEMPTION = -1,
-    TRANSFER = 0,
-    DEPOSIT = 1,
 }
 /**
  * IAsset interface

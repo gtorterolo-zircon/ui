@@ -1,3 +1,13 @@
+import BigNumber from 'bignumber.js';
+
+/**
+ * Defenition of fee types
+ */
+export enum FeeType {
+   REDEMPTION = -1,
+   TRANSFER = 0,
+   DEPOSIT = 1,
+}
 /**
  * Interface for IERC20 definition
  * using web3.js package
@@ -17,6 +27,7 @@ export interface IERC20TypeDefault {
  * Interfaces for web3 definition
  */
 interface IWeb3EthContract {
+    // tslint:disable-next-line callable-types
     new(jsonInterface: object, address: string, options?: object): IERC20TypeDefault;
 }
 interface IWeb3Eth {
@@ -67,14 +78,20 @@ export interface IMIXRContractType extends IERC20Type {
     registerDetailedToken: (address: string, options: object) => Promise<void>;
     getName: (address: string) => Promise<string>;
     getDecimals: (address: string) => Promise<string>;
-    isGovernor: (address: string) => Promise<boolean>;
     getTargetProportion: (address: string) => Promise<string>;
+    getDepositFee: (address: string) => Promise<BigNumber>;
+    getRedemptionFee: (address: string) => Promise<BigNumber>;
+    setTransactionFee: (address: string, amout: string, type: number, options: object) => Promise<void>;
+}
+export interface IWhitelistType {
+    isGovernor: (address: string) => Promise<boolean>;
 }
 /**
  * TODO:
  */
 export interface IBlockchainState {
     mixrContract?: IMIXRContractType;
+    whitelistContract?: IWhitelistType;
     IERC20ABI?: object;
     userAccount?: string;
     web3?: IWeb3Type;

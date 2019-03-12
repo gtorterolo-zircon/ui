@@ -24,9 +24,9 @@ interface IProfile extends IBlockchainState {
     action: TypeAction;
 }
 /**
- * Class Admin
- * @dev This is the skeleton for W13, also known as Special Wallet
- * It's main objective is to handle governators requests.
+ * Class Profile
+ * @dev This class does the work for W9 and W19 requirements
+ * Just like a private wallet.
  */
 class Profile extends Component<{}, IProfile> {
     /**
@@ -211,7 +211,7 @@ function ApproveHook(
      * Render available tokens from state
      */
     function renderAvailableTokens() {
-        if (availableTokens[0].address === undefined) {
+        if (availableTokens.length < 1 || availableTokens[0].address === undefined) {
             return null;
         }
         return availableTokens.map((token) => {
@@ -351,7 +351,7 @@ function AllowanceHook(props: any) {
      * Render available tokens from state
      */
     function renderAvailableTokens() {
-        if (availableTokens[0].address === undefined) {
+        if (availableTokens.length < 1 || availableTokens[0].address === undefined) {
             return null;
         }
         return availableTokens.map((token) => {

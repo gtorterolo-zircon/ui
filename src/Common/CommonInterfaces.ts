@@ -82,6 +82,7 @@ export interface IMIXRContractType extends IERC20Type {
     getDepositFee: (address: string) => Promise<BigNumber>;
     getRedemptionFee: (address: string) => Promise<BigNumber>;
     setTransactionFee: (address: string, amout: string, type: number, options: object) => Promise<void>;
+    setTokensTargetProportion: (tokens: string[],  proportions: string[], options: object) => Promise<void>;
 }
 export interface IWhitelistType {
     isGovernor: (address: string) => Promise<boolean>;

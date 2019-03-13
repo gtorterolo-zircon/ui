@@ -156,7 +156,6 @@ class Admin extends Component<{}, IAdmin> {
 
     private handleClick = (event: any) => {
         const actionId = event.target.dataset.id;
-        // alert(actionId);
         switch (actionId) {
             case 'addErc20StableCoin':
                 this.setState({ action: TypeAction.RegisterToken });
@@ -206,7 +205,8 @@ function RegisterTokensHook(props: { mixrContract: IMIXRContractType, userAccoun
         mixrContract.registerDetailedToken(erc20Address, {
             from: userAccount,
         }).then(() => {
-            console.log('registered!');
+            // TODO: show a popup, maybe!
+            window.location.reload();
         });
         event.preventDefault();
     }
@@ -330,7 +330,24 @@ function SetTargetProportionHook(props: { mixrContract: IMIXRContractType, web3:
      * Handle interface user submit
      */
     function handleSubmit(event: any) {
-        // TODO:
+        // TODO: working, but we might want a better way of doing it
+        // this prevents bignumber to exponentiate and result int something like 1e+23
+        BigNumber.config({ EXPONENTIAL_AT: 25 });
+        const { mixrContract, userAccount } = props;
+        const addresses: string[] = [];
+        const proportions: string[] = [];
+        mixrContract.decimals().then((BNdecimals) => {
+            const decimals = new BigNumber(BNdecimals).toNumber();
+            // collect addresses and proportions
+            tokensProportions.forEach((token) => {
+                addresses.push(token.address);
+                proportions.push(new BigNumber(token.proportion).multipliedBy(10 ** decimals).toString());
+            });
+            // blockchain call
+            mixrContract.setTokensTargetProportion(addresses, proportions, { from: userAccount }).then(() => {
+                alert('done!');
+            });
+        });
         event.preventDefault();
     }
 
@@ -345,13 +362,13 @@ function SetTargetProportionHook(props: { mixrContract: IMIXRContractType, web3:
         const approved: [[string], number] = await mixrContract.getRegisteredTokens();
         const approvedTokensAddress: [string] = approved[0];
         const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
+        const mixrDecimals = new BigNumber(await mixrContract.decimals()).toNumber();
         // iterate over accepted tokens to add them of state component for rendering
         for (let i = 0; i < totalApprovedTokens; i += 1) {
             // get token info
-            // TODO: mixr decimals!
             const proportion = new BigNumber(
                 await mixrContract.getTargetProportion(approvedTokensAddress[i]),
-            ).dividedBy(10 ** 24).toString();
+            ).dividedBy(10 ** mixrDecimals).toString();
             const name = web3.utils.hexToUtf8(
                 await mixrContract.getName(approvedTokensAddress[i]),
             );
@@ -454,16 +471,15 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
     async function updateBaseFeeValue(tokenAddress: string, feeType: FeeType) {
         const { mixrContract } = props;
         let baseFee;
+        const mixrDecimals = new BigNumber(await mixrContract.decimals()).toNumber();
         if (feeType === FeeType.DEPOSIT) {
             baseFee = new BigNumber(
                 await mixrContract.getDepositFee(tokenAddress),
-                // TODO: mixr decimals!
-            ).dividedBy(10 ** 24).toString();
+            ).dividedBy(10 ** mixrDecimals).toString();
         } else {
             baseFee = new BigNumber(
                 await mixrContract.getRedemptionFee(tokenAddress),
-                // TODO: mixr decimals!
-            ).dividedBy(10 ** 24).toString();
+            ).dividedBy(10 ** mixrDecimals).toString();
         }
         return baseFee;
     }

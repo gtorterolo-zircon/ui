@@ -156,20 +156,19 @@ class MIXR extends Component<{}, IMIXRState> {
     /**
      * Handle fields changes
      */
-    private handleChange =  (event: any) => {
+    private handleChange = (event: any) => {
         // we could use a generic setState using the target.name
         // but it would lead us to an error. See more
         // https://stackoverflow.com/a/37427579
         const { assetSelect, assetAmount } = this.state;
-        console.log('assetAmount: ', assetAmount, 'assetSelect: ', assetSelect);
         if (assetSelect === undefined || assetAmount === undefined) {
             return;
         }
 
         // update states
         if (event.target.name === 'assetAmount') {
-            this.setState({isMixrLoaded: false });
-            this.setState({ assetAmount: event.target.value});
+            this.setState({ isMixrLoaded: false });
+            this.setState({ assetAmount: event.target.value });
             this.updateAssetsPrice(event.target.value, assetSelect);
         } else if (event.target.name === 'assetSelect') {
             this.setState({ assetSelect: event.target.value });
@@ -188,7 +187,7 @@ class MIXR extends Component<{}, IMIXRState> {
             if (asset === 'mix') {
                 this.renderCreate([]);
                 this.renderExchange(assetsMap);
-            // in case of moving the default selection
+                // in case of moving the default selection
             } else if (asset !== 'empty') {
                 this.renderCreate(assetsMap);
                 this.renderExchange([]);
@@ -329,25 +328,20 @@ class MIXR extends Component<{}, IMIXRState> {
             const tokensToDeposit = new BigNumber(10).pow(someERC20Decimals)
                 .multipliedBy(tokens).toString(10);
             const MIXToMint = new BigNumber(10).pow(mixrDecimals).multipliedBy(tokens);
-            // approve mix tokens
-            mixrContract.approve(mixrContract.address, MIXToMint.toString(10), {
-                from: userAccount,
-            }).then(() => {
-                this.setState({ transactionStatus: TransactionStatus.Pending });
-                // approve token
-                ERC.methods.approve(mixrContract.address, tokensToDeposit)
-                    .send({ from: userAccount })
-                    .then(async (receipt: any) => {
-                        // deposit
-                        mixrContract.depositToken(assetAddress, tokensToDeposit, {
-                            from: userAccount,
-                        }).then(() => {
-                            this.setState({ transactionStatus: TransactionStatus.Success });
-                        }).catch(() => {
-                            this.setState({ transactionStatus: TransactionStatus.Fail });
-                        });
+            // approve token
+            ERC.methods.approve(mixrContract.address, tokensToDeposit)
+                .send({ from: userAccount })
+                .then(() => {
+                    this.setState({ transactionStatus: TransactionStatus.Pending });
+                    // deposit
+                    mixrContract.depositToken(assetAddress, tokensToDeposit, {
+                        from: userAccount,
+                    }).then(() => {
+                        this.setState({ transactionStatus: TransactionStatus.Success });
+                    }).catch(() => {
+                        this.setState({ transactionStatus: TransactionStatus.Fail });
                     });
-            });
+                });
         } else {
             // otherwise it's a redeem action
             // get address using of selected token name
@@ -394,7 +388,7 @@ class MIXR extends Component<{}, IMIXRState> {
             >
                 CHANGE SELECTION
             </p>
-            <button  className="MIXR__selection-button" onClick={this.confirmTransaction}>CONFIRM</button>
+            <button className="MIXR__selection-button" onClick={this.confirmTransaction}>CONFIRM</button>
         </div>;
     }
 
@@ -551,7 +545,7 @@ class MIXR extends Component<{}, IMIXRState> {
                 </React.Fragment>
             </React.Fragment>, node,
         );
-        this.setState({isMixrLoaded: true});
+        this.setState({ isMixrLoaded: true });
     }
 
     /**
@@ -576,7 +570,7 @@ class MIXR extends Component<{}, IMIXRState> {
                 </React.Fragment>
             </React.Fragment>, node,
         );
-        this.setState({isMixrLoaded: true});
+        this.setState({ isMixrLoaded: true });
     }
 
     private renderWarningBalance = () => {

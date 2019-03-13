@@ -28,6 +28,7 @@ interface IWalletState extends IBlockchainState {
     userAccount?: string;
     web3?: IWeb3Type;
     walletInfo?: IWalletType[];
+    isWalletLoaded: boolean;
 }
 /**
  * The wallet component
@@ -38,6 +39,9 @@ class Wallet extends Component<{}, IWalletState> {
      */
     constructor(props: any) {
         super(props);
+        this.state = {
+            isWalletLoaded: false,
+        };
     }
     /**
      * @ignore
@@ -46,6 +50,7 @@ class Wallet extends Component<{}, IWalletState> {
         await BlockchainGeneric.onLoad().then((result) => {
             this.setState({
                 IERC20ABI: result.IERC20ABI,
+                isWalletLoaded: true,
                 mixrContract: result.mixrContract,
                 userAccount: result.userAccount,
                 walletInfo: result.walletInfo,
@@ -57,6 +62,7 @@ class Wallet extends Component<{}, IWalletState> {
      * @ignore
      */
     public render() {
+        const { isWalletLoaded } = this.state;
         return (
             <div className="Wallet">
                 <div className="Wallet__container">
@@ -71,6 +77,7 @@ class Wallet extends Component<{}, IWalletState> {
                         <div className="Wallet__grid-title">
                             <span className="Wallet__grid-title--underline">DEPOSIT</span>
                         </div>
+                        <div className="Wallet__title" hidden={isWalletLoaded}>Loading...</div>
                         {this.renderWalletInfo()}
                     </div>
                     <div>

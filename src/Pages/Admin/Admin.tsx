@@ -90,7 +90,7 @@ class Admin extends Component<{}, IAdmin> {
         ) {
             return null;
         }
-        if (isGovernor === true) {
+        if (isGovernor === false) {
             return <p>You are not allowed!</p>;
         }
         let actionRender = null;

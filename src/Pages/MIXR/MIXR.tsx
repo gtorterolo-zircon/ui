@@ -447,6 +447,8 @@ class MIXR extends Component<{}, IMIXRState> {
             return [];
         }
 
+        // TODO: remove it!
+        let stop: boolean = false;
         let assetsMap: any[] = [];
         const assetsData: IAsset[] = [];
         // if mix is selected, the user is redeeming
@@ -483,6 +485,7 @@ class MIXR extends Component<{}, IMIXRState> {
                     )[0]
                 ).address;
                 feeType = FeeType.DEPOSIT;
+                stop = true;
             }
 
             estimatedFee = new BigNumber(
@@ -502,6 +505,9 @@ class MIXR extends Component<{}, IMIXRState> {
                 receive: new BigNumber(assetAmount).minus(estimatedFee).toFixed(2),
                 total: assetAmount,
             });
+            if (stop) {
+                break;
+            }
         }
 
         if (selectedAssetCreate === '') {

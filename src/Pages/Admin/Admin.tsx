@@ -3,7 +3,7 @@ import React, { Component, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
-import { IBlockchainState, IMIXRContractType, FeeType } from '../../Common/CommonInterfaces';
+import { FeeType, IBlockchainState, IMIXRContractType, IWeb3Type } from '../../Common/CommonInterfaces';
 
 import Navbar from '../../Components/Navbar/Navbar';
 
@@ -102,6 +102,7 @@ class Admin extends Component<{}, IAdmin> {
                 actionRender = <SetTargetProportionHook
                     mixrContract={mixrContract}
                     userAccount={userAccount}
+                    web3={web3}
                 />;
                 break;
             case TypeAction.setBaseFee:
@@ -175,7 +176,7 @@ class Admin extends Component<{}, IAdmin> {
  * React Hook to handle token registry
  * @param props Properties sent to hook
  */
-function RegisterTokensHook(props: any) {
+function RegisterTokensHook(props: { mixrContract: IMIXRContractType, userAccount: string }) {
     const [erc20Address, setErc20Address] = useState('');
     const [erc20Name, setErc20Name] = useState('');
     const [erc20Decimals, setErc20Decimals] = useState('');
@@ -202,9 +203,6 @@ function RegisterTokensHook(props: any) {
      */
     function handleSubmit(event: any) {
         const { mixrContract, userAccount } = props;
-        if (mixrContract === undefined) {
-            return;
-        }
         mixrContract.registerDetailedToken(erc20Address, {
             from: userAccount,
         }).then(() => {
@@ -218,10 +216,7 @@ function RegisterTokensHook(props: any) {
      */
     function updateRegisteredTokens() {
         const { mixrContract } = props;
-        if (mixrContract === undefined) {
-            return;
-        }
-        (mixrContract as IMIXRContractType).getRegisteredTokens().then((tokens: [[string], number]) => {
+        mixrContract.getRegisteredTokens().then((tokens: [[string], number]) => {
             const tokenMap = tokens[0];
             const tokenElements = tokenMap.map(
                 (token) => <li className="Admin-Input__title Admin-Input__title--padding" key={token}>{token}</li>,
@@ -296,9 +291,11 @@ function RegisterTokensHook(props: any) {
  * React Hook to handle set target proportion
  * @param props Properties sent to hook
  */
-function SetTargetProportionHook(props: any) {
+function SetTargetProportionHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Type, userAccount: string }) {
     const [load, setLoad] = useState(false);
-    const [tokensProportions, setTokensProportions] = useState([{}] as [{ address: string, proportion: string }]);
+    const [tokensProportions, setTokensProportions] = useState(
+        [{}] as [{ address: string, name: string, proportion: string }],
+    );
 
     useEffect(() => {
         if (load === false) {
@@ -313,11 +310,15 @@ function SetTargetProportionHook(props: any) {
      * Handle interface user changes
      */
     function handleChange(event: any) {
-        const localChanges: [{ address: string, proportion: string }] = [] as any;
+        const localChanges: [{ address: string, name: string, proportion: string }] = [] as any;
         const totalTokens = tokensProportions.length;
         for (let i = 0; i < totalTokens; i++) {
             if (tokensProportions[i].address === event.target.name) {
-                localChanges[i] = { address: event.target.name, proportion: event.target.value };
+                localChanges[i] = {
+                    address: event.target.name,
+                    name: tokensProportions[i].name,
+                    proportion: event.target.value,
+                };
             } else {
                 localChanges[i] = tokensProportions[i];
             }
@@ -337,9 +338,9 @@ function SetTargetProportionHook(props: any) {
      * Get token information async to render
      */
     async function getTokenProportions() {
-        const { mixrContract } = props;
+        const { mixrContract, web3 } = props;
 
-        const tokensAndPorportions: [{ address: string, proportion: string }] = [{} as any];
+        const tokensAndPorportions: [{ address: string, name: string, proportion: string }] = [{} as any];
         tokensAndPorportions.pop();
         const approved: [[string], number] = await mixrContract.getRegisteredTokens();
         const approvedTokensAddress: [string] = approved[0];
@@ -351,7 +352,10 @@ function SetTargetProportionHook(props: any) {
             const proportion = new BigNumber(
                 await mixrContract.getTargetProportion(approvedTokensAddress[i]),
             ).dividedBy(10 ** 24).toString();
-            tokensAndPorportions.push({ address: approvedTokensAddress[i], proportion });
+            const name = web3.utils.hexToUtf8(
+                await mixrContract.getName(approvedTokensAddress[i]),
+            );
+            tokensAndPorportions.push({ address: approvedTokensAddress[i], name, proportion });
         }
         return tokensAndPorportions;
     }
@@ -367,7 +371,7 @@ function SetTargetProportionHook(props: any) {
             tokensProportions.map((token) => {
                 return (
                     <li key={token.address}>
-                        <p style={{ color: 'white' }}>{token.address}</p>
+                        <p style={{ color: 'white' }}>{token.name}</p>
                         <input
                             name={token.address}
                             type="text"
@@ -408,7 +412,7 @@ function SetTargetProportionHook(props: any) {
  * React Hook to handle set the base fee for deposit
  * @param props Properties sent to hook
  */
-function SetBaseFeeHook(props: any) {
+function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Type, userAccount: string }) {
     enum controlVarNames { baseFeeDepositToken = 'baseFeeDepositToken' };
     const [load, setLoad] = useState(false);
     const [tokensNames, setTokensNames] = useState([{}] as [{ address: string, name: string }]);
@@ -452,12 +456,12 @@ function SetBaseFeeHook(props: any) {
         let baseFee;
         if (feeType === FeeType.DEPOSIT) {
             baseFee = new BigNumber(
-                await (mixrContract as IMIXRContractType).getDepositFee(tokenAddress),
+                await mixrContract.getDepositFee(tokenAddress),
                 // TODO: mixr decimals!
             ).dividedBy(10 ** 24).toString();
         } else {
             baseFee = new BigNumber(
-                await (mixrContract as IMIXRContractType).getRedemptionFee(tokenAddress),
+                await mixrContract.getRedemptionFee(tokenAddress),
                 // TODO: mixr decimals!
             ).dividedBy(10 ** 24).toString();
         }
@@ -473,14 +477,14 @@ function SetBaseFeeHook(props: any) {
         // this prevents bignumber to exponentiate and result int something like 1e+23
         BigNumber.config({ EXPONENTIAL_AT: 25 });
         if (event.target.name === 'baseFeeDeposit') {
-            (mixrContract as IMIXRContractType).setTransactionFee(
+            mixrContract.setTransactionFee(
                 baseFeeDepositToken,
                 new BigNumber(baseFeeDepositValue).multipliedBy(10 ** 24).toString(),
                 FeeType.DEPOSIT,
                 { from: userAccount },
             );
         } else if (event.target.name === 'baseFeeRedemption') {
-            (mixrContract as IMIXRContractType).setTransactionFee(
+            mixrContract.setTransactionFee(
                 baseFeeRedemptionToken,
                 new BigNumber(baseFeeRedemptionValue).multipliedBy(10 ** 24).toString(),
                 FeeType.REDEMPTION,
@@ -559,7 +563,9 @@ function SetBaseFeeHook(props: any) {
                     </div>
                 </div>
             </form>
-            <p className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">BASE FEE REDEMPTION</p>
+            <p className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">
+                BASE FEE REDEMPTION
+            </p>
             <form name="baseFeeRedemption" onSubmit={handleSubmit}>
                 <div className="Admin__inputs-grid">
                     <div>

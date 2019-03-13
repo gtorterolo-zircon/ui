@@ -31,9 +31,12 @@ start_ganache() {
 
     # move to contracts folder so it can deploy the contracts to the network
     cd ../Contracts
+    # verify if the ../chaindata folder exists and if not, create it, to store chain data
+    if [[ ! -e ../chaindata ]]; then
+        mkdir ../chaindata
+    fi
     # run ganache-cli and put it on background so we can use the shell to deploy the contracts
-    mkdir ../chaindata
-    npx ganache-cli --db="../chaindata" --host 0.0.0.0 --port "$ganache_port" "${accounts[@]}" &
+    npx ganache-cli --mnemonic "rose current recycle double floor door scare dog lake claim rate lemon original fix better" --networkId "201903" --db="../chaindata" --host 0.0.0.0 --port "$ganache_port" "${accounts[@]}" &
     # get pid of ganache-cli
     export GANACHE_SHELL_PID=$!
     # wait for 10 seconds to let ganache start

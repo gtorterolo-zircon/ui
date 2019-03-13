@@ -64,6 +64,7 @@ interface IMIXRState extends IBlockchainState {
     selectedAssetExchange: string;
     assets: IAsset[];
     isMixing: boolean;
+    isMixrLoaded: boolean;
     transactionStatus: TransactionStatus;
 }
 
@@ -83,6 +84,7 @@ class MIXR extends Component<{}, IMIXRState> {
             assets: [],
             haveValidFunds: true,
             isMixing: false,
+            isMixrLoaded: true,
             selectedAssetCreate: '',
             selectedAssetExchange: '',
             transactionStatus: TransactionStatus.None,
@@ -154,18 +156,20 @@ class MIXR extends Component<{}, IMIXRState> {
     /**
      * Handle fields changes
      */
-    private handleChange = (event: any) => {
+    private handleChange =  (event: any) => {
         // we could use a generic setState using the target.name
         // but it would lead us to an error. See more
         // https://stackoverflow.com/a/37427579
         const { assetSelect, assetAmount } = this.state;
+        console.log('assetAmount: ', assetAmount, 'assetSelect: ', assetSelect);
         if (assetSelect === undefined || assetAmount === undefined) {
             return;
         }
 
         // update states
         if (event.target.name === 'assetAmount') {
-            this.setState({ assetAmount: event.target.value });
+            this.setState({isMixrLoaded: false });
+            this.setState({ assetAmount: event.target.value});
             this.updateAssetsPrice(event.target.value, assetSelect);
         } else if (event.target.name === 'assetSelect') {
             this.setState({ assetSelect: event.target.value });
@@ -205,7 +209,7 @@ class MIXR extends Component<{}, IMIXRState> {
     }
 
     private renderMixing = () => {
-        const { assetAmount, assetSelect } = this.state;
+        const { assetAmount, assetSelect, isMixrLoaded } = this.state;
         return <React.Fragment>
             <div className="MIXR-Input">
                 <p className="MIXR-Input__title">CREATE NEW MIX TOKEN OR EXCHANGE STABLECOINS</p>
@@ -240,6 +244,7 @@ class MIXR extends Component<{}, IMIXRState> {
                     </div>
                 </form>
             </div>
+            <div className="MIXR-Input__title" hidden={isMixrLoaded}>Loading...</div>
             {this.renderWarningBalance()}
             <div id="renderCreate" />
             <div id="renderExchange" />
@@ -546,6 +551,7 @@ class MIXR extends Component<{}, IMIXRState> {
                 </React.Fragment>
             </React.Fragment>, node,
         );
+        this.setState({isMixrLoaded: true});
     }
 
     /**
@@ -570,6 +576,7 @@ class MIXR extends Component<{}, IMIXRState> {
                 </React.Fragment>
             </React.Fragment>, node,
         );
+        this.setState({isMixrLoaded: true});
     }
 
     private renderWarningBalance = () => {

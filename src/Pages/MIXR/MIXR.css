@@ -131,7 +131,7 @@ select {
 .MIXR-Asset__grid {
     position: relative;
     display: grid;
-    grid-template-columns: 1fr 1fr 52px 1fr;
+    grid-template-columns: 120px 1fr 52px 1fr;
     max-width: 70%;
     grid-column-gap: 20px;
     padding: 10px 0px;

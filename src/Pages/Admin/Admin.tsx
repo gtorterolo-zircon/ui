@@ -38,7 +38,7 @@ class Admin extends Component<{}, IAdmin> {
     constructor(props: any) {
         super(props);
         this.state = {
-            action: TypeAction.SetTargetProportion,
+            action: TypeAction.None,
             isGovernor: false,
         };
     }

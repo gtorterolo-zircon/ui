@@ -3,12 +3,14 @@ import truffleContract from 'truffle-contract';
 
 import IERC20Contract from '../contracts/IERC20.json';
 import MIXRContract from '../contracts/MIXR.json';
+import WhitelistContract from '../contracts/Whitelist.json';
 import getWeb3 from '../utils/getWeb3';
 import {
     IBlockchainState,
     IMIXRContractType,
     IWalletType,
     IWeb3Type,
+    IWhitelistType,
 } from './CommonInterfaces';
 
 
@@ -28,22 +30,28 @@ class BlockchainGeneric {
             userAccount: accounts[0],
             walletInfo: balances,
             web3,
+            whitelistContract: contracts.whitelist,
         });
     }
 
     /**
      * Load contracts async
      */
-    private static loadContracts(web3: IWeb3Type): Promise<{erc20abi: object, mixr: IMIXRContractType}> {
+    private static loadContracts(web3: IWeb3Type):
+        Promise<{erc20abi: object, mixr: IMIXRContractType, whitelist: IWhitelistType}> {
         return new Promise(async (resolve, reject) => {
             // load MIXR contract
             const ContractMIXR = truffleContract(MIXRContract);
             ContractMIXR.setProvider(web3.currentProvider);
             const instanceMIXR: IMIXRContractType = await ContractMIXR.deployed();
+            // load MIXR contract
+            const ContractWhitelist = truffleContract(WhitelistContract);
+            ContractWhitelist.setProvider(web3.currentProvider);
+            const instanceWhitelist: IWhitelistType = await ContractWhitelist.deployed();
             // load the ERC20 interface abi
             const abi = (IERC20Contract).abi;
             // update component state
-            resolve({erc20abi: abi, mixr: instanceMIXR});
+            resolve({erc20abi: abi, mixr: instanceMIXR, whitelist: instanceWhitelist});
         });
     }
     /**

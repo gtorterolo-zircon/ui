@@ -64,9 +64,6 @@ class Admin extends Component<{}, IAdmin> {
             }
             result.whitelistContract.isGovernor(result.userAccount).then((isGovernor) => {
                 this.setState({ isGovernor });
-                if (isGovernor) {
-                    this.updateRegisteredTokens();
-                }
             });
         });
     }
@@ -147,11 +144,6 @@ class Admin extends Component<{}, IAdmin> {
                     <div className="Admin__main">
                         <div>
                             {actionRender}
-                            {/* <p
-                            className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">
-                                TOKEN ADDRESSES
-                            </p>
-                            <ul id="tokensList" /> */}
                         </div>
                     </div>
                     <div />
@@ -176,21 +168,6 @@ class Admin extends Component<{}, IAdmin> {
                 break;
         }
         event.preventDefault();
-    }
-
-    /**
-     * Update registered tokens.
-     */
-    private updateRegisteredTokens = () => {
-        const { mixrContract } = this.state;
-        if (mixrContract === undefined) {
-            return;
-        }
-        mixrContract.getRegisteredTokens().then((tokens) => {
-            const tokenMap = tokens[0];
-            const tokenElements = tokenMap.map((token) => <li className="Admin-Input__title Admin-Input__title--padding" key={token}>{token}</li>);
-            ReactDOM.render(tokenElements, document.getElementById('tokensList'));
-        });
     }
 }
 
@@ -234,6 +211,23 @@ function RegisterTokensHook(props: any) {
             console.log('registered!');
         });
         event.preventDefault();
+    }
+
+    /**
+     * Update registered tokens.
+     */
+    function updateRegisteredTokens() {
+        const { mixrContract } = props;
+        if (mixrContract === undefined) {
+            return;
+        }
+        (mixrContract as IMIXRContractType).getRegisteredTokens().then((tokens: [[string], number]) => {
+            const tokenMap = tokens[0];
+            const tokenElements = tokenMap.map(
+                (token) => <li className="Admin-Input__title Admin-Input__title--padding" key={token}>{token}</li>,
+            );
+            ReactDOM.render(tokenElements, document.getElementById('tokensList'));
+        });
     }
 
     /**
@@ -287,6 +281,13 @@ function RegisterTokensHook(props: any) {
                     </div>
                 </div>
             </form>
+            <p
+                className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding"
+            >
+                TOKEN ADDRESSES
+            </p>
+            <ul id="tokensList" />
+            {updateRegisteredTokens()}
         </React.Fragment>
     );
 }
@@ -359,11 +360,14 @@ function SetTargetProportionHook(props: any) {
      * Transform json array in HTML
      */
     function renderTokensProportions() {
+        if (tokensProportions.length < 1 || tokensProportions[0].address === undefined) {
+            return;
+        }
         return (
             tokensProportions.map((token) => {
                 return (
                     <li key={token.address}>
-                        {/* <p>{token.address}</p> */}
+                        <p style={{ color: 'white' }}>{token.address}</p>
                         <input
                             name={token.address}
                             type="text"
@@ -382,7 +386,9 @@ function SetTargetProportionHook(props: any) {
         <form onSubmit={handleSubmit}>
             <ul>
                 <li
-                    className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">
+                    key={'title'}
+                    className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding"
+                >
                     TOKEN PROPORTION
                 </li>
                 {renderTokensProportions()}

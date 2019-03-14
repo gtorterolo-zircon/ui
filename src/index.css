@@ -5,6 +5,27 @@
 
 @import "reset.css";
 
+/**********************************************************************************
+Login Slider Buttons
+**********************************************************************************/
+
+.slick-arrow, .slick-next {
+    right: 13vw;
+    top: 70vh;
+}
+
+.slick-next:before, [dir=rtl] .slick-prev:before {
+    content: '→';
+    opacity: 1;
+    border-radius: 26px;
+}
+
+.slick-next:before, .slick-prev:before {
+    font-size: 26px;
+    line-height: 1;
+    color: #fff;
+}
+
 body {
     font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
     overflow: hidden;

@@ -11,7 +11,7 @@ const LoginBackground = (props: any) => (
                     {props.content}
                 </p>
                 <div className="Login__button-flex">
-                    <img className="Login__button" src={props.nextButtonImg}  onClick={props.nextSlide}  />
+                    {/* <img className="Login__button" src={props.nextButtonImg}  onClick={props.nextSlide}  /> */}
                 </div>
             </div>
     </div>

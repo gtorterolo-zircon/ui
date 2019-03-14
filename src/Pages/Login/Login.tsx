@@ -65,7 +65,6 @@ class Login extends Component {
                             benefit from increased liquidity, greater stability and
                             protection from risk."
                             img={loginImg1}
-                            nextButtonImg={sliderNext}
                         />
                     </div>
                     <div>
@@ -79,7 +78,6 @@ class Login extends Component {
                              only accepts DAI."
                             img={loginImg2}
                             nextButton={sliderNext}
-                            nextButtonImg={sliderNext}
 
                         />
                     </div>
@@ -91,7 +89,6 @@ class Login extends Component {
                             compete to identify the best stablecoin projects. Community votes
                             determine which stablecoins are accepted or ejected from the Mixer."
                             img={loginImg3}
-                            nextButton={sliderNext}
                         />
                     </div>
                     <div>
@@ -103,7 +100,6 @@ class Login extends Component {
                             diversification of their exposure. Earn rewards, paid out from fees collected
                             in the MIXR by absorbing this risk."
                             img={loginImg4}
-                            nextButton={sliderNext}
                         />
                     </div>
                 </Carousel>

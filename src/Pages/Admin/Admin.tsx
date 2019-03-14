@@ -388,7 +388,8 @@ function SetTargetProportionHook(props: { mixrContract: IMIXRContractType, web3:
             tokensProportions.map((token) => {
                 return (
                     <li key={token.address}>
-                        <p style={{ color: 'white' }}>{token.name}</p>
+                        <p className="Admin-Input__title">{token.name}</p>
+                        <br />
                         <input
                             name={token.address}
                             type="text"

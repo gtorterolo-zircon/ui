@@ -79,9 +79,18 @@ select {
     background: #fff;
 }
 
+.MIXR-Input__name-amount {
+    width: 100%;
+    height: 29px;
+    border-radius: 2px;
+    border: none;
+    background: #fff;
+    padding-left: 10px;
+}
+
 .MIXR-Input__coin-amount {
     width: 95%;
-    height: 26px;
+    height: 27px;
     border-radius: 2px;
     border: none;
     background: #fff;
@@ -91,6 +100,7 @@ select {
 
 .MIXR-Input__coin-amount-container {
     position: relative;
+    height: 29px;
 }
 
 .MIXR-Input__coin-option-container {
@@ -98,9 +108,18 @@ select {
     background: #fff;
 }
 
+.MIXR-Input__down-button {
+    position: absolute;
+    top: 8px;
+    right: 10px;
+    outline: none;
+    border: none;
+    background: #fff;
+}
+
 .MIXR-Input__max-button {
     position: absolute;
-    top: 6px;
+    top: 8px;
     right: 0;
     outline: none;
     border: none;

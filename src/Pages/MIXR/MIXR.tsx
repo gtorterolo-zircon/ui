@@ -15,6 +15,7 @@ import StartMixing from '../../Components/StartMixing/StartMixing';
 import Popup from '../../Components/Popup/Popup';
 
 import MaxButton from '../../Assets/img/button-max.svg';
+import DropDownButton from '../../Assets/img/dropdown-button.svg';
 
 
 import './MIXR.css';
@@ -214,16 +215,21 @@ class MIXR extends Component<{}, IMIXRState> {
                 <p className="MIXR-Input__title">CREATE NEW MIX TOKEN OR EXCHANGE STABLECOINS</p>
 
                 <form className="MIXR-Input__grid" onSubmit={this.handleSubmit}>
-
-                    <select
-                        className="MIXR-Input__coin-input"
-                        name="assetSelect"
-                        value={assetSelect}
-                        onChange={this.handleChange}
-                    >
-                        <option value="empty">Select Coin To Convert</option>
-                        {this.renderAssets()}
-                    </select>
+                    <div className="MIXR-Input__coin-amount-container">
+                        <select
+                            className="MIXR-Input__name-amount"
+                            name="assetSelect"
+                            placeholder="Select Coin To Convert"
+                            value={assetSelect}
+                            onChange={this.handleChange}
+                        >
+                            <option value="empty">Select Coin To Convert</option>
+                            {this.renderAssets()}
+                        </select>
+                        <button className="MIXR-Input__down-button" >
+                            <img src={DropDownButton} />
+                        </button>
+                    </div>
                     <div className="MIXR-Input__coin-amount-container">
                         <input
                             className="MIXR-Input__coin-amount"

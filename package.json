@@ -21,6 +21,7 @@
         "start": "react-scripts start",
         "build": "react-scripts build",
         "eject": "react-scripts eject",
+        "live": "serve -s build -l 3000",
         "link-contracts": "run-script-os",
         "link-contracts:linux:darwin": "cd src && ln -s ../../Contracts/build/contracts contracts",
         "link-contracts:win32": "cd src && mklink \\D contracts ..\\..\\Contracts\\build\\contracts"
@@ -62,7 +63,8 @@
         "tslint": "5.13.0",
         "tslint-react": "3.6.0",
         "typedoc": "^0.14.2",
-        "typescript-tslint-plugin": "0.3.1"
+        "typescript-tslint-plugin": "0.3.1",
+        "serve": "10.1.2"
     },
     "eslintConfig": {
         "extends": "react-app"

@@ -51,6 +51,7 @@
 .Wallet__grid-button {
     display: block;
     padding-left: 12px;
+    cursor: pointer;
 }
 
 

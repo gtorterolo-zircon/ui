@@ -249,7 +249,7 @@ class MIXR extends Component<{}, IMIXRState> {
                     </div>
                 </form>
             </div>
-            <div className="MIXR-Input__title" hidden={isMixrLoaded}>Loading...</div>
+            <div className="MIXR-Input__title--big" hidden={isMixrLoaded}>Loading...</div>
             {this.renderWarningBalance()}
             <div id="renderCreate" />
             <div id="renderExchange" />

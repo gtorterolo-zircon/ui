@@ -56,7 +56,14 @@
     color: #00d0de;
     font-weight: 300;
     opacity: 0.6;
+}
 
+.MIXR-Input__title--big {
+    font-size: 18px;
+    letter-spacing: 1.4px;
+    color: #00d0de;
+    font-weight: 300;
+    opacity: 0.6;
 }
 
 .MIXR-Input__title--vertical-align {

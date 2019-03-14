@@ -27,6 +27,7 @@
     font-size: 14px;
     letter-spacing: 3px;
     color: #6B5F7A;
+    cursor: pointer;
 }
 
 .Navbar__menu-icon-container {

@@ -66,6 +66,10 @@ class ActionMenu extends Component<{}, IMenuState> {
         this.setState({ displayMenu: !displayMenu });
     }
 
+    private logoutClickHandler = () => {
+        window.location.href = '/';
+    }
+
     /**
      * Method to return the hidden menu jsx
      */
@@ -96,7 +100,7 @@ class ActionMenu extends Component<{}, IMenuState> {
                             <img className="Action-Menu__copy-address" src={copyAddressButton} />
                         </CopyToClipboard>
                         <img className="Action-Menu__help" src={helpButton} />
-                        <img className="Action-Menu__logout" src={logoutButton} />
+                        <img className="Action-Menu__logout" onClick={this.logoutClickHandler} src={logoutButton} />
                     </div>
             </React.Fragment>
         );

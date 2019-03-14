@@ -436,6 +436,8 @@ class MIXR extends Component<{}, IMIXRState> {
             selectedAssetExchange,
             assetSelect,
             walletInfo,
+            IERC20ABI,
+            web3,
         } = this.state;
 
         // since this variables can be undefined, let's check their values
@@ -444,6 +446,8 @@ class MIXR extends Component<{}, IMIXRState> {
             selectedAssetCreate === undefined ||
             selectedAssetExchange === undefined ||
             walletInfo === undefined ||
+            IERC20ABI === undefined ||
+            web3 === undefined ||
             assetSelect === undefined
         ) {
             return [];
@@ -458,6 +462,7 @@ class MIXR extends Component<{}, IMIXRState> {
         const assetsData: IAsset[] = [];
         // if mix is selected, the user is redeeming
         // if any other select, is because it's a deposit
+        // local variables
         for (const element of walletInfo) {
             if (element.name.toLowerCase() === assetSelect.toLowerCase()) {
                 continue;
@@ -482,6 +487,14 @@ class MIXR extends Component<{}, IMIXRState> {
             if (assetSelect.toLowerCase() === 'mix') {
                 assetAddress = element.address;
                 feeType = FeeType.REDEMPTION;
+                // if MIXR does not have enough balance, hide the token
+                // get contract using abi
+                const ERC = new web3.eth.Contract(IERC20ABI, element.address);
+                // verify balance
+                const balance = new BigNumber(await ERC.methods.balanceOf(mixrContract.address).call());
+                if (balance.lt(new BigNumber(assetAmount).multipliedBy(10 ** 18))) {
+                    continue;
+                }
             } else {
                 // if it's a deposit, it's always MIX
                 assetAddress = (

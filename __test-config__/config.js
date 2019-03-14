@@ -155,8 +155,8 @@ const configContracts = async () => {
         { from: governor },
     );
     //
-    await mixr.setTransactionFee(ERC20Sample.address, baseFee, DEPOSIT, { from: governor });
-    await mixr.setTransactionFee(ERC20Sample.address, baseFee, REDEMPTION, { from: governor });
+    await mixr.setTransactionFee(baseFee, DEPOSIT, { from: governor });
+    await mixr.setTransactionFee(baseFee, REDEMPTION, { from: governor });
     //
     await ERC20Sample.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
     // approve and deposit
@@ -177,9 +177,6 @@ const configContracts = async () => {
         ],
         { from: governor },
     );
-    //
-    await mixr.setTransactionFee(ERC20Complex.address, baseFee, DEPOSIT, { from: governor });
-    await mixr.setTransactionFee(ERC20Complex.address, baseFee, REDEMPTION, { from: governor });
     //
     await ERC20Complex.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
     // approve and deposit
@@ -202,9 +199,6 @@ const configContracts = async () => {
         ],
         { from: governor },
     );
-    //
-    await mixr.setTransactionFee(ERC20Rare.address, baseFee, DEPOSIT, { from: governor });
-    await mixr.setTransactionFee(ERC20Rare.address, baseFee, REDEMPTION, { from: governor });
     //
     await ERC20Rare.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
     // approve and deposit
@@ -229,9 +223,6 @@ const configContracts = async () => {
         ],
         { from: governor },
     );
-    //
-    await mixr.setTransactionFee(ERC20Cosmic.address, baseFee, DEPOSIT, { from: governor });
-    await mixr.setTransactionFee(ERC20Cosmic.address, baseFee, REDEMPTION, { from: governor });
     //
     await ERC20Cosmic.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
     // approve and deposit
@@ -258,9 +249,6 @@ const configContracts = async () => {
         ],
         { from: governor },
     );
-    //
-    await mixr.setTransactionFee(ERC20Galactic.address, baseFee, DEPOSIT, { from: governor });
-    await mixr.setTransactionFee(ERC20Galactic.address, baseFee, REDEMPTION, { from: governor });
     //
     await ERC20Galactic.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
     // approve and deposit

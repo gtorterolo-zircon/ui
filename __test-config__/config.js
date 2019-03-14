@@ -138,7 +138,7 @@ const configContracts = async () => {
     // set base fee
     const baseFee = new BigNumber(10).pow(23).toString(10);
     // set account to receive fees
-    await mixr.setStakeholderAccount(walletFees, { from: governor });
+    await mixr.setBILDContract(walletFees, { from: owner });
     // define amounts
     const tokensInDeposit = tokenNumber(defaultERC20Decimals, tokensToDeposit - tokensToUser);
 

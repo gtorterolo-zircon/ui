@@ -155,8 +155,8 @@ const configContracts = async () => {
         { from: governor },
     );
     //
-    await mixr.setTransactionFee(baseFee, DEPOSIT, { from: governor });
-    await mixr.setTransactionFee(baseFee, REDEMPTION, { from: governor });
+    await mixr.setBaseFee(baseFee, DEPOSIT, { from: governor });
+    await mixr.setBaseFee(baseFee, REDEMPTION, { from: governor });
     //
     await ERC20Sample.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
     // approve and deposit

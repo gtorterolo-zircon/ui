@@ -489,7 +489,7 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
         // this prevents bignumber to exponentiate and result int something like 1e+23
         BigNumber.config({ EXPONENTIAL_AT: 25 });
         if (event.target.name === 'baseFeeDeposit') {
-            mixrContract.setTransactionFee(
+            mixrContract.setBaseFee(
                 new BigNumber(baseFeeDepositValue).multipliedBy(10 ** 24).toString(),
                 FeeType.DEPOSIT,
                 { from: userAccount },
@@ -501,7 +501,7 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
                 alert('Your transaction failed ' + errorReason[1]);
             });
         } else if (event.target.name === 'baseFeeRedemption') {
-            mixrContract.setTransactionFee(
+            mixrContract.setBaseFee(
                 new BigNumber(baseFeeRedemptionValue).multipliedBy(10 ** 24).toString(),
                 FeeType.REDEMPTION,
                 { from: userAccount },
@@ -513,7 +513,7 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
                 alert('Your transaction failed ' + errorReason[1]);
             });
         } else if (event.target.name === 'baseFeeTransfer') {
-            mixrContract.setTransactionFee(
+            mixrContract.setBaseFee(
                 new BigNumber(baseFeeTransferValue).multipliedBy(10 ** 24).toString(),
                 FeeType.TRANSFER,
                 { from: userAccount },

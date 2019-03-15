@@ -58,6 +58,7 @@ export interface IWalletType {
     name: string;
     address: string;
     balance: number;
+    decimals: number;
 }
 /**
  * Interface for mixr contract definition

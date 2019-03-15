@@ -814,43 +814,38 @@ function MixingCreateHook(props: {
             mixrContract,
             walletInfo,
             userAccount,
-            IERC20ABI,
-            web3,
             inputAmount,
         } = props;
-
         // TODO: get real decimals from system maybe mixr from .env file
-        const someERC20Decimals = 18;
         const tokens = parseInt(inputAmount, 10);
         const mixrDecimals = 24;
-        //
-        // if I click in MIX is because I'm doing a deposit
-        // get address using selected token name
+        // otherwise it's a redeem action
+        // get address using of selected token name
         const assetAddress = (
             walletInfo.filter((element) =>
                 element.name.toLowerCase() === selectedAssetToTranfer.toLowerCase(),
             )[0]
         ).address;
-        // get contract using abi
-        const ERC = new web3.eth.Contract(IERC20ABI, assetAddress);
-        // define amounts
-        const tokensToDeposit = new BigNumber(10).pow(someERC20Decimals)
-            .multipliedBy(tokens).toString(10);
-        const MIXToMint = new BigNumber(10).pow(mixrDecimals).multipliedBy(tokens);
-        // approve token
-        ERC.methods.approve(mixrContract.address, tokensToDeposit)
-            .send({ from: userAccount })
-            .then(() => {
-                setTransactionStatus(TransactionStatus.Pending);
-                // deposit
-                mixrContract.depositToken(assetAddress, tokensToDeposit, {
+        // define amount
+        // TODO: needs to use convertTokenAmount method
+        const amountInBasketWei = new BigNumber(tokens * 10 ** mixrDecimals).toString(10);
+        // approve transaction
+        mixrContract.approve(
+            mixrContract.address,
+            amountInBasketWei,
+            {
+                from: userAccount,
+            },
+        ).then(async () => {
+            // redeem
+            await mixrContract.redeemMIX(
+                assetAddress,
+                amountInBasketWei,
+                {
                     from: userAccount,
-                }).then(() => {
-                    setTransactionStatus(TransactionStatus.Success);
-                }).catch(() => {
-                    setTransactionStatus(TransactionStatus.Fail);
-                });
-            });
+                },
+            );
+        });
     }
 
     /**

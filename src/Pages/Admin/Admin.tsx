@@ -431,18 +431,22 @@ function SetTargetProportionHook(props: { mixrContract: IMIXRContractType, web3:
  * @param props Properties sent to hook
  */
 function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Type, userAccount: string }) {
-    enum controlVarNames { baseFeeDepositToken = 'baseFeeDepositToken' };
+    enum controlVarNames {
+        baseFeeDepositValue = 'baseFeeDepositValue',
+        baseFeeRedemptionValue = 'baseFeeRedemptionValue',
+        baseFeeTransferValue = 'baseFeeTransferValue',
+    }
     const [load, setLoad] = useState(false);
-    const [tokensNames, setTokensNames] = useState([{}] as [{ address: string, name: string }]);
-    const [baseFeeDepositToken, setBaseFeeDepositToken] = useState('default');
     const [baseFeeDepositValue, setBaseFeeDepositValue] = useState('');
-    const [baseFeeRedemptionToken, setBaseFeeRedemptionToken] = useState('default');
     const [baseFeeRedemptionValue, setBaseFeeRedemptionValue] = useState('');
+    const [baseFeeTransferValue, setBaseFeeTransferValue] = useState('');
 
     useEffect(() => {
         if (load === false) {
-            getAvailableTokens().then((result) => {
-                setTokensNames(result);
+            getBaseFeeValues().then((result) => {
+                setBaseFeeDepositValue(result.deposit);
+                setBaseFeeRedemptionValue(result.redemption);
+                setBaseFeeTransferValue(result.transfer);
                 setLoad(true);
             });
         }
@@ -452,37 +456,28 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
      * Handle interface user changes
      */
     function handleChange(event: any) {
-        if (event.target.name === 'baseFeeDepositToken') {
-            setBaseFeeDepositToken(event.target.value);
-            updateBaseFeeValue(event.target.value, FeeType.DEPOSIT).then((result) => {
-                setBaseFeeDepositValue(result);
-            });
-        } else if (event.target.name === 'baseFeeDepositValue') {
+        if (event.target.name === controlVarNames.baseFeeDepositValue) {
             setBaseFeeDepositValue(event.target.value);
-        } else if (event.target.name === 'baseFeeRedemptionToken') {
-            setBaseFeeRedemptionToken(event.target.value);
-            updateBaseFeeValue(event.target.value, FeeType.REDEMPTION).then((result) => {
-                setBaseFeeRedemptionValue(result);
-            });
-        } else if (event.target.name === 'baseFeeRedemptionValue') {
+        } else if (event.target.name === controlVarNames.baseFeeRedemptionValue) {
             setBaseFeeRedemptionValue(event.target.value);
+        } else if (event.target.name === controlVarNames.baseFeeTransferValue) {
+            setBaseFeeTransferValue(event.target.value);
         }
     }
 
-    async function updateBaseFeeValue(tokenAddress: string, feeType: FeeType) {
+    async function getBaseFeeValues(): Promise<{ deposit: string, redemption: string, transfer: string }> {
         const { mixrContract } = props;
-        let baseFee;
         const mixrDecimals = new BigNumber(await mixrContract.decimals()).toNumber();
-        if (feeType === FeeType.DEPOSIT) {
-            baseFee = new BigNumber(
-                await mixrContract.getDepositFee(tokenAddress),
-            ).dividedBy(10 ** mixrDecimals).toString();
-        } else {
-            baseFee = new BigNumber(
-                await mixrContract.getRedemptionFee(tokenAddress),
-            ).dividedBy(10 ** mixrDecimals).toString();
-        }
-        return baseFee;
+        const baseFeeDeposit = new BigNumber(
+            await mixrContract.getDepositFee(),
+        ).dividedBy(10 ** mixrDecimals).toString();
+        const baseFeeRedemption = new BigNumber(
+            await mixrContract.getRedemptionFee(),
+        ).dividedBy(10 ** mixrDecimals).toString();
+        const baseFeeTransfer = new BigNumber(
+            await mixrContract.getTransferFee(),
+        ).dividedBy(10 ** mixrDecimals).toString();
+        return { deposit: baseFeeDeposit, redemption: baseFeeRedemption, transfer: baseFeeTransfer };
     }
 
     /**
@@ -495,80 +490,56 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
         BigNumber.config({ EXPONENTIAL_AT: 25 });
         if (event.target.name === 'baseFeeDeposit') {
             mixrContract.setTransactionFee(
-                baseFeeDepositToken,
                 new BigNumber(baseFeeDepositValue).multipliedBy(10 ** 24).toString(),
                 FeeType.DEPOSIT,
                 { from: userAccount },
-            );
+            ).then((success) => {
+                window.location.reload();
+            }).catch((fail) => {
+                // TODO: needs standard error popup
+                const errorReason = fail.toString().match('Error: VM Exception .*: revert (.*)\\.');
+                alert('Your transaction failed ' + errorReason[1]);
+            });
         } else if (event.target.name === 'baseFeeRedemption') {
             mixrContract.setTransactionFee(
-                baseFeeRedemptionToken,
                 new BigNumber(baseFeeRedemptionValue).multipliedBy(10 ** 24).toString(),
                 FeeType.REDEMPTION,
                 { from: userAccount },
-            );
+            ).then((success) => {
+                window.location.reload();
+            }).catch((fail) => {
+                // TODO: needs standard error popup
+                const errorReason = fail.toString().match('Error: VM Exception .*: revert (.*)\\.');
+                alert('Your transaction failed ' + errorReason[1]);
+            });
+        } else if (event.target.name === 'baseFeeTransfer') {
+            mixrContract.setTransactionFee(
+                new BigNumber(baseFeeTransferValue).multipliedBy(10 ** 24).toString(),
+                FeeType.TRANSFER,
+                { from: userAccount },
+            ).then((success) => {
+                window.location.reload();
+            }).catch((fail) => {
+                // TODO: needs standard error popup
+                const errorReason = fail.toString().match('Error: VM Exception .*: revert (.*)\\.');
+                alert('Your transaction failed ' + errorReason[1]);
+            });
         }
         event.preventDefault();
     }
 
-    /**
-     * Get token information async to render
-     */
-    async function getAvailableTokens() {
-        const { mixrContract } = props;
-
-        const tokensAndNames: [{ address: string, name: string }] = [{} as any];
-        tokensAndNames.pop();
-        const approved: [[string], number] = await mixrContract.getRegisteredTokens();
-        const approvedTokensAddress: [string] = approved[0];
-        const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
-        // iterate over accepted tokens to add them of state component for rendering
-        for (let i = 0; i < totalApprovedTokens; i += 1) {
-            // get token info
-            const name = await mixrContract.getName(approvedTokensAddress[i]);
-            tokensAndNames.push({ address: approvedTokensAddress[i], name });
-        }
-        return tokensAndNames;
-    }
-
-    /**
-     * Render available tokens from state
-     */
-    function renderTokensNames() {
-        const { web3 } = props;
-        if (tokensNames.length < 1 || tokensNames[0].address === undefined) {
-            return null;
-        }
-        return tokensNames.map((token) => {
-            return (
-                <option value={token.address} key={token.address}>{web3.utils.hexToUtf8(token.name)}</option>
-            );
-        });
-    }
-
     return (
         <div>
-            <p className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">BASE FEE DEPOSIT</p>
+            <p className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">
+                BASE FEE DEPOSIT
+            </p>
             <form name="baseFeeDeposit" onSubmit={handleSubmit}>
                 <div className="Admin__inputs-grid">
-                    <div>
-                        <p className="Admin-Input__title Admin-Input__title--padding">TOKEN SELECT</p>
-                        <select
-                            name="baseFeeDepositToken"
-                            value={baseFeeDepositToken}
-                            onChange={handleChange}
-                            required={true}
-                            className="Admin__input-approvals"
-                        >
-                            <option disabled={true} value="default">Select Token</option>
-                            {renderTokensNames()}
-                        </select>
-                    </div>
                     <div>
                         <p className="Admin-Input__title Admin-Input__title--padding">AMOUNT</p>
                         <input
                             type="text"
-                            name="baseFeeDepositValue"
+                            name={controlVarNames.baseFeeDepositValue}
                             value={baseFeeDepositValue}
                             onChange={handleChange}
                             className="Admin__input-approvals"
@@ -586,24 +557,32 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
             <form name="baseFeeRedemption" onSubmit={handleSubmit}>
                 <div className="Admin__inputs-grid">
                     <div>
-                        <p className="Admin-Input__title Admin-Input__title--padding">TOKEN SELECT</p>
-                        <select
-                            name="baseFeeRedemptionToken"
-                            value={baseFeeRedemptionToken}
+                        <p className="Admin-Input__title Admin-Input__title--padding">AMOUNT</p>
+                        <input
+                            type="text"
+                            name={controlVarNames.baseFeeRedemptionValue}
+                            value={baseFeeRedemptionValue}
                             onChange={handleChange}
-                            required={true}
                             className="Admin__input-approvals"
-                        >
-                            <option disabled={true} value="default">Select Token</option>
-                            {renderTokensNames()}
-                        </select>
+                        />
                     </div>
+                    <div />
+                    <div className="Admin__button-grid">
+                        <input className="Admin__button" type="submit" value="SUBMIT" />
+                    </div>
+                </div>
+            </form>
+            <p className="Admin-Input__title Admin-Input__title--big Admin-Input__title--padding">
+                BASE FEE TRANSFER
+            </p>
+            <form name="baseFeeTransfer" onSubmit={handleSubmit}>
+                <div className="Admin__inputs-grid">
                     <div>
                         <p className="Admin-Input__title Admin-Input__title--padding">AMOUNT</p>
                         <input
                             type="text"
-                            name="baseFeeRedemptionValue"
-                            value={baseFeeRedemptionValue}
+                            name={controlVarNames.baseFeeTransferValue}
+                            value={baseFeeTransferValue}
                             onChange={handleChange}
                             className="Admin__input-approvals"
                         />

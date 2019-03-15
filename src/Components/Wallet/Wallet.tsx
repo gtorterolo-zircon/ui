@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
-
 import ActionMenu from '../../Components/ActionMenu/ActionMenu';
 
-import BlockchainGeneric from '../../Common/BlockchainGeneric';
 import {
     IBlockchainState,
-    IMIXRContractType,
-    IWalletType,
-    IWeb3Type,
 } from '../../Common/CommonInterfaces';
 
 import './Wallet.css';
@@ -16,53 +11,20 @@ import DepositBtn from '../../Assets/img/wallet/deposit-btn.svg';
 
 
 /**
- * Interface for wallet component state definition
- * It also extends IBlockchainState so it can use
- * state variables blockchain related and load
- * information using state. The information is loaded
- * when the component loads.
- */
-interface IWalletState extends IBlockchainState {
-    mixrContract?: IMIXRContractType;
-    IERC20ABI?: object;
-    userAccount?: string;
-    web3?: IWeb3Type;
-    walletInfo?: IWalletType[];
-    isWalletLoaded: boolean;
-}
-/**
  * The wallet component
  */
-class Wallet extends Component<{}, IWalletState> {
+class Wallet extends Component<IBlockchainState, {}> {
     /**
      * @ignore
      */
-    constructor(props: any) {
+    constructor(props: IBlockchainState) {
         super(props);
-        this.state = {
-            isWalletLoaded: false,
-        };
     }
-    /**
-     * @ignore
-     */
-    public async componentDidMount() {
-        await BlockchainGeneric.onLoad().then((result) => {
-            this.setState({
-                IERC20ABI: result.IERC20ABI,
-                isWalletLoaded: true,
-                mixrContract: result.mixrContract,
-                userAccount: result.userAccount,
-                walletInfo: result.walletInfo,
-                web3: result.web3,
-            });
-        });
-    }
+
     /**
      * @ignore
      */
     public render() {
-        const { isWalletLoaded } = this.state;
         return (
             <div className="Wallet">
                 <div className="Wallet__container">
@@ -77,7 +39,6 @@ class Wallet extends Component<{}, IWalletState> {
                         <div className="Wallet__grid-title">
                             <span className="Wallet__grid-title--underline">DEPOSIT</span>
                         </div>
-                        <div className="Wallet__title" hidden={isWalletLoaded}>Loading...</div>
                         {this.renderWalletInfo()}
                     </div>
                     <div>
@@ -92,11 +53,8 @@ class Wallet extends Component<{}, IWalletState> {
      */
     private renderWalletInfo() {
         {
-            if (this.state === null || this.state === undefined) {
-                return;
-            }
             // get wallet info form state
-            const { walletInfo } = this.state;
+            const { walletInfo } = this.props;
             if (walletInfo === null || walletInfo === undefined) {
                 return;
             }

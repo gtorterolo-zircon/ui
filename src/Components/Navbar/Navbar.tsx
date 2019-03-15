@@ -31,8 +31,12 @@ class Navbar extends Component<any, any> {
         this.setState({sidebarOpen: !this.state.sidebarOpen});
     }
 
-    public reloadRoute = () => {
+    public mixrRoute = () => {
         window.location.href = '/mixr';
+    }
+
+    public bildRoute = () => {
+        window.location.href = '/bild';
     }
 
     public navbarLinkTracker = () => {
@@ -72,12 +76,18 @@ class Navbar extends Component<any, any> {
                     <div className="Navbar__items-container">
                         <span
                             style={{color: mixrLinkColor}}
-                            onClick={this.reloadRoute}
+                            onClick={this.mixrRoute}
                             className="Navbar__item"
                         >
                             MIXR
                         </span>
-                        <Link style={{color: bildLinkColor}} to="/bild" className="Navbar__item">BILD</Link>
+                        <span
+                            style={{color: bildLinkColor}}
+                            className="Navbar__item"
+                            onClick={this.bildRoute}
+                        >
+                            BILD
+                        </span>
                         <Link style={{color: riskLinkColor}} to="/risk" className="Navbar__item">RISK</Link>
                     </div>
                     <div className="Navbar__menu-icon-container">

@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import React, { Component, useState, EventHandler } from 'react';
+import React, { Component, useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { createLogger, format, transports } from 'winston';
 
@@ -649,7 +649,16 @@ function MixingCreateHook(props: {
     const [haveValidFunds, setHaveValidFunds] = useState(true);
     const [selectedAssetToTranfer, setSelectedAssetToTranfer] = useState('');
     const [transactionStatus, setTransactionStatus] = useState(TransactionStatus.None);
-    const [isMixrLoaded, setIsMixrLoaded] = useState(true);
+    const [isMixrLoaded, setIsMixrLoaded] = useState(false);
+    const assetsToExchange: Map<string, IAsset> = new Map();
+    const promisesFeesToLoad: [Promise<{ address: string, fee: Promise<number> }>] = [true as any];
+    let loading = true;
+
+    useEffect(() => {
+        // typescript is a bit stupid and I need to add something to the array
+        // since I don't use it, I will also remove it. You bastard!
+        promisesFeesToLoad.pop();
+    });
 
     function filterAssetHandler(key: string) {
         setSelectedAssetToTranfer(key);
@@ -665,8 +674,8 @@ function MixingCreateHook(props: {
         return <MIXRAsset
             key={asset.assetName}
             assetName={asset.assetName}
-            receive={asset.receive}
-            fee={asset.fee}
+            receive={(asset.receive === '0') ? ('...') : (asset.receive)}
+            fee={(asset.fee === '0') ? ('...') : (asset.fee)}
             total={asset.total}
             // tslint:disable-next-line jsx-no-lambda
             click={() => filterAssetHandler(asset.assetName)}
@@ -678,7 +687,7 @@ function MixingCreateHook(props: {
      * @param amount amount use in exchange (from input)
      * @returns Returns a promise with an array of MIXRComponents
      */
-    async function generateDataToRenderExchange(amount: string): Promise<any[]> {
+    function generateDataToRenderExchange(amount: string) {
         const {
             mixrContract,
             walletInfo,
@@ -689,15 +698,16 @@ function MixingCreateHook(props: {
         const assetBalance = (
             walletInfo.filter((wElement) => wElement.name.toLowerCase() === 'mix')[0]
         ).balance;
+        // let's make sure it's empty
+        assetsToExchange.clear();
         // verify balance
         if (assetBalance < parseInt(amount, 10)) {
             setHaveValidFunds(false);
             return [];
+        } else if (haveValidFunds === false) {
+            setHaveValidFunds(true);
         }
-        const mixrDecimals = 24;
 
-        let assetsMap: any[] = [];
-        const assetsData: IAsset[] = [];
         // if mix is selected, the user is redeeming
         // if any other select, is because it's a deposit
         // local variables
@@ -705,8 +715,6 @@ function MixingCreateHook(props: {
             if (element.name.toLowerCase() === 'mix') {
                 continue;
             }
-            let estimatedFee;
-
             // get selected asset balance
             // create variables
             let feeType: FeeType;
@@ -718,59 +726,76 @@ function MixingCreateHook(props: {
             // get contract using abi
             const ERC = new web3.eth.Contract(IERC20ABI, element.address);
             // verify balance
-            const balance = new BigNumber(await ERC.methods.balanceOf(mixrContract.address).call());
-            if (balance.lt(new BigNumber(amount).multipliedBy(10 ** element.decimals))) {
+            if (element.mixrBalance.lt(new BigNumber(amount).multipliedBy(10 ** element.decimals))) {
                 continue;
             }
-
-            estimatedFee = new BigNumber(
-                await mixrContract.estimateFee(
-                    assetAddress,
-                    mixrContract.address,
-                    new BigNumber(parseInt(amount, 10) * 10 ** element.decimals).toString(10),
-                    feeType,
-                ),
-            ).dividedBy(10 ** mixrDecimals);
-
-            setHaveValidFunds(true);
-            assetsData.push({
+            // estimate fee (it's async, so we will save it in an array and load async)
+            const estimatedFee = mixrContract.estimateFee(
+                assetAddress,
+                mixrContract.address,
+                new BigNumber(parseInt(amount, 10) * 10 ** element.decimals).toString(10),
+                feeType,
+            );
+            // save promises and then async
+            promisesFeesToLoad.push(
+                Promise.resolve(
+                    {
+                        address: element.address,
+                        fee: estimatedFee,
+                    }),
+            );
+            // wait from them all
+            Promise.all(promisesFeesToLoad).then((result) => {
+                result.forEach(async (feeForToken) => {
+                    const asset = assetsToExchange.get(feeForToken.address);
+                    if (asset !== undefined && asset.fee === '0') {
+                        const fee = new BigNumber(await feeForToken.fee).dividedBy(10 ** 24);
+                        asset.fee = fee.toFixed(2);
+                        asset.receive = new BigNumber(asset.total).minus(asset.fee).toFixed(2);
+                        assetsToExchange.set(feeForToken.address, asset);
+                        //
+                        const node = document.getElementById('assetsList');
+                        const assetsMap: any[] = [];
+                        assetsToExchange.forEach((assetEach: IAsset) => assetsMap.push(mixrAsset(assetEach)));
+                        ReactDOM.render(<React.Fragment>{assetsMap}</React.Fragment>, node);
+                    }
+                });
+            });
+            // save in a map
+            assetsToExchange.set(element.address, {
                 assetName: element.name,
-                fee: estimatedFee.toFixed(2),
-                receive: new BigNumber(amount).minus(estimatedFee).toFixed(2),
+                fee: '0',
+                receive: '0',
                 total: amount,
             });
         }
-
-        assetsMap = assetsData.map((element) => {
-            return mixrAsset(element);
-        });
-        return assetsMap;
     }
 
     function renderCreate() {
         const { inputAmount } = props;
-        generateDataToRenderExchange(inputAmount).then((assetsMap) => {
-            const node = document.getElementById('renderCreate');
-            if (assetsMap.length === 0) {
-                ReactDOM.unmountComponentAtNode(node);
-                return;
-            }
-            ReactDOM.render(
+        const assetsMap: any[] = [];
+        if (loading) {
+            generateDataToRenderExchange(inputAmount);
+            loading = false;
+        }
+        if (assetsToExchange.size === 0) {
+            return;
+        }
+        // map it to html
+        assetsToExchange.forEach((element: IAsset) => assetsMap.push(mixrAsset(element)));
+        return <React.Fragment>
+            <div className="MIXR-New-Token">
+                <p className="MIXR-New-Token__title">
+                    CREATE
+                        <span className="MIXR-New-Token__title--light"> NEW MIX TOKEN</span>
+                </p>
+            </div>
+            <div id="assetsList">
                 <React.Fragment>
-                    {/* new mix token title */}
-                    <div className="MIXR-New-Token">
-                        <p className="MIXR-New-Token__title">
-                            CREATE
-                            <span className="MIXR-New-Token__title--light"> NEW MIX TOKEN</span>
-                        </p>
-                    </div>
-                    {/* mixr asset component */}
-                    <React.Fragment>
-                        {assetsMap}
-                    </React.Fragment>
-                </React.Fragment>, node,
-            );
-        });
+                    {assetsMap}
+                </React.Fragment>
+            </div>
+        </React.Fragment>;
     }
 
     /**
@@ -848,9 +873,8 @@ function MixingCreateHook(props: {
 
     return (
         <React.Fragment>
-            {renderCreate()}
             <div className="MIXR-Input__title--big" hidden={isMixrLoaded}>Loading...</div>
-            <div id="renderCreate" />
+            {renderCreate()}
             {renderSelectionChoice()}
         </React.Fragment>
     );

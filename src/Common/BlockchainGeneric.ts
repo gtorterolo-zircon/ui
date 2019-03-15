@@ -81,6 +81,7 @@ class BlockchainGeneric {
                     address: mixrContract.address,
                     balance: mixrBalance.dp(2).toNumber(),
                     decimals: new BigNumber(await mixrContract.decimals()).toNumber(),
+                    mixrBalance: new BigNumber(0),
                     name: 'MIX',
                 },
             ];
@@ -99,6 +100,7 @@ class BlockchainGeneric {
                     address: approvedTokensAddress[i],
                     balance: sampleBalance.dp(2).toNumber(),
                     decimals: new BigNumber(await mixrContract.getDecimals(approvedTokensAddress[i])).toNumber(),
+                    mixrBalance: new BigNumber(await ERC.methods.balanceOf(mixrContract.address).call()),
                     name: tokenName,
                 });
             }

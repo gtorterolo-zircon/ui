@@ -17,6 +17,7 @@
         "pretest:final": "npm run deploy-contracts && npm run test-config",
         "test:final": "react-scripts test --env=jsdom --coverage",
         "posttest:final": "DEPLOY_ACTION=stop scripts/local_with_node.sh",
+        "debug:chrome": "google-chrome --remote-debugging-port=9222",
         "docs": "typedoc --out docs ./src",
         "start": "react-scripts start",
         "build": "react-scripts build",

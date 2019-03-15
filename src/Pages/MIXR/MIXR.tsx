@@ -368,7 +368,7 @@ class MIXR extends Component<{}, IMIXRState> {
                 },
             ).then(async () => {
                 // redeem
-                await mixrContract.redeemMIXR(
+                await mixrContract.redeemMIX(
                     assetAddress,
                     amountInBasketWei,
                     {

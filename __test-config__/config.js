@@ -71,44 +71,44 @@ const configContracts = async () => {
     // load the ERC20 sample
     const ContractSampleERC20 = truffleContract(SampleERC20Contract);
     ContractSampleERC20.setProvider(web3.currentProvider);
-    const ERC20Sample = await ContractSampleERC20.new(
+    const ERC20Gemini = await ContractSampleERC20.new(
         governor,
         tokenNumber(defaultERC20Decimals, tokensToDeploy),
         defaultERC20Decimals,
-        'SIMLE',
-        'SMP',
+        'Gemini Dollar',
+        'GUSD',
         { from: governor },
     );
-    const ERC20Complex = await ContractSampleERC20.new(
+    const ERC20Tether = await ContractSampleERC20.new(
         governor,
         tokenNumber(defaultERC20Decimals, tokensToDeploy),
         defaultERC20Decimals,
-        'COMPLEX',
-        'CLP',
+        'Tether',
+        'USDT',
         { from: governor },
     );
-    const ERC20Rare = await ContractSampleERC20.new(
+    const ERC20True = await ContractSampleERC20.new(
         governor,
         tokenNumber(defaultERC20Decimals, tokensToDeploy),
         defaultERC20Decimals,
-        'RARE',
-        'RR',
+        'True USD',
+        'TUSD',
         { from: governor },
     );
-    const ERC20Cosmic = await ContractSampleERC20.new(
+    const ERC20USD = await ContractSampleERC20.new(
         governor,
         tokenNumber(defaultERC20Decimals, tokensToDeploy),
         defaultERC20Decimals,
-        'COSMIC',
-        'CC',
+        'USD Coin',
+        'USDC',
         { from: governor },
     );
-    const ERC20Galactic = await ContractSampleERC20.new(
+    const ERC20Paxos = await ContractSampleERC20.new(
         governor,
         tokenNumber(defaultERC20Decimals, tokensToDeploy),
         defaultERC20Decimals,
-        'GALACTIC',
-        'GLC',
+        'Paxos Coin',
+        'PAX',
         { from: governor },
     );
 
@@ -144,10 +144,10 @@ const configContracts = async () => {
 
 
     // add first token
-    await mixr.registerStandardToken(ERC20Sample.address, web3.utils.utf8ToHex('SAMPLE'), 18, { from: governor });
+    await mixr.registerStandardToken(ERC20Gemini.address, web3.utils.utf8ToHex('Gemini Dollar'), 18, { from: governor });
     await mixr.setTokensTargetProportion(
         [
-            ERC20Sample.address,
+            ERC20Gemini.address,
         ],
         [
             fixed1.toString(10),
@@ -158,18 +158,18 @@ const configContracts = async () => {
     await mixr.setBaseFee(baseFee, DEPOSIT, { from: governor });
     await mixr.setBaseFee(baseFee, REDEMPTION, { from: governor });
     //
-    await ERC20Sample.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
+    await ERC20Gemini.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
     // approve and deposit
-    await ERC20Sample.approve(mixr.address, tokensInDeposit, { from: governor });
-    await mixr.depositToken(ERC20Sample.address, tokensInDeposit, { from: governor });
+    await ERC20Gemini.approve(mixr.address, tokensInDeposit, { from: governor });
+    await mixr.depositToken(ERC20Gemini.address, tokensInDeposit, { from: governor });
 
 
     // add second token
-    await mixr.registerStandardToken(ERC20Complex.address, web3.utils.utf8ToHex('COMPLEX'), 18, { from: governor });
+    await mixr.registerStandardToken(ERC20Tether.address, web3.utils.utf8ToHex('Tether'), 18, { from: governor });
     await mixr.setTokensTargetProportion(
         [
-            ERC20Sample.address,
-            ERC20Complex.address,
+            ERC20Gemini.address,
+            ERC20Tether.address,
         ],
         [
             new BigNumber(await fixidityLibMock.newFixedFraction(1, 2)).toString(10),
@@ -178,19 +178,19 @@ const configContracts = async () => {
         { from: governor },
     );
     //
-    await ERC20Complex.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
+    await ERC20Tether.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
     // approve and deposit
-    await ERC20Complex.approve(mixr.address, tokensInDeposit, { from: governor });
-    await mixr.depositToken(ERC20Complex.address, tokensInDeposit, { from: governor });
+    await ERC20Tether.approve(mixr.address, tokensInDeposit, { from: governor });
+    await mixr.depositToken(ERC20Tether.address, tokensInDeposit, { from: governor });
 
 
     // add third token
-    await mixr.registerStandardToken(ERC20Rare.address, web3.utils.utf8ToHex('RARE'), 18, { from: governor });
+    await mixr.registerStandardToken(ERC20True.address, web3.utils.utf8ToHex('True USD'), 18, { from: governor });
     await mixr.setTokensTargetProportion(
         [
-            ERC20Sample.address,
-            ERC20Complex.address,
-            ERC20Rare.address,
+            ERC20Gemini.address,
+            ERC20Tether.address,
+            ERC20True.address,
         ],
         [
             new BigNumber(await fixidityLibMock.newFixedFraction(1, 4)).toString(10),
@@ -200,20 +200,20 @@ const configContracts = async () => {
         { from: governor },
     );
     //
-    await ERC20Rare.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
+    await ERC20True.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
     // approve and deposit
-    await ERC20Rare.approve(mixr.address, tokensInDeposit, { from: governor });
-    await mixr.depositToken(ERC20Rare.address, tokensInDeposit, { from: governor });
+    await ERC20True.approve(mixr.address, tokensInDeposit, { from: governor });
+    await mixr.depositToken(ERC20True.address, tokensInDeposit, { from: governor });
 
 
     // add fourth token
-    await mixr.registerStandardToken(ERC20Cosmic.address, web3.utils.utf8ToHex('COSMIC'), 18, { from: governor });
+    await mixr.registerStandardToken(ERC20USD.address, web3.utils.utf8ToHex('USD Coin'), 18, { from: governor });
     await mixr.setTokensTargetProportion(
         [
-            ERC20Sample.address,
-            ERC20Complex.address,
-            ERC20Rare.address,
-            ERC20Cosmic.address,
+            ERC20Gemini.address,
+            ERC20Tether.address,
+            ERC20True.address,
+            ERC20USD.address,
         ],
         [
             new BigNumber(await fixidityLibMock.newFixedFraction(1, 4)).toString(10),
@@ -224,21 +224,21 @@ const configContracts = async () => {
         { from: governor },
     );
     //
-    await ERC20Cosmic.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
+    await ERC20USD.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
     // approve and deposit
-    await ERC20Cosmic.approve(mixr.address, tokensInDeposit, { from: governor });
-    await mixr.depositToken(ERC20Cosmic.address, tokensInDeposit, { from: governor });
+    await ERC20USD.approve(mixr.address, tokensInDeposit, { from: governor });
+    await mixr.depositToken(ERC20USD.address, tokensInDeposit, { from: governor });
 
 
     // add fifth token
-    await mixr.registerStandardToken(ERC20Galactic.address, web3.utils.utf8ToHex('GALACTIC'), 18, { from: governor });
+    await mixr.registerStandardToken(ERC20Paxos.address, web3.utils.utf8ToHex('Paxos Coin'), 18, { from: governor });
     await mixr.setTokensTargetProportion(
         [
-            ERC20Sample.address,
-            ERC20Complex.address,
-            ERC20Rare.address,
-            ERC20Cosmic.address,
-            ERC20Galactic.address,
+            ERC20Gemini.address,
+            ERC20Tether.address,
+            ERC20True.address,
+            ERC20USD.address,
+            ERC20Paxos.address,
         ],
         [
             new BigNumber(await fixidityLibMock.newFixedFraction(1, 5)).toString(10),
@@ -250,10 +250,10 @@ const configContracts = async () => {
         { from: governor },
     );
     //
-    await ERC20Galactic.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
+    await ERC20Paxos.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
     // approve and deposit
-    await ERC20Galactic.approve(mixr.address, tokensInDeposit, { from: governor });
-    await mixr.depositToken(ERC20Galactic.address, tokensInDeposit, { from: governor });
+    await ERC20Paxos.approve(mixr.address, tokensInDeposit, { from: governor });
+    await mixr.depositToken(ERC20Paxos.address, tokensInDeposit, { from: governor });
 };
 
 configContracts().then(() => {

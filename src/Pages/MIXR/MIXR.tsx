@@ -176,33 +176,11 @@ function MixingHook(props: {
     web3: IWeb3Type,
     userAccount: string,
 }) {
-    const [selectedAssetExchange, setSelectedAssetExchange] = useState('');
-    const [selectedAssetCreate, setSelectedAssetCreate] = useState('');
     const [assetSelect, setAssetSelect] = useState('default');
     const [assetAmount, setAssetAmount] = useState('');
     const [isMixrLoaded, setIsMixrLoaded] = useState(true);
     const [haveValidFunds, setHaveValidFunds] = useState(true);
     const [transactionStatus, setTransactionStatus] = useState(TransactionStatus.None);
-    /**
-     * Close transaction related pop up
-     */
-    function closePopUp() {
-        setTransactionStatus(TransactionStatus.None);
-    }
-
-    /**
-     * Renders popup according to component state
-     */
-    function renderPopUp() {
-        switch (transactionStatus) {
-            case TransactionStatus.Pending:
-                return <Popup status="inProgess" clickClose={closePopUp} />;
-            case TransactionStatus.Success:
-                return <Popup status="success" clickClose={closePopUp} />;
-            case TransactionStatus.Fail:
-                return <Popup status="error" clickClose={closePopUp} />;
-        }
-    }
 
     /**
      * Handle fields changes
@@ -232,127 +210,6 @@ function MixingHook(props: {
     }
 
     /**
-     * Given asset and amount information, get and render
-     * @param amount asset amount to exchange
-     * @param asset asset to ecxhange
-     */
-    function updateAssetsPrice(amount: string, asset: string) {
-        generateDataToRenderExchange(amount).then((assetsMap) => {
-            if (asset === 'mix') {
-                renderCreate([]);
-                renderExchange(assetsMap);
-                // in case of moving the default selection
-            } else if (asset !== 'empty') {
-                renderCreate(assetsMap);
-                renderExchange([]);
-            }
-        });
-    }
-
-    /**
-     * Called when onClick to reset selection
-     * Cleans selection variables values
-     */
-    function changeSelection() {
-        setSelectedAssetCreate('');
-        setSelectedAssetExchange('');
-    }
-
-    /**
-     * Method called when onClick from confirm button transaction
-     */
-    function confirmTransaction() {
-        const {
-            mixrContract,
-            walletInfo,
-            userAccount,
-            IERC20ABI,
-            web3,
-        } = props;
-
-        // TODO: get real decimals from system maybe mixr from .env file
-        const someERC20Decimals = 18;
-        const tokens = parseInt(assetAmount, 10);
-        const mixrDecimals = 24;
-        //
-        if (selectedAssetExchange.toLowerCase() === 'mix') {
-            // if I click in MIX is because I'm doing a deposit
-            // get address using selected token name
-            const assetAddress = (
-                walletInfo.filter((element) =>
-                    element.name.toLowerCase() === assetSelect.toLowerCase(),
-                )[0]
-            ).address;
-            // get contract using abi
-            const ERC = new web3.eth.Contract(IERC20ABI, assetAddress);
-            // define amounts
-            const tokensToDeposit = new BigNumber(10).pow(someERC20Decimals)
-                .multipliedBy(tokens).toString(10);
-            const MIXToMint = new BigNumber(10).pow(mixrDecimals).multipliedBy(tokens);
-            // approve token
-            ERC.methods.approve(mixrContract.address, tokensToDeposit)
-                .send({ from: userAccount })
-                .then(() => {
-                    setTransactionStatus(TransactionStatus.Pending);
-                    // deposit
-                    mixrContract.depositToken(assetAddress, tokensToDeposit, {
-                        from: userAccount,
-                    }).then(() => {
-                        setTransactionStatus(TransactionStatus.Success);
-                    }).catch(() => {
-                        setTransactionStatus(TransactionStatus.Fail);
-                    });
-                });
-        } else {
-            // otherwise it's a redeem action
-            // get address using of selected token name
-            const assetAddress = (
-                walletInfo.filter((element) =>
-                    element.name.toLowerCase() === selectedAssetExchange.toLowerCase(),
-                )[0]
-            ).address;
-            // define amount
-            // TODO: needs to use convertTokenAmount method
-            const amountInBasketWei = new BigNumber(tokens * 10 ** 24).toString(10);
-            // approve transaction
-            mixrContract.approve(
-                mixrContract.address,
-                amountInBasketWei,
-                {
-                    from: userAccount,
-                },
-            ).then(async () => {
-                // redeem
-                await mixrContract.redeemMIX(
-                    assetAddress,
-                    amountInBasketWei,
-                    {
-                        from: userAccount,
-                    },
-                );
-            });
-        }
-    }
-
-    /**
-     * Render the selection choice after select one option
-     */
-    function renderSelectionChoice() {
-        if (selectedAssetCreate === '' && selectedAssetExchange === '') {
-            return null;
-        }
-        return <div className="MIXR__selection">
-            <p
-                className="MIXR-Input__title MIXR-Input__title--vertical-align"
-                onClick={changeSelection}
-            >
-                CHANGE SELECTION
-            </p>
-            <button className="MIXR__selection-button" onClick={confirmTransaction}>CONFIRM</button>
-        </div>;
-    }
-
-    /**
      * Using state variables it renders the asset names in the dropdown
      * @returns The mapped elements into html <option /> tag
      */
@@ -365,168 +222,6 @@ function MixingHook(props: {
         return assetName.map((element) => {
             return <option key={element} value={element.toLowerCase()}>{element}</option>;
         });
-    }
-
-    function filterAssetHandler(isExchanging: boolean, key: string) {
-        if (isExchanging) {
-            setSelectedAssetExchange(key);
-        } else {
-            setSelectedAssetCreate(key);
-        }
-    }
-
-    /**
-     * Generate data to render assets, according to asset amount and select assets
-     * @param amount amount use in exchange (from input)
-     * @returns Returns a promise with an array of MIXRComponents
-     */
-    async function generateDataToRenderExchange(amount: string): Promise<any[]> {
-        const {
-            mixrContract,
-            walletInfo,
-            IERC20ABI,
-            web3,
-        } = props;
-
-        // since this variables can be undefined, let's check their values
-        if (assetSelect === 'default' || amount.length < 1) {
-            return [];
-        }
-        const assetBalance = (
-            walletInfo.filter((wElement) =>
-                wElement.name.toLowerCase() === assetSelect.toLowerCase(),
-            )[0]
-        ).balance;
-        // verify balance
-        if (assetBalance < parseInt(amount, 10)) {
-            setHaveValidFunds(false);
-            return [];
-        }
-        const mixrDecimals = 24;
-
-        // TODO: remove it!
-        let stop: boolean = false;
-        let assetsMap: any[] = [];
-        const assetsData: IAsset[] = [];
-        // if mix is selected, the user is redeeming
-        // if any other select, is because it's a deposit
-        // local variables
-        for (const element of walletInfo) {
-            if (element.name.toLowerCase() === assetSelect.toLowerCase()) {
-                continue;
-            }
-            let estimatedFee;
-
-            // get selected asset balance
-            // create variables
-            let feeType: FeeType;
-            let assetAddress: string;
-            // if the asset selected is mix
-            if (assetSelect.toLowerCase() === 'mix') {
-                assetAddress = element.address;
-                feeType = FeeType.REDEMPTION;
-                // if MIXR does not have enough balance, hide the token
-                // get contract using abi
-                const ERC = new web3.eth.Contract(IERC20ABI, element.address);
-                // verify balance
-                const balance = new BigNumber(await ERC.methods.balanceOf(mixrContract.address).call());
-                if (balance.lt(new BigNumber(amount).multipliedBy(10 ** element.decimals))) {
-                    continue;
-                }
-            } else {
-                // if it's a deposit, it's always MIX
-                assetAddress = (
-                    walletInfo.filter((wElement) =>
-                        wElement.name.toLowerCase() === assetSelect.toLowerCase(),
-                    )[0]
-                ).address;
-                feeType = FeeType.DEPOSIT;
-                stop = true;
-            }
-
-            estimatedFee = new BigNumber(
-                await mixrContract.estimateFee(
-                    assetAddress,
-                    mixrContract.address,
-                    new BigNumber(parseInt(amount, 10) * 10 ** element.decimals).toString(10),
-                    feeType,
-                ),
-            ).dividedBy(10 ** mixrDecimals);
-
-            setHaveValidFunds(true);
-            assetsData.push({
-                assetName: element.name,
-                fee: estimatedFee.toFixed(2),
-                receive: new BigNumber(amount).minus(estimatedFee).toFixed(2),
-                total: amount,
-            });
-            if (stop) {
-                break;
-            }
-        }
-
-        if (selectedAssetCreate === '') {
-            if (selectedAssetExchange !== '') {
-                const element = assetsData.filter((asset) => asset.assetName === selectedAssetExchange)[0];
-                assetsMap = [mixrAsset(element)];
-            } else {
-                assetsMap = assetsData.map((element) => {
-                    return mixrAsset(element);
-                });
-            }
-        }
-        return assetsMap;
-    }
-
-    /**
-     * Render create
-     */
-    function renderCreate(assetsMap: any[]) {
-        const node = document.getElementById('renderCreate');
-        if (assetsMap.length === 0) {
-            ReactDOM.unmountComponentAtNode(node);
-            return;
-        }
-        ReactDOM.render(
-            <React.Fragment>
-                {/* new mix token title */}
-                <div className="MIXR-New-Token">
-                    <p className="MIXR-New-Token__title">
-                        CREATE
-                <span className="MIXR-New-Token__title--light"> NEW MIX TOKEN</span></p>
-                </div>
-                {/* mixr asset component */}
-                <React.Fragment>
-                    {assetsMap}
-                </React.Fragment>
-            </React.Fragment>, node,
-        );
-        setIsMixrLoaded(true);
-    }
-
-    /**
-     * Render exchange
-     */
-    function renderExchange(assetsMap: any[]) {
-        const node = document.getElementById('renderExchange');
-        if (assetsMap.length === 0) {
-            ReactDOM.unmountComponentAtNode(node);
-            return;
-        }
-        ReactDOM.render(
-            <React.Fragment>
-                {/* stablecoin title */}
-                <p className="MIXR-New-Token__title MIXR-New-Token__title--padding-top">
-                    EXCHANGE
-                <span className="MIXR-New-Token__title--light"> FOR STABLECOIN</span>
-                </p>
-                {/* mixr asset component */}
-                <React.Fragment>
-                    {assetsMap}
-                </React.Fragment>
-            </React.Fragment>, node,
-        );
-        setIsMixrLoaded(true);
     }
 
     function renderWarningBalance() {
@@ -544,24 +239,6 @@ function MixingHook(props: {
                             </p>
             </div>
         </React.Fragment>;
-    }
-
-    /**
-     * Renders a MIXR assets using the given information of the parameter
-     * It will render a MIXRAsset component. See the component for more info.
-     * @param asset asset info being rendered
-     * @returns a MIXRAsset to be put in html
-     */
-    function mixrAsset(asset: IAsset) {
-        return <MIXRAsset
-            key={asset.assetName}
-            assetName={asset.assetName}
-            receive={asset.receive}
-            fee={asset.fee}
-            total={asset.total}
-            // tslint:disable-next-line jsx-no-lambda
-            click={() => filterAssetHandler(true, asset.assetName)}
-        />;
     }
 
     function renderChoices() {
@@ -641,7 +318,6 @@ function MixingHook(props: {
             </div>
             {renderWarningBalance()}
             {renderChoices()}
-            {renderSelectionChoice()}
         </React.Fragment>
     );
 }
@@ -667,6 +343,27 @@ function MixingCreateHook(props: {
         // since I don't use it, I will also remove it. You bastard!
         promisesFeesToLoad.pop();
     });
+
+    /**
+     * Close transaction related pop up
+     */
+    function closePopUp() {
+        setTransactionStatus(TransactionStatus.None);
+    }
+
+    /**
+     * Renders popup according to component state
+     */
+    function renderPopUp() {
+        switch (transactionStatus) {
+            case TransactionStatus.Pending:
+                return <Popup status="inProgess" clickClose={closePopUp} />;
+            case TransactionStatus.Success:
+                return <Popup status="success" clickClose={closePopUp} />;
+            case TransactionStatus.Fail:
+                return <Popup status="error" clickClose={closePopUp} />;
+        }
+    }
 
     function filterAssetHandler(key: string) {
         setSelectedAssetToTranfer(key);
@@ -843,13 +540,18 @@ function MixingCreateHook(props: {
             },
         ).then(async () => {
             // redeem
-            await mixrContract.redeemMIX(
+            setTransactionStatus(TransactionStatus.Pending);
+            mixrContract.redeemMIX(
                 assetAddress,
                 amountInBasketWei,
                 {
                     from: userAccount,
                 },
-            );
+            ).then(() => {
+                setTransactionStatus(TransactionStatus.Success);
+            }).catch(() => {
+                setTransactionStatus(TransactionStatus.Fail);
+            });
         });
     }
 
@@ -876,6 +578,7 @@ function MixingCreateHook(props: {
             <div className="MIXR-Input__title--big" hidden={isMixrLoaded}>Loading...</div>
             {renderCreate()}
             {renderSelectionChoice()}
+            {renderPopUp()}
         </React.Fragment>
     );
 }
@@ -896,6 +599,27 @@ function MixingExchangeHook(props: {
     const assetsToExchange: Map<string, IAsset> = new Map();
     const promisesFeesToLoad: [Promise<{ address: string, fee: Promise<number> }>] = [true as any];
     let loading = true;
+
+    /**
+     * Close transaction related pop up
+     */
+    function closePopUp() {
+        setTransactionStatus(TransactionStatus.None);
+    }
+
+    /**
+     * Renders popup according to component state
+     */
+    function renderPopUp() {
+        switch (transactionStatus) {
+            case TransactionStatus.Pending:
+                return <Popup status="inProgess" clickClose={closePopUp} />;
+            case TransactionStatus.Success:
+                return <Popup status="success" clickClose={closePopUp} />;
+            case TransactionStatus.Fail:
+                return <Popup status="error" clickClose={closePopUp} />;
+        }
+    }
 
     /**
      * Method called when onClick from confirm button transaction
@@ -1114,6 +838,7 @@ function MixingExchangeHook(props: {
             <div className="MIXR-Input__title--big" hidden={isMixrLoaded}>Loading...</div>
             {renderExchange()}
             {renderSelectionChoice()}
+            {renderPopUp()}
         </React.Fragment>
     );
 }

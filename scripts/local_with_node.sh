@@ -61,8 +61,11 @@ if [[ $DEPLOY_ACTION = "start" ]]; then
             touch $CONTAINER_ALREADY_STARTED
             # deploy contracts
             npx truffle deploy --network development
-            # move to ui folder and deploy test tokens
+            # move to ui folder to perform extra actions
             cd ../ui
+            # build the ui (needs to be after deploy contracts)
+            npm run build
+            # deploy test tokens
             npm run test-config
         fi
     fi

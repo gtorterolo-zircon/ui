@@ -9,7 +9,7 @@
         "yarn": ">= 1.10.0"
     },
     "scripts": {
-        "docker": "npm run deploy-contracts && npm run start",
+        "docker": "npm run deploy-contracts && npm run live",
         "deploy-network": "scripts/local_with_docker.sh",
         "deploy-contracts": "DEPLOY_ACTION=start scripts/local_with_node.sh",
         "test-config": "node -r esm __test-config__/config.js",
@@ -46,7 +46,8 @@
         "truffle-contract": "4.0.5",
         "typescript": "3.3.3",
         "web3": "1.0.0-beta.35",
-        "winston": "^3.2.1"
+        "winston": "^3.2.1",
+        "serve": "10.1.2"
     },
     "devDependencies": {
         "enzyme": "^3.9.0",
@@ -64,8 +65,7 @@
         "tslint": "5.13.0",
         "tslint-react": "3.6.0",
         "typedoc": "^0.14.2",
-        "typescript-tslint-plugin": "0.3.1",
-        "serve": "10.1.2"
+        "typescript-tslint-plugin": "0.3.1"
     },
     "eslintConfig": {
         "extends": "react-app"

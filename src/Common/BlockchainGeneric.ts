@@ -31,6 +31,7 @@ class BlockchainGeneric {
             walletInfo: balances,
             web3,
             whitelistContract: contracts.whitelist,
+            assetClick: '',
         });
     }
 

@@ -100,4 +100,5 @@ export interface IBlockchainState {
     userAccount?: string;
     web3?: IWeb3Type;
     walletInfo?: IWalletType[];
+    assetClick: any;
 }

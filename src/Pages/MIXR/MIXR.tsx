@@ -81,6 +81,7 @@ class MIXR extends Component<{}, IMIXRState> {
         super(props);
         this.state = {
             assetAmount: '',
+            assetClick: '',
             assetSelect: 'empty',
             assets: [],
             haveValidFunds: true,
@@ -89,6 +90,7 @@ class MIXR extends Component<{}, IMIXRState> {
             selectedAssetCreate: '',
             selectedAssetExchange: '',
             transactionStatus: TransactionStatus.None,
+
         };
     }
 
@@ -141,6 +143,7 @@ class MIXR extends Component<{}, IMIXRState> {
                             userAccount={userAccount}
                             walletInfo={walletInfo}
                             web3={web3}
+                            assetClick={this.AssetWalletClickHandler}
                         />
                     </div>
                     <div className="MIXR__main">
@@ -166,6 +169,14 @@ class MIXR extends Component<{}, IMIXRState> {
 
     private startMixing = () => {
         this.setState({ isMixing: true });
+    }
+
+
+    private AssetWalletClickHandler(name: any)  {
+        // TODO interact with the hook to update the field from default to have a value
+        this.setState({isMixing: true});
+        logger.info(name);
+
     }
 }
 

@@ -17,7 +17,7 @@ class Wallet extends Component<IBlockchainState, {}> {
     /**
      * @ignore
      */
-    constructor(props: IBlockchainState) {
+    constructor(props: any) {
         super(props);
     }
 
@@ -71,7 +71,12 @@ class Wallet extends Component<IBlockchainState, {}> {
                             </p>
                         </div>
                         <div>
-                            <img className="Wallet__grid-button" src={DepositBtn} />
+                            <img
+                                className="Wallet__grid-button"
+                                defaultValue={element.name}
+                                onClick={() => this.props.assetClick(element.name)}
+                                src={DepositBtn}
+                            />
                         </div>
                     </React.Fragment>
                 );

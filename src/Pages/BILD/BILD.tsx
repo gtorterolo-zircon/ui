@@ -40,6 +40,7 @@ class BILD extends Component<{}, IBILD> {
         this.state = {
             action: TypeAction.None,
             isGovernor: false,
+            assetClick: '',
         };
     }
 
@@ -54,6 +55,7 @@ class BILD extends Component<{}, IBILD> {
                 userAccount: result.userAccount,
                 walletInfo: result.walletInfo,
                 web3: result.web3,
+                assetClick: '',
             });
             if (
                 result.userAccount === undefined ||

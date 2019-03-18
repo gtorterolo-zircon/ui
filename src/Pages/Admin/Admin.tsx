@@ -18,6 +18,7 @@ enum TypeAction {
     RegisterToken = 1,
     SetTargetProportion = 2,
     setBaseFee = 3,
+    setMinimumStake = 4,
 }
 /**
  * Admin Interface
@@ -112,6 +113,13 @@ class Admin extends Component<{}, IAdmin> {
                     web3={web3}
                 />;
                 break;
+            case TypeAction.setMinimumStake:
+                actionRender = <SetMinimumStakeHook
+                    mixrContract={mixrContract}
+                    userAccount={userAccount}
+                    web3={web3}
+                />;
+                break;
         }
         return (
             <div className="Admin">
@@ -140,6 +148,13 @@ class Admin extends Component<{}, IAdmin> {
                             >
                                 Set Base Fee
                             </li>
+                            <li
+                                className="Admin-Input__title Admin-Input__title--big"
+                                data-id="setMinimumStake"
+                                onClick={this.handleClick}
+                            >
+                                Set Minimum Stake
+                            </li>
                         </ul>
                     </div>
                     <div className="Admin__main">
@@ -154,6 +169,9 @@ class Admin extends Component<{}, IAdmin> {
         );
     }
 
+    /**
+     * handle click
+     */
     private handleClick = (event: any) => {
         const actionId = event.target.dataset.id;
         switch (actionId) {
@@ -165,6 +183,9 @@ class Admin extends Component<{}, IAdmin> {
                 break;
             case 'setBaseFee':
                 this.setState({ action: TypeAction.setBaseFee });
+                break;
+            case 'setMinimumStake':
+                this.setState({ action: TypeAction.setMinimumStake });
                 break;
         }
         event.preventDefault();
@@ -588,6 +609,55 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
                         <input className="Admin__button" type="submit" value="SUBMIT" />
                     </div>
                 </div>
+            </form>
+        </div>
+    );
+}
+
+/**
+ * set minimum stake hook
+ */
+function SetMinimumStakeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Type, userAccount: string }) {
+    const [load, setLoad] = useState(false);
+    const [minimumStake, SetMinimumStake] = useState('');
+
+    useEffect(() => {
+        if (load === false) {
+            getMinimumStake().then((result) => {
+                SetMinimumStake(result);
+                setLoad(true);
+            });
+        }
+    });
+
+    async function getMinimumStake() {
+        // TODO:
+        return '3';
+    }
+
+    /**
+     * handle submit
+     */
+    function handleSubmit(event: any) {
+        // TODO: set!
+        event.preventDefault();
+    }
+
+    /**
+     * handle change
+     */
+    function handleChange(event: any) {
+        if (event.target.name === 'minimumStake') {
+            SetMinimumStake(event.target.value);
+        }
+    }
+
+    return (
+        <div>
+            <p>The required minimum stake for Rating Agent Nominations</p>
+            <form onSubmit={handleSubmit}>
+                <input type="text" name="minimumStake" value={minimumStake} onChange={handleChange} />
+                <input type="submit" />
             </form>
         </div>
     );

@@ -17,18 +17,7 @@ import Popup from '../../Components/Popup/Popup';
 import MaxButton from '../../Assets/img/button-max.svg';
 import DropDownButton from '../../Assets/img/dropdown-button.svg';
 
-// DAI Icon
-import '../../Assets/img/wallet-icons/dai.svg';
-// Gemini Dollar Icon
-import '../../Assets/img/wallet-icons/gemini-dollar.svg';
-// Paxos Icon
-import '../../Assets/img/wallet-icons/paxos.svg';
-// Tether Icon
-import '../../Assets/img/wallet-icons/tether-icon.svg';
-// True USD Icon
-import '../../Assets/img/wallet-icons/true-usd.svg';
-// USD Icon
-import '../../Assets/img/wallet-icons/usd-coin.svg';
+import tetherIcon from '../../Assets/img/wallet-icons/tether-icon.svg';
 
 
 import './MIXR.css';
@@ -211,6 +200,7 @@ function MixingHook(props: {
     const [assetAmount, setAssetAmount] = useState('');
     const [isMixrLoaded, setIsMixrLoaded] = useState(true);
     const [haveValidFunds, setHaveValidFunds] = useState(true);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     /**
      * Handle fields changes
@@ -306,6 +296,10 @@ function MixingHook(props: {
         }
     }
 
+    function toggleDropdown() {
+        setDropdownOpen(dropdownOpen ? false : true);
+    }
+
     return (
         <React.Fragment>
             <div className="MIXR-Input">
@@ -313,6 +307,20 @@ function MixingHook(props: {
 
                 <form className="MIXR-Input__grid">
                     <div className="MIXR-Input__coin-amount-container">
+                        <div className="mainDropdown" onClick={toggleDropdown}>
+                            <div>Some text</div>
+                            <ul hidden={dropdownOpen === false}>
+                                <li>
+                                    <img src={tetherIcon} />
+                                </li>
+                                <li>
+                                    <img src={tetherIcon} />
+                                </li>
+                                <li>
+                                    <img src={tetherIcon} />
+                                </li>
+                            </ul>
+                        </div>
                         <select
                             className="MIXR-Input__name-amount"
                             name="assetSelect"

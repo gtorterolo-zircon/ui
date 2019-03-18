@@ -230,3 +230,16 @@ input {
     font-size: 13px;
     cursor: pointer;
 }
+
+
+/* */
+
+.mainDropdown {
+    width: 150px;
+    height: 23px;
+    background: white;
+    padding: 5px;
+}
+.mainDropdown li {
+    background: grey;
+}

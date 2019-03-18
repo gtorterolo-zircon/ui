@@ -110,6 +110,20 @@ class BlockchainGeneric {
             resolve(walletInfo);
         });
     }
+
+    /**
+     * Get tokens logo
+     */
+    private static getTokensLogo() {
+        return [
+            { name: 'TUSD', logo: '../../Assets/img/wallet-icons/tether-icon.svg' },
+            { name: 'X', logo: '../../Assets/img/wallet-icons/true-usd.svg' },
+            { name: 'X', logo: '../../Assets/img/wallet-icons/usd-coin.svg' },
+            { name: 'X', logo: '../../Assets/img/wallet-icons/paxos.svg' },
+            { name: 'X', logo: '../../Assets/img/wallet-icons/gemini-dollar.svg' },
+            { name: 'X', logo: '../../Assets/img/wallet-icons/dai.svg' },
+        ];
+    }
 }
 
 export default BlockchainGeneric;

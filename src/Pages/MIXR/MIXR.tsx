@@ -80,7 +80,7 @@ interface IMIXRState extends IBlockchainState {
     isMixing: boolean;
     isMixrLoaded: boolean;
     transactionStatus: TransactionStatus;
-    tokenIcons: any;
+    clickDepositButton: string;
 }
 
 /**
@@ -97,12 +97,12 @@ class MIXR extends Component<{}, IMIXRState> {
             assetAmount: '',
             assetSelect: 'empty',
             assets: [],
+            clickDepositButton: 'default',
             haveValidFunds: true,
             isMixing: false,
             isMixrLoaded: true,
             selectedAssetCreate: '',
             selectedAssetExchange: '',
-            tokenIcons: [],
             transactionStatus: TransactionStatus.None,
 
         };
@@ -123,14 +123,6 @@ class MIXR extends Component<{}, IMIXRState> {
             });
         });
         logger.info('[END] componentWillMount');
-        this.setState({tokenIcons: [
-            '../../Assets/img/wallet-icons/tether-icon.svg',
-            '../../Assets/img/wallet-icons/true-usd.svg',
-            '../../Assets/img/wallet-icons/usd-coin.svg',
-            '../../Assets/img/wallet-icons/paxos.svg',
-            '../../Assets/img/wallet-icons/gemini-dollar.svg',
-            '../../Assets/img/wallet-icons/dai.svg',
-        ] });
     }
 
     /**
@@ -144,7 +136,7 @@ class MIXR extends Component<{}, IMIXRState> {
             IERC20ABI,
             web3,
             userAccount,
-            tokenIcons,
+            clickDepositButton,
         } = this.state;
         if (
             mixrContract === undefined ||
@@ -166,7 +158,7 @@ class MIXR extends Component<{}, IMIXRState> {
                             userAccount={userAccount}
                             walletInfo={walletInfo}
                             web3={web3}
-                            assetClick={assetWalletClickHandler}
+                            assetClick={this.assetWalletClickHandler}
                         />
                     </div>
                     <div className="MIXR__main">
@@ -180,25 +172,30 @@ class MIXR extends Component<{}, IMIXRState> {
                                 IERC20ABI={IERC20ABI}
                                 web3={web3}
                                 userAccount={userAccount}
-                                tokenIcons={tokenIcons}
+                                selectedAssetFromWallet={clickDepositButton.toLowerCase()}
                             />
                         }
                     </div>
                     <div className="MIXR__basket-composition" />
                 </div>
-                { /*this.renderPopUp()*/}
             </div>
         );
     }
 
+    /**
+     * start mixing! \o/
+     */
     private startMixing = () => {
         this.setState({ isMixing: true });
     }
 
-}
-
-const assetWalletClickHandler = (name: any) =>  {
-    // TODO interact with the hook to update the field from default to have a value
+    /**
+     * handle to clicks from wallet
+     */
+    private assetWalletClickHandler = (event: any) => {
+        this.setState({ clickDepositButton: event.target.dataset.id, isMixing: true });
+        event.preventDefault();
+    }
 
 }
 
@@ -208,26 +205,23 @@ function MixingHook(props: {
     IERC20ABI: object,
     web3: IWeb3Type,
     userAccount: string,
-    tokenIcons: any,
+    selectedAssetFromWallet: string,
 }) {
-    const [assetSelect, setAssetSelect] = useState('default');
+    const [assetSelect, setAssetSelect] = useState(props.selectedAssetFromWallet);
     const [assetAmount, setAssetAmount] = useState('');
     const [isMixrLoaded, setIsMixrLoaded] = useState(true);
     const [haveValidFunds, setHaveValidFunds] = useState(true);
-    const [transactionStatus, setTransactionStatus] = useState(TransactionStatus.None);
 
     /**
      * Handle fields changes
      */
-    function handleAssetAmountChange(event: any) {
+    function handleChange(event: any) {
         setIsMixrLoaded(false);
-        setAssetAmount(event.target.defaultValue);
-    }
-
-    function handleAssetSelectChange(asset: any) {
-        logger.info(asset);
-        setIsMixrLoaded(false);
-        setAssetSelect(asset);
+        if (event.target.name === 'assetAmount') {
+            setAssetAmount(event.target.value);
+        } else if (event.target.name === 'assetSelect') {
+            setAssetSelect(event.target.value);
+        }
     }
 
     /**
@@ -250,27 +244,13 @@ function MixingHook(props: {
      * @returns The mapped elements into html <option /> tag
      */
     function renderAssets() {
-        const { walletInfo, tokenIcons } = props;
-        const assetName: any[] = [];
-        for (let i = 0; i < walletInfo.length; i++) {
-            assetName.push({name: walletInfo[i].name});
+        const { walletInfo } = props;
+        const assetName: string[] = [];
+        for (const element of walletInfo) {
+            assetName.push(element.name);
         }
-
-        for (let i = 0; i <  tokenIcons.length; i++) {
-            assetName[i].tokenIcon = tokenIcons[i];
-        }
-
         return assetName.map((element) => {
-            return <li
-                key={element.name}
-                value={element.name.toLowerCase()}
-                onClick={() => handleAssetSelectChange(element)}
-                >
-                <span>
-                    <img src={element.tokenIcon}   />
-                </span>
-                {element.name}
-            </li>;
+            return <option key={element} value={element.toLowerCase()}>{element}</option>;
         });
     }
 
@@ -299,7 +279,7 @@ function MixingHook(props: {
             web3,
             userAccount,
         } = props;
-        if (assetAmount.length < 1) {
+        if (assetAmount === undefined || assetAmount.length < 1) {
             return null;
         }
         if (assetSelect === 'mix') {
@@ -333,15 +313,16 @@ function MixingHook(props: {
 
                 <form className="MIXR-Input__grid">
                     <div className="MIXR-Input__coin-amount-container">
-                        <ul
+                        <select
                             className="MIXR-Input__name-amount"
-                            // name="assetSelect"
+                            name="assetSelect"
                             placeholder="Select Coin To Convert"
-                            defaultValue={assetSelect}
+                            value={assetSelect}
+                            onChange={handleChange}
                         >
-                            <li placeholder="Select Coin To Convert" >{assetSelect}</li>
+                            <option key="default" value="default" disabled={true}>Select Coin To Convert</option>
                             {renderAssets()}
-                        </ul>
+                        </select>
                         <button className="MIXR-Input__down-button" >
                             <img src={DropDownButton} />
                         </button>
@@ -354,7 +335,7 @@ function MixingHook(props: {
                             type="text"
                             name="assetAmount"
                             value={assetAmount}
-                            onChange={handleAssetAmountChange}
+                            onChange={handleChange}
                         />
                         <button
                             onClick={fetchAssetMax}

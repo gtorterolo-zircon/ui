@@ -76,8 +76,8 @@ class Wallet extends Component<IWalletState, {}> {
                         <div>
                             <img
                                 className="Wallet__grid-button"
-                                defaultValue={element.name}
-                                onClick={() => this.props.assetClick(element.name)}
+                                data-id={element.name}
+                                onClick={this.props.assetClick}
                                 src={DepositBtn}
                             />
                         </div>

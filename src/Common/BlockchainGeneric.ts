@@ -31,7 +31,6 @@ class BlockchainGeneric {
             walletInfo: balances,
             web3,
             whitelistContract: contracts.whitelist,
-            assetClick: '',
         });
     }
 
@@ -39,7 +38,7 @@ class BlockchainGeneric {
      * Load contracts async
      */
     private static loadContracts(web3: IWeb3Type):
-        Promise<{erc20abi: object, mixr: IMIXRContractType, whitelist: IWhitelistType}> {
+        Promise<{ erc20abi: object, mixr: IMIXRContractType, whitelist: IWhitelistType }> {
         return new Promise(async (resolve, reject) => {
             // load MIXR contract
             const ContractMIXR = truffleContract(MIXRContract);
@@ -52,7 +51,7 @@ class BlockchainGeneric {
             // load the ERC20 interface abi
             const abi = (IERC20Contract).abi;
             // update component state
-            resolve({erc20abi: abi, mixr: instanceMIXR, whitelist: instanceWhitelist});
+            resolve({ erc20abi: abi, mixr: instanceMIXR, whitelist: instanceWhitelist });
         });
     }
     /**
@@ -73,6 +72,7 @@ class BlockchainGeneric {
                 await mixrContract.balanceOf(userAccount),
             ).dividedBy(10 ** mixrDecimals);
             // same as above!
+            // TODO: get only available tokens, not all
             const approved: [[string], number] = await mixrContract.getRegisteredTokens();
             const approvedTokensAddress: [string] = approved[0];
             const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
@@ -89,18 +89,19 @@ class BlockchainGeneric {
             // iterate over accepted tokens to add them of state component for rendering
             for (let i = 0; i < totalApprovedTokens; i += 1) {
                 // get token info
-                // TODO: we actualy need a method to get decimals!
-                const sampleDecimals = new BigNumber(18).toNumber();
+                const tokenDecimals = new BigNumber(
+                    await mixrContract.getDecimals(approvedTokensAddress[i]),
+                ).toNumber();
                 const ERC = new web3.eth.Contract(IERC20ABI, approvedTokensAddress[i]);
                 const sampleBalance = new BigNumber(
                     await ERC.methods.balanceOf(userAccount).call(),
-                ).dividedBy(10 ** sampleDecimals);
+                ).dividedBy(10 ** tokenDecimals);
                 // add it to the array
                 const tokenName = web3.utils.hexToUtf8(await mixrContract.getName(approvedTokensAddress[i]));
                 walletInfo.push({
                     address: approvedTokensAddress[i],
                     balance: sampleBalance.dp(2).toNumber(),
-                    decimals: new BigNumber(await mixrContract.getDecimals(approvedTokensAddress[i])).toNumber(),
+                    decimals: tokenDecimals,
                     mixrBalance: new BigNumber(await ERC.methods.balanceOf(mixrContract.address).call()),
                     name: tokenName,
                 });

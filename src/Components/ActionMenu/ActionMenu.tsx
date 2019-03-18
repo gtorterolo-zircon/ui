@@ -27,7 +27,6 @@ class ActionMenu extends Component<{}, IMenuState> {
     constructor(props: any) {
         super(props);
         this.state = {
-            assetClick: '',
             copied: false,
             displayMenu: false,
             userAccount: '',
@@ -42,7 +41,6 @@ class ActionMenu extends Component<{}, IMenuState> {
                 userAccount: result.userAccount,
                 walletInfo: result.walletInfo,
                 web3: result.web3,
-                assetClick: '',
             });
         });
     }

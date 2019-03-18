@@ -95,7 +95,6 @@ class MIXR extends Component<{}, IMIXRState> {
         super(props);
         this.state = {
             assetAmount: '',
-            assetClick: '',
             assetSelect: 'empty',
             assets: [],
             haveValidFunds: true,

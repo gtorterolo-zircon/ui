@@ -10,10 +10,13 @@ import './Wallet.css';
 import DepositBtn from '../../Assets/img/wallet/deposit-btn.svg';
 
 
+interface IWalletState extends IBlockchainState {
+    assetClick?: any;
+}
 /**
  * The wallet component
  */
-class Wallet extends Component<IBlockchainState, {}> {
+class Wallet extends Component<IWalletState, {}> {
     /**
      * @ignore
      */

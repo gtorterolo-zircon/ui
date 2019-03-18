@@ -39,7 +39,6 @@ class Profile extends Component<{}, IProfile> {
             addressToApprove: '',
             amountToApprove: '',
             inTokenToApprove: '',
-            assetClick: '',
         };
     }
 

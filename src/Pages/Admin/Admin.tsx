@@ -202,10 +202,9 @@ function RegisterTokensHook(props: { mixrContract: IMIXRContractType, userAccoun
      */
     function handleSubmit(event: any) {
         const { mixrContract, userAccount } = props;
-        mixrContract.registerDetailedToken(erc20Address, {
+        mixrContract.registerStandardToken(erc20Address, erc20Name, erc20Decimals, {
             from: userAccount,
         }).then(() => {
-            // TODO: show a popup, maybe!
             window.location.reload();
         });
         event.preventDefault();
@@ -489,38 +488,35 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
         // this prevents bignumber to exponentiate and result int something like 1e+23
         BigNumber.config({ EXPONENTIAL_AT: 25 });
         if (event.target.name === 'baseFeeDeposit') {
-            mixrContract.setTransactionFee(
+            mixrContract.setBaseFee(
                 new BigNumber(baseFeeDepositValue).multipliedBy(10 ** 24).toString(),
                 FeeType.DEPOSIT,
                 { from: userAccount },
             ).then((success) => {
                 window.location.reload();
             }).catch((fail) => {
-                // TODO: needs standard error popup
                 const errorReason = fail.toString().match('Error: VM Exception .*: revert (.*)\\.');
                 alert('Your transaction failed ' + errorReason[1]);
             });
         } else if (event.target.name === 'baseFeeRedemption') {
-            mixrContract.setTransactionFee(
+            mixrContract.setBaseFee(
                 new BigNumber(baseFeeRedemptionValue).multipliedBy(10 ** 24).toString(),
                 FeeType.REDEMPTION,
                 { from: userAccount },
             ).then((success) => {
                 window.location.reload();
             }).catch((fail) => {
-                // TODO: needs standard error popup
                 const errorReason = fail.toString().match('Error: VM Exception .*: revert (.*)\\.');
                 alert('Your transaction failed ' + errorReason[1]);
             });
         } else if (event.target.name === 'baseFeeTransfer') {
-            mixrContract.setTransactionFee(
+            mixrContract.setBaseFee(
                 new BigNumber(baseFeeTransferValue).multipliedBy(10 ** 24).toString(),
                 FeeType.TRANSFER,
                 { from: userAccount },
             ).then((success) => {
                 window.location.reload();
             }).catch((fail) => {
-                // TODO: needs standard error popup
                 const errorReason = fail.toString().match('Error: VM Exception .*: revert (.*)\\.');
                 alert('Your transaction failed ' + errorReason[1]);
             });

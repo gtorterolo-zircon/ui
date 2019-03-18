@@ -78,6 +78,7 @@ export interface IMIXRContractType extends IERC20Type {
     redeemMIX: (token: string, redemptionInBasketWei: string, options?: any) => Promise<void>;
     approve: (address: string, amount: string, options: object) => Promise<void>;
     registerDetailedToken: (address: string, options: object) => Promise<void>;
+    registerStandardToken: (address: string, name: any, decimals: string, options: object) => Promise<void>;
     getName: (address: string) => Promise<string>;
     getDecimals: (address: string) => Promise<string>;
     getTargetProportion: (address: string) => Promise<string>;
@@ -87,11 +88,14 @@ export interface IMIXRContractType extends IERC20Type {
     setBaseFee: (amount: string, type: number, options: object) => Promise<void>;
     setTokensTargetProportion: (tokens: string[],  proportions: string[], options: object) => Promise<void>;
 }
+/**
+ * Interface for Whitelist contract definition
+ */
 export interface IWhitelistType {
     isGovernor: (address: string) => Promise<boolean>;
 }
 /**
- * TODO:
+ * Blockchain state interface
  */
 export interface IBlockchainState {
     mixrContract?: IMIXRContractType;
@@ -100,5 +104,4 @@ export interface IBlockchainState {
     userAccount?: string;
     web3?: IWeb3Type;
     walletInfo?: IWalletType[];
-    assetClick: any;
 }

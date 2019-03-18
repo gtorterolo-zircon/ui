@@ -1,21 +1,21 @@
-.BILD {
+.Admin {
     background-color: #10001F;
 }
 
-.BILD__grid {
+.Admin__grid {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     height: 100vh;
 }
 
-.BILD__main {
+.Admin__main {
     border-right: 1px solid #655E6E;
     padding: 50px;
     background: #10001f;
 }
 
 
-.BILD-Input__title {
+.Admin-Input__title {
     font-size: 13px;
     letter-spacing: 1.4px;
     color: #00d0de;
@@ -23,17 +23,17 @@
     opacity: 0.6;
 }
 
-.BILD-Input__title--big {
+.Admin-Input__title--big {
     font-size: 16px;
     margin-bottom: 10px;
     cursor: pointer;
 }
 
-.BILD-Input__title--padding {
+.Admin-Input__title--padding {
     padding: 10px 0px;
 }
 
-.BILD__input-address {
+.Admin__input-address {
     width: 98%;
     border: none;
     border-radius: 3px;
@@ -44,7 +44,7 @@
     margin-bottom: 20px;
 }
 
-.BILD__inputs-grid {
+.Admin__inputs-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     margin-top: 20px;
@@ -52,14 +52,14 @@
     grid-gap: 10px;
 }
 
-.BILD__token-proportion-grid {
+.Admin__token-proportion-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     margin-bottom: 10px;
     grid-gap: 10px;
 }
 
-.BILD__input-approvals{
+.Admin__input-approvals{
     width: 96%;
     height: 36px;
     border: none;
@@ -68,7 +68,7 @@
     font-size: 14px;
 }
 
-.BILD__input-approvals--full-width {
+.Admin__input-approvals--full-width {
     width: 98%;
     height: 36px;
     border: none;
@@ -77,11 +77,11 @@
     font-size: 14px;
 }
 
-.BILD__button-grid {
+.Admin__button-grid {
     position: relative;
 }
 
-.BILD__button {
+.Admin__button {
     height: 36px;
     width: 50%;
     float: right;

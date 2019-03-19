@@ -237,7 +237,7 @@ function RegisterTokensHook(props: { mixrContract: IMIXRContractType, userAccoun
             from: userAccount,
         }).then(() => {
             window.location.reload();
-        });
+        }).catch((fail) => alert(fail.toString()));
         event.preventDefault();
     }
 
@@ -399,9 +399,7 @@ function SetTargetProportionHook(props: { mixrContract: IMIXRContractType, web3:
             const proportion = new BigNumber(
                 await mixrContract.getTargetProportion(approvedTokensAddress[i]),
             ).dividedBy(10 ** mixrDecimals).toString();
-            const name = web3.utils.hexToUtf8(
-                await mixrContract.getName(approvedTokensAddress[i]),
-            );
+            const name = await mixrContract.getName(approvedTokensAddress[i]);
             tokensAndPorportions.push({ address: approvedTokensAddress[i], name, proportion });
         }
         return tokensAndPorportions;
@@ -648,18 +646,26 @@ function SetMinimumStakeHook(props: {
     async function getMinimumStake() {
         const { bildContract } = props;
         const currentMinimumStake = await bildContract.getMinimumStake();
-        return new BigNumber(currentMinimumStake).toString();
+        const bildDecimals = new BigNumber(await bildContract.decimals()).toNumber();
+        return new BigNumber(currentMinimumStake)
+            .dividedBy(10 ** bildDecimals)
+            .toString();
     }
 
     /**
      * handle submit
      */
     function handleSubmit(event: any) {
-        const { bildContract } = props;
-        bildContract.setMinimumStake(minimumStake).then((success) => {
-            //
-        }).catch((fail) => {
-            //
+        const { bildContract, userAccount } = props;
+        bildContract.decimals().then((decimals) => {
+            const stakeToBeSet = new BigNumber(minimumStake)
+                .multipliedBy(10 ** new BigNumber(decimals).toNumber())
+                .toString();
+            bildContract.setMinimumStake(stakeToBeSet, { from: userAccount }).then(() => {
+                //
+            }).catch((fail) => {
+                //
+            });
         });
         event.preventDefault();
     }

@@ -32,6 +32,7 @@ class BlockchainGeneric {
         const balances = await this.loadUserBalances(accounts[0], contracts.mixr, web3, contracts.erc20abi);
         return ({
             IERC20ABI: contracts.erc20abi,
+            bildContract: contracts.bild,
             mixrContract: contracts.mixr,
             userAccount: accounts[0],
             walletInfo: balances,
@@ -44,7 +45,7 @@ class BlockchainGeneric {
      * Load contracts async
      */
     private static loadContracts(web3: IWeb3Type):
-        Promise<{ erc20abi: object, mixr: IMIXRContractType, whitelist: IWhitelistType, build: IBILDState }> {
+        Promise<{ erc20abi: object, mixr: IMIXRContractType, whitelist: IWhitelistType, bild: IBILDState }> {
         return new Promise(async (resolve, reject) => {
             // load MIXR contract
             const ContractMIXR = truffleContract(MIXRContract);
@@ -61,7 +62,7 @@ class BlockchainGeneric {
             // load the ERC20 interface abi
             const abi = (IERC20Contract).abi;
             // update component state
-            resolve({ erc20abi: abi, mixr: instanceMIXR, whitelist: instanceWhitelist, build: instanceBILD });
+            resolve({ erc20abi: abi, mixr: instanceMIXR, whitelist: instanceWhitelist, bild: instanceBILD });
         });
     }
     /**
@@ -110,7 +111,7 @@ class BlockchainGeneric {
                     await ERC.methods.balanceOf(userAccount).call(),
                 ).dividedBy(10 ** tokenDecimals);
                 // add it to the array
-                const tokenName = web3.utils.hexToUtf8(await mixrContract.getName(approvedTokensAddress[i]));
+                const tokenName = await mixrContract.getName(approvedTokensAddress[i]);
                 walletInfo.push({
                     address: approvedTokensAddress[i],
                     balance: sampleBalance.dp(2).toNumber(),

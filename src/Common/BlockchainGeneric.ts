@@ -1,11 +1,13 @@
 import BigNumber from 'bignumber.js';
 import truffleContract from 'truffle-contract';
 
+import BILDContract from '../contracts/BILD.json';
 import IERC20Contract from '../contracts/IERC20.json';
 import MIXRContract from '../contracts/MIXR.json';
 import WhitelistContract from '../contracts/Whitelist.json';
 import getWeb3 from '../utils/getWeb3';
 import {
+    IBILDState,
     IBlockchainState,
     IMIXRContractType,
     IWalletType,
@@ -13,7 +15,11 @@ import {
     IWhitelistType,
 } from './CommonInterfaces';
 
-
+/**
+ * Blockchain generic is a class used to server with some static methods
+ * that does some generic call which are used often in different parts
+ * of the application.
+ */
 class BlockchainGeneric {
 
     // tslint:disable-next-line member-ordering
@@ -38,20 +44,24 @@ class BlockchainGeneric {
      * Load contracts async
      */
     private static loadContracts(web3: IWeb3Type):
-        Promise<{ erc20abi: object, mixr: IMIXRContractType, whitelist: IWhitelistType }> {
+        Promise<{ erc20abi: object, mixr: IMIXRContractType, whitelist: IWhitelistType, build: IBILDState }> {
         return new Promise(async (resolve, reject) => {
             // load MIXR contract
             const ContractMIXR = truffleContract(MIXRContract);
             ContractMIXR.setProvider(web3.currentProvider);
             const instanceMIXR: IMIXRContractType = await ContractMIXR.deployed();
-            // load MIXR contract
+            // load whitelist contract
             const ContractWhitelist = truffleContract(WhitelistContract);
             ContractWhitelist.setProvider(web3.currentProvider);
             const instanceWhitelist: IWhitelistType = await ContractWhitelist.deployed();
+            // load bild contract
+            const ContractBILD = truffleContract(BILDContract);
+            ContractBILD.setProvider(web3.currentProvider);
+            const instanceBILD: IBILDState = await ContractBILD.deployed();
             // load the ERC20 interface abi
             const abi = (IERC20Contract).abi;
             // update component state
-            resolve({ erc20abi: abi, mixr: instanceMIXR, whitelist: instanceWhitelist });
+            resolve({ erc20abi: abi, mixr: instanceMIXR, whitelist: instanceWhitelist, build: instanceBILD });
         });
     }
     /**
@@ -72,7 +82,6 @@ class BlockchainGeneric {
                 await mixrContract.balanceOf(userAccount),
             ).dividedBy(10 ** mixrDecimals);
             // same as above!
-            // TODO: get only available tokens, not all
             const approved: [[string], number] = await mixrContract.getRegisteredTokens();
             const approvedTokensAddress: [string] = approved[0];
             const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
@@ -84,8 +93,12 @@ class BlockchainGeneric {
                     decimals: new BigNumber(await mixrContract.decimals()).toNumber(),
                     mixrBalance: new BigNumber(0),
                     name: 'MIX',
+                    validDeposit: true,
+                    validRedemption: true,
                 },
             ];
+            const validTokensForDeposit = await mixrContract.getTokensAcceptedForDeposits();
+            const validTokensForRedemption = await mixrContract.getTokensAcceptedForRedemptions();
             // iterate over accepted tokens to add them of state component for rendering
             for (let i = 0; i < totalApprovedTokens; i += 1) {
                 // get token info
@@ -104,6 +117,12 @@ class BlockchainGeneric {
                     decimals: tokenDecimals,
                     mixrBalance: new BigNumber(await ERC.methods.balanceOf(mixrContract.address).call()),
                     name: tokenName,
+                    validDeposit:
+                        validTokensForDeposit[0]
+                            .find((name) => name === approvedTokensAddress[i]) !== undefined,
+                    validRedemption:
+                        validTokensForRedemption[0]
+                            .find((name) => name === approvedTokensAddress[i]) !== undefined,
                 });
             }
             // resolve with info

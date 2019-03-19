@@ -3,7 +3,13 @@ import React, { Component, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
-import { FeeType, IBlockchainState, IMIXRContractType, IWeb3Type } from '../../Common/CommonInterfaces';
+import {
+    FeeType,
+    IBILDState,
+    IBlockchainState,
+    IMIXRContractType,
+    IWeb3Type,
+} from '../../Common/CommonInterfaces';
 
 import Navbar from '../../Components/Navbar/Navbar';
 
@@ -51,6 +57,7 @@ class Admin extends Component<{}, IAdmin> {
         await BlockchainGeneric.onLoad().then((result) => {
             this.setState({
                 IERC20ABI: result.IERC20ABI,
+                bildContract: result.bildContract,
                 mixrContract: result.mixrContract,
                 userAccount: result.userAccount,
                 walletInfo: result.walletInfo,
@@ -75,6 +82,7 @@ class Admin extends Component<{}, IAdmin> {
     public render() {
         const {
             mixrContract,
+            bildContract,
             userAccount,
             action,
             isGovernor,
@@ -82,6 +90,7 @@ class Admin extends Component<{}, IAdmin> {
         } = this.state;
         if (
             userAccount === undefined ||
+            bildContract === undefined ||
             mixrContract === undefined ||
             web3 === undefined ||
             isGovernor === undefined
@@ -116,6 +125,7 @@ class Admin extends Component<{}, IAdmin> {
             case TypeAction.setMinimumStake:
                 actionRender = <SetMinimumStakeHook
                     mixrContract={mixrContract}
+                    bildContract={bildContract}
                     userAccount={userAccount}
                     web3={web3}
                 />;
@@ -617,29 +627,40 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
 /**
  * set minimum stake hook
  */
-function SetMinimumStakeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Type, userAccount: string }) {
+function SetMinimumStakeHook(props: {
+    mixrContract: IMIXRContractType,
+    bildContract: IBILDState,
+    web3: IWeb3Type,
+    userAccount: string,
+}) {
     const [load, setLoad] = useState(false);
-    const [minimumStake, SetMinimumStake] = useState('');
+    const [minimumStake, setMinimumStake] = useState('');
 
     useEffect(() => {
         if (load === false) {
             getMinimumStake().then((result) => {
-                SetMinimumStake(result);
+                setMinimumStake(result);
                 setLoad(true);
             });
         }
     });
 
     async function getMinimumStake() {
-        // TODO:
-        return '3';
+        const { bildContract } = props;
+        const currentMinimumStake = await bildContract.getMinimumStake();
+        return new BigNumber(currentMinimumStake).toString();
     }
 
     /**
      * handle submit
      */
     function handleSubmit(event: any) {
-        // TODO: set!
+        const { bildContract } = props;
+        bildContract.setMinimumStake(minimumStake).then((success) => {
+            //
+        }).catch((fail) => {
+            //
+        });
         event.preventDefault();
     }
 
@@ -648,7 +669,7 @@ function SetMinimumStakeHook(props: { mixrContract: IMIXRContractType, web3: IWe
      */
     function handleChange(event: any) {
         if (event.target.name === 'minimumStake') {
-            SetMinimumStake(event.target.value);
+            setMinimumStake(event.target.value);
         }
     }
 

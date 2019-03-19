@@ -60,6 +60,8 @@ export interface IWalletType {
     balance: number;
     decimals: number;
     mixrBalance: BigNumber;
+    validDeposit: boolean;
+    validRedemption: boolean;
 }
 /**
  * Interface for mixr contract definition
@@ -74,6 +76,8 @@ export interface IMIXRContractType extends IERC20Type {
         transactionType: number,
     ) => Promise<number>;
     getRegisteredTokens: () => Promise<[[string], number]>;
+    getTokensAcceptedForDeposits: () => Promise<[[string], number]>;
+    getTokensAcceptedForRedemptions: () => Promise<[[string], number]>;
     depositToken: (token: string, depositInTokenWei: string, options?: any) => Promise<void>;
     redeemMIX: (token: string, redemptionInBasketWei: string, options?: any) => Promise<void>;
     approve: (address: string, amount: string, options: object) => Promise<void>;
@@ -100,8 +104,16 @@ export interface IWhitelistType {
 export interface IBlockchainState {
     mixrContract?: IMIXRContractType;
     whitelistContract?: IWhitelistType;
+    bildContract?: IBILDState;
     IERC20ABI?: object;
     userAccount?: string;
     web3?: IWeb3Type;
     walletInfo?: IWalletType[];
+}
+/**
+ * Interface for BILD contract
+ */
+export interface IBILDState {
+    setMinimumStake: (minimumStake: string) => Promise<void>;
+    getMinimumStake: () => Promise<BigNumber>;
 }

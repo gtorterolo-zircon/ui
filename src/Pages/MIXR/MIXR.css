@@ -87,8 +87,10 @@ select {
 }
 
 .MIXR-Input__name-amount {
-    width: 100%;
+    width: 96%;
     height: 29px;
+    line-height: 29px;
+    font-size: 12px;
     border-radius: 2px;
     border: none;
     background: #fff;
@@ -117,8 +119,8 @@ select {
 
 .MIXR-Input__down-button {
     position: absolute;
-    top: 8px;
-    right: 10px;
+    top: 0;
+    right: 18px;
     outline: none;
     border: none;
     background: #fff;
@@ -234,12 +236,43 @@ input {
 
 /* */
 
-.mainDropdown {
-    width: 150px;
-    height: 23px;
+.MIXR-Dropdown {
+    margin-top: 20px;
+    border-radius: 3px;
     background: white;
-    padding: 5px;
 }
-.mainDropdown li {
+
+.MIXR-Dropdown__item-inner {
+    margin: 4px 8px;
+    height: 30px;
+    line-height: 30px;
+    display: grid;
+    grid-template-columns: 30px 50px auto;
+}
+
+.MIXR-Dropdown__item {
+    border-bottom: 1px solid #d3d3d3;
+    height: 30px;
+}
+
+.MIXR-Dropdown__item:hover {
     background: grey;
+}
+
+.MIXR-Dropdown__item-image {
+    line-height: 30px;
+    padding: 5px 0px;
+}
+
+.MIXR-Dropdown__item-content {
+    margin-right: 6px;
+    line-height: 30px;
+    font-size: 13px;
+}
+
+.MIXR-Dropdown__item-content--bold {
+    font-weight: 700;
+    margin-right: 4px;
+    line-height: 30px;
+    font-size: 13px;
 }

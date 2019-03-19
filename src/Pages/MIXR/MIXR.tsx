@@ -307,21 +307,24 @@ function MixingHook(props: {
 
                 <form className="MIXR-Input__grid">
                     <div className="MIXR-Input__coin-amount-container">
-                        <div className="mainDropdown" onClick={toggleDropdown}>
-                            <div>Some text</div>
-                            <ul hidden={dropdownOpen === false}>
-                                <li>
-                                    <img src={tetherIcon} />
-                                </li>
-                                <li>
-                                    <img src={tetherIcon} />
-                                </li>
-                                <li>
-                                    <img src={tetherIcon} />
-                                </li>
-                            </ul>
+                        <div className="MIXR-Input__name-amount" onClick={toggleDropdown}>
+                            Create dynamically
+                            <div className="MIXR-Input__down-button" onClick={toggleDropdown}>
+                                <img onClick={toggleDropdown} src={DropDownButton} />
+                            </div>
                         </div>
-                        <select
+                        <ul className="MIXR-Dropdown" hidden={dropdownOpen === false}>
+
+                                <li className="MIXR-Dropdown__item">
+                                    <div className="MIXR-Dropdown__item-inner">
+                                        <img className="MIXR-Dropdown__item-image" src={tetherIcon} />
+                                        <p className="MIXR-Dropdown__item-content--bold">USDT</p>
+                                        <p className="MIXR-Dropdown__item-content">Tether</p>
+                                    </div>
+                                </li>
+
+                            </ul>
+                        {/* <select
                             className="MIXR-Input__name-amount"
                             name="assetSelect"
                             placeholder="Select Coin To Convert"
@@ -333,7 +336,7 @@ function MixingHook(props: {
                         </select>
                         <button className="MIXR-Input__down-button" >
                             <img src={DropDownButton} />
-                        </button>
+                        </button> */}
                     </div>
                     <div className="MIXR-Input__coin-amount-container">
                         <input

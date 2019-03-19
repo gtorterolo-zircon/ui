@@ -10,6 +10,7 @@
 
 .Admin__main {
     border-right: 1px solid #655E6E;
+    overflow-y: scroll;
     padding: 50px;
     background: #10001f;
 }
@@ -84,6 +85,18 @@
 .Admin__button {
     height: 36px;
     width: 50%;
+    float: right;
+    font-size: 14px;
+    border: none;
+    border-radius: 3px;
+    font-weight: 500;
+    background: #64e36b;
+}
+
+.Admin__button--small {
+    height: 36px;
+    margin-top: 20px;
+    width: 150px;
     float: right;
     font-size: 14px;
     border: none;

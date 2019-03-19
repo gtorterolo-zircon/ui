@@ -654,10 +654,22 @@ function SetMinimumStakeHook(props: { mixrContract: IMIXRContractType, web3: IWe
 
     return (
         <div>
-            <p>The required minimum stake for Rating Agent Nominations</p>
+            <p
+                className="Admin-Input__title Admin-Input__title--big"
+            >
+                The required minimum stake for Rating Agent Nominations
+            </p>
             <form onSubmit={handleSubmit}>
-                <input type="text" name="minimumStake" value={minimumStake} onChange={handleChange} />
-                <input type="submit" />
+                <input
+                    className="Admin__input-approvals--full-width"
+                    type="text"
+                    name="minimumStake"
+                    value={minimumStake}
+                    onChange={handleChange}
+                />
+                <div className="Admin__button-grid">
+                    <input className="Admin__button--small" type="submit" value="SUBMIT" />
+                </div>
             </form>
         </div>
     );

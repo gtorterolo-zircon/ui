@@ -28,7 +28,7 @@ Login Slider Buttons
 
 body {
     font-family: Arial, Helvetica Neue, Helvetica, sans-serif;
-    overflow: hidden;
+    overflow-x: hidden !important;
 }
 
 select {

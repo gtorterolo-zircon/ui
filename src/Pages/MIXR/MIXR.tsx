@@ -216,9 +216,15 @@ function MixingHook(props: {
         setIsMixrLoaded(false);
         if (event.target.name === 'assetAmount') {
             setAssetAmount(event.target.value);
-        } else if (event.target.name === 'assetSelect') {
+        }/*  else if (event.target.name === 'assetSelect') {
             setAssetSelect(event.target.value);
-        }
+        } */
+    }
+
+    function handleSelectAsset(event: any) {
+        const tag = event.currentTarget.dataset.tag;
+        setAssetSelect(tag);
+        setDropdownOpen(false);
     }
 
     /**
@@ -247,7 +253,20 @@ function MixingHook(props: {
             assetName.push(element.name);
         }
         return assetName.map((element) => {
-            return <option key={element} value={element.toLowerCase()}>{element}</option>;
+            return (
+                <li
+                    key={element.toLowerCase()}
+                    data-tag={element.toLowerCase()}
+                    onClick={handleSelectAsset}
+                    className="MIXR-Dropdown__item"
+                >
+                    <div className="MIXR-Dropdown__item-inner">
+                        <img className="MIXR-Dropdown__item-image" src={tetherIcon} />
+                        <p className="MIXR-Dropdown__item-content--bold">{element}</p>
+                        <p className="MIXR-Dropdown__item-content">{element}</p>
+                    </div>
+                </li>
+            );
         });
     }
 
@@ -316,6 +335,20 @@ function MixingHook(props: {
         setDropdownOpen(dropdownOpen ? false : true);
     }
 
+    function renderSelectedAsset() {
+        if (assetSelect === 'default') {
+            return 'Select coin to convert';
+        } else {
+            return (
+                <div className="MIXR-Dropdown__item-inner">
+                    <img className="MIXR-Dropdown__item-image" src={tetherIcon} />
+                    <p className="MIXR-Dropdown__item-content--bold">{assetSelect}</p>
+                    <p className="MIXR-Dropdown__item-content">{assetSelect}</p>
+                </div>
+            );
+        }
+    }
+
     return (
         <React.Fragment>
             <div className="MIXR-Input">
@@ -324,22 +357,14 @@ function MixingHook(props: {
                 <form className="MIXR-Input__grid">
                     <div className="MIXR-Input__coin-amount-container">
                         <div className="MIXR-Input__name-amount" onClick={toggleDropdown}>
-                            Create dynamically
+                            {renderSelectedAsset()}
                             <div className="MIXR-Input__down-button" onClick={toggleDropdown}>
                                 <img onClick={toggleDropdown} src={DropDownButton} />
                             </div>
                         </div>
                         <ul className="MIXR-Dropdown" hidden={dropdownOpen === false}>
-
-                                <li className="MIXR-Dropdown__item">
-                                    <div className="MIXR-Dropdown__item-inner">
-                                        <img className="MIXR-Dropdown__item-image" src={tetherIcon} />
-                                        <p className="MIXR-Dropdown__item-content--bold">USDT</p>
-                                        <p className="MIXR-Dropdown__item-content">Tether</p>
-                                    </div>
-                                </li>
-
-                            </ul>
+                            {renderAssets()}
+                        </ul>
                         {/* <select
                             className="MIXR-Input__name-amount"
                             name="assetSelect"

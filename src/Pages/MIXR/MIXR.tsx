@@ -136,6 +136,7 @@ class MIXR extends Component<{}, IMIXRState> {
         ) {
             return null;
         }
+        console.log('rendering');
         return (
             <div className="MIXR">
                 <Navbar />
@@ -182,7 +183,13 @@ class MIXR extends Component<{}, IMIXRState> {
      * handle to clicks from wallet
      */
     private assetWalletClickHandler = (event: any) => {
-        this.setState({ clickDepositButton: event.target.dataset.id, isMixing: true });
+        alert(event.target.dataset.id);
+        const { isMixing } = this.state;
+        if (isMixing === false) {
+            this.setState({ clickDepositButton: event.target.dataset.id, isMixing: true });
+        } else {
+            this.setState({ clickDepositButton: event.target.dataset.id });
+        }
         event.preventDefault();
     }
 
@@ -199,8 +206,8 @@ function MixingHook(props: {
     const [assetSelect, setAssetSelect] = useState(props.selectedAssetFromWallet);
     const [assetAmount, setAssetAmount] = useState('');
     const [isMixrLoaded, setIsMixrLoaded] = useState(true);
-    const [haveValidFunds, setHaveValidFunds] = useState(true);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    let haveValidFunds = true;
 
     /**
      * Handle fields changes
@@ -272,27 +279,36 @@ function MixingHook(props: {
         if (assetAmount === undefined || assetAmount.length < 1) {
             return null;
         }
-        if (assetSelect === 'mix') {
-            return <MixingCreateHook
-                mixrContract={mixrContract}
-                walletInfo={walletInfo}
-                IERC20ABI={IERC20ABI}
-                web3={web3}
-                userAccount={userAccount}
-                inputAmount={assetAmount}
-            />;
-        } else if (assetSelect !== 'default') {
-            return <MixingExchangeHook
-                mixrContract={mixrContract}
-                walletInfo={walletInfo}
-                IERC20ABI={IERC20ABI}
-                web3={web3}
-                userAccount={userAccount}
-                inputAmount={assetAmount}
-                assetSelect={assetSelect}
-            />;
+        const currentBalance = walletInfo.filter(
+            (e) => e.name.toLowerCase() === assetSelect.toLowerCase(),
+        )[0].balance;
+        const invalidBalance = new BigNumber(assetAmount).gt(currentBalance);
+        if (invalidBalance && haveValidFunds === true) {
+            haveValidFunds = false;
         } else {
-            return null;
+            haveValidFunds = true;
+            if (assetSelect === 'mix') {
+                return <MixingCreateHook
+                    mixrContract={mixrContract}
+                    walletInfo={walletInfo}
+                    IERC20ABI={IERC20ABI}
+                    web3={web3}
+                    userAccount={userAccount}
+                    inputAmount={assetAmount}
+                />;
+            } else if (assetSelect !== 'default') {
+                return <MixingExchangeHook
+                    mixrContract={mixrContract}
+                    walletInfo={walletInfo}
+                    IERC20ABI={IERC20ABI}
+                    web3={web3}
+                    userAccount={userAccount}
+                    inputAmount={assetAmount}
+                    assetSelect={assetSelect}
+                />;
+            } else {
+                return null;
+            }
         }
     }
 
@@ -357,8 +373,8 @@ function MixingHook(props: {
                     </div>
                 </form>
             </div>
-            {renderWarningBalance()}
             {renderChoices()}
+            {renderWarningBalance()}
         </React.Fragment>
     );
 }
@@ -501,6 +517,9 @@ function MixingCreateHook(props: {
                         assetsToExchange.set(feeForToken.address, asset);
                         //
                         const node = document.getElementById('assetsList');
+                        if (node === null) {
+                            return;
+                        }
                         const assetsMap: any[] = [];
                         assetsToExchange.forEach((assetEach: IAsset) => assetsMap.push(mixrAsset(assetEach)));
                         ReactDOM.render(<React.Fragment>{assetsMap}</React.Fragment>, node);
@@ -805,6 +824,9 @@ function MixingExchangeHook(props: {
                         assetsToExchange.set(feeForToken.address, asset);
                         //
                         const node = document.getElementById('assetsList');
+                        if (node === null) {
+                            return;
+                        }
                         const assetsMap: any[] = [];
                         assetsToExchange.forEach((assetEach: IAsset) => assetsMap.push(mixrAsset(assetEach)));
                         ReactDOM.render(<React.Fragment>{assetsMap}</React.Fragment>, node);

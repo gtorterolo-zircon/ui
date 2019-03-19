@@ -60,8 +60,6 @@ export interface IWalletType {
     balance: number;
     decimals: number;
     mixrBalance: BigNumber;
-    validDeposit: boolean;
-    validRedemption: boolean;
 }
 /**
  * Interface for mixr contract definition

@@ -94,14 +94,18 @@ class BlockchainGeneric {
                     decimals: new BigNumber(await mixrContract.decimals()).toNumber(),
                     mixrBalance: new BigNumber(0),
                     name: 'MIX',
-                    validDeposit: true,
-                    validRedemption: true,
                 },
             ];
             const validTokensForDeposit = await mixrContract.getTokensAcceptedForDeposits();
             const validTokensForRedemption = await mixrContract.getTokensAcceptedForRedemptions();
             // iterate over accepted tokens to add them of state component for rendering
             for (let i = 0; i < totalApprovedTokens; i += 1) {
+                if (validTokensForDeposit[0]
+                    .find((name) => name === approvedTokensAddress[i]) === undefined ||
+                    validTokensForRedemption[0]
+                        .find((name) => name === approvedTokensAddress[i]) === undefined) {
+                    continue;
+                }
                 // get token info
                 const tokenDecimals = new BigNumber(
                     await mixrContract.getDecimals(approvedTokensAddress[i]),
@@ -118,12 +122,6 @@ class BlockchainGeneric {
                     decimals: tokenDecimals,
                     mixrBalance: new BigNumber(await ERC.methods.balanceOf(mixrContract.address).call()),
                     name: tokenName,
-                    validDeposit:
-                        validTokensForDeposit[0]
-                            .find((name) => name === approvedTokensAddress[i]) !== undefined,
-                    validRedemption:
-                        validTokensForRedemption[0]
-                            .find((name) => name === approvedTokensAddress[i]) !== undefined,
                 });
             }
             // resolve with info

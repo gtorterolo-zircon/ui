@@ -341,11 +341,12 @@ function MixingHook(props: {
         if (assetSelect === 'default') {
             return 'Select coin to convert';
         } else {
+            const assetToRender = props.walletInfo.filter((e) => e.name.toLowerCase() === assetSelect)[0];
             return (
                 <div className="MIXR-Dropdown__item-inner">
                     <img className="MIXR-Dropdown__item-image" src={tetherIcon} />
-                    <p className="MIXR-Dropdown__item-content--bold">{assetSelect}</p>
-                    <p className="MIXR-Dropdown__item-content">{assetSelect}</p>
+                    <p className="MIXR-Dropdown__item-content--bold">{assetToRender.name}</p>
+                    <p className="MIXR-Dropdown__item-content">{assetToRender.name}</p>
                 </div>
             );
         }
@@ -367,19 +368,6 @@ function MixingHook(props: {
                         <ul className="MIXR-Dropdown" hidden={dropdownOpen === false}>
                             {renderAssets()}
                         </ul>
-                        {/* <select
-                            className="MIXR-Input__name-amount"
-                            name="assetSelect"
-                            placeholder="Select Coin To Convert"
-                            value={assetSelect}
-                            onChange={handleChange}
-                        >
-                            <option key="default" value="default" disabled={true}>Select Coin To Convert</option>
-                            {renderAssets()}
-                        </select>
-                        <button className="MIXR-Input__down-button" >
-                            <img src={DropDownButton} />
-                        </button> */}
                     </div>
                     <div className="MIXR-Input__coin-amount-container">
                         <input

@@ -134,7 +134,6 @@ class MIXR extends Component<{}, IMIXRState> {
         ) {
             return null;
         }
-        console.log('rendering');
         return (
             <div className="MIXR">
                 <Navbar />
@@ -181,13 +180,7 @@ class MIXR extends Component<{}, IMIXRState> {
      * handle to clicks from wallet
      */
     private assetWalletClickHandler = (event: any) => {
-        alert(event.target.dataset.id);
-        const { isMixing } = this.state;
-        if (isMixing === false) {
-            this.setState({ clickDepositButton: event.target.dataset.id, isMixing: true });
-        } else {
-            this.setState({ clickDepositButton: event.target.dataset.id });
-        }
+        this.setState({ clickDepositButton: event.target.dataset.id, isMixing: true });
         event.preventDefault();
     }
 
@@ -206,6 +199,13 @@ function MixingHook(props: {
     const [isMixrLoaded, setIsMixrLoaded] = useState(true);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     let haveValidFunds = true;
+
+    useEffect(() => {
+        // hooks related problem
+        if (assetSelect !== props.selectedAssetFromWallet) {
+            setAssetSelect(props.selectedAssetFromWallet);
+        }
+    });
 
     /**
      * Handle fields changes

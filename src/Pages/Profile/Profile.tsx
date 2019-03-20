@@ -216,7 +216,7 @@ function ApproveHook(
         }
         return availableTokens.map((token) => {
             return (
-                <option value={token.address} key={token.address}>{props.web3.utils.hexToUtf8(token.name)}</option>
+                <option value={token.address} key={token.address}>{token.name}</option>
             );
         });
     }
@@ -353,7 +353,7 @@ function AllowanceHook(props: any) {
         }
         return availableTokens.map((token) => {
             return (
-                <option value={token.address} key={token.address}>{props.web3.utils.hexToUtf8(token.name)}</option>
+                <option value={token.address} key={token.address}>{token.name}</option>
             );
         });
     }

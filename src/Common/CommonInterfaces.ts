@@ -60,6 +60,7 @@ export interface IWalletType {
     balance: number;
     decimals: number;
     mixrBalance: BigNumber;
+    symbol: string;
 }
 /**
  * Interface for mixr contract definition
@@ -80,8 +81,10 @@ export interface IMIXRContractType extends IERC20Type {
     redeemMIX: (token: string, redemptionInBasketWei: string, options?: any) => Promise<void>;
     approve: (address: string, amount: string, options: object) => Promise<void>;
     registerDetailedToken: (address: string, options: object) => Promise<void>;
-    registerStandardToken: (address: string, name: string, decimals: string, options: object) => Promise<void>;
+    registerStandardToken:
+        (address: string, name: string, symbol: string, decimals: string, options: object) => Promise<void>;
     getName: (address: string) => Promise<string>;
+    getSymbol: (address: string) => Promise<string>;
     getDecimals: (address: string) => Promise<string>;
     getTargetProportion: (address: string) => Promise<string>;
     getDepositFee: () => Promise<BigNumber>;

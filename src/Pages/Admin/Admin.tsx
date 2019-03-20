@@ -209,6 +209,7 @@ class Admin extends Component<{}, IAdmin> {
 function RegisterTokensHook(props: { mixrContract: IMIXRContractType, userAccount: string }) {
     const [erc20Address, setErc20Address] = useState('');
     const [erc20Name, setErc20Name] = useState('');
+    const [erc20Symbol, setErc20Symbol] = useState('');
     const [erc20Decimals, setErc20Decimals] = useState('');
 
     useEffect(() => {
@@ -223,6 +224,8 @@ function RegisterTokensHook(props: { mixrContract: IMIXRContractType, userAccoun
             setErc20Address(event.target.value);
         } else if (event.target.name === 'erc20Name') {
             setErc20Name(event.target.value);
+        } else if (event.target.name === 'erc20Symbol') {
+            setErc20Symbol(event.target.value);
         } else if (event.target.name === 'erc20Decimals') {
             setErc20Decimals(event.target.value);
         }
@@ -233,7 +236,7 @@ function RegisterTokensHook(props: { mixrContract: IMIXRContractType, userAccoun
      */
     function handleSubmit(event: any) {
         const { mixrContract, userAccount } = props;
-        mixrContract.registerStandardToken(erc20Address, erc20Name, erc20Decimals, {
+        mixrContract.registerStandardToken(erc20Address, erc20Name, erc20Symbol, erc20Decimals, {
             from: userAccount,
         }).then(() => {
             window.location.reload();
@@ -284,6 +287,18 @@ function RegisterTokensHook(props: { mixrContract: IMIXRContractType, userAccoun
                             placeholder="Name"
                             name="erc20Name"
                             value={erc20Name}
+                            onChange={handleChange}
+                        />
+                    </div>
+
+                    <div>
+                        <p className="Admin-Input__title Admin-Input__title--padding">SYMBOL</p>
+                        <input
+                            className="Admin__input-approvals"
+                            type="text"
+                            placeholder="Symbol"
+                            name="erc20Symbol"
+                            value={erc20Symbol}
                             onChange={handleChange}
                         />
                     </div>

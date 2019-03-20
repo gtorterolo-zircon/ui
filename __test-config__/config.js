@@ -144,7 +144,7 @@ const configContracts = async () => {
 
 
     // add first token
-    await mixr.registerStandardToken(ERC20Gemini.address, 'GUSD', 18, { from: governor });
+    await mixr.registerDetailedToken(ERC20Gemini.address, { from: governor });
     await mixr.setTokensTargetProportion(
         [
             ERC20Gemini.address,
@@ -165,7 +165,7 @@ const configContracts = async () => {
 
 
     // add second token
-    await mixr.registerStandardToken(ERC20Tether.address, 'USDT', 18, { from: governor });
+    await mixr.registerDetailedToken(ERC20Tether.address, { from: governor });
     await mixr.setTokensTargetProportion(
         [
             ERC20Gemini.address,
@@ -185,7 +185,7 @@ const configContracts = async () => {
 
 
     // add third token
-    await mixr.registerStandardToken(ERC20True.address, 'TUSD', 18, { from: governor });
+    await mixr.registerDetailedToken(ERC20True.address, { from: governor });
     await mixr.setTokensTargetProportion(
         [
             ERC20Gemini.address,
@@ -207,7 +207,7 @@ const configContracts = async () => {
 
 
     // add fourth token
-    await mixr.registerStandardToken(ERC20USD.address, 'USDC', 18, { from: governor });
+    await mixr.registerDetailedToken(ERC20USD.address, { from: governor });
     await mixr.setTokensTargetProportion(
         [
             ERC20Gemini.address,
@@ -231,7 +231,7 @@ const configContracts = async () => {
 
 
     // add fifth token
-    await mixr.registerStandardToken(ERC20Paxos.address, 'PAX', 18, { from: governor });
+    await mixr.registerDetailedToken(ERC20Paxos.address, { from: governor });
     await mixr.setTokensTargetProportion(
         [
             ERC20Gemini.address,

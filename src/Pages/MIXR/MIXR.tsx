@@ -257,7 +257,7 @@ class MixingHook extends Component<IMixingHookProps, IMixingHookState> {
         if (assetSelect.length > 0) {
             // get asset max from user's balance
             const max = walletInfo.filter(
-                (wallet) => wallet.name.toLowerCase() === assetSelect.toLowerCase(),
+                (wallet) => wallet.symbol.toLowerCase() === assetSelect.toLowerCase(),
             )[0].balance;
             this.setState({ assetAmount: max.toString() });
         }
@@ -270,24 +270,20 @@ class MixingHook extends Component<IMixingHookProps, IMixingHookState> {
      */
     public renderAssets = () => {
         const { walletInfo } = this.props;
-        const assetName: string[] = [];
-        for (const element of walletInfo) {
-            assetName.push(element.name);
-        }
-        return assetName.map((element) => {
+        return walletInfo.map((element) => {
             const assetLogo = BlockchainGeneric.getTokensLogo()
-                .filter((e) => e.name.toLowerCase() === element.toLowerCase())[0].logo;
+                .filter((e) => e.symbol.toLowerCase() === element.symbol.toLowerCase())[0].logo;
             return (
                 <li
-                    key={element.toLowerCase()}
-                    data-tag={element.toLowerCase()}
+                    key={element.symbol.toLowerCase()}
+                    data-tag={element.symbol.toLowerCase()}
                     onClick={this.handleSelectAsset}
                     className="MIXR-Dropdown__item"
                 >
                     <div className="MIXR-Dropdown__item-inner">
                         <img className="MIXR-Dropdown__item-image" src={assetLogo} />
-                        <p className="MIXR-Dropdown__item-content--bold">{element}</p>
-                        <p className="MIXR-Dropdown__item-content">{element}</p>
+                        <p className="MIXR-Dropdown__item-content--bold">{element.symbol}</p>
+                        <p className="MIXR-Dropdown__item-content">{element.name}</p>
                     </div>
                 </li>
             );
@@ -331,7 +327,7 @@ class MixingHook extends Component<IMixingHookProps, IMixingHookState> {
             return null;
         }
         const currentBalance = walletInfo.filter(
-            (e) => e.name.toLowerCase() === assetSelect.toLowerCase(),
+            (e) => e.symbol.toLowerCase() === assetSelect.toLowerCase(),
         )[0].balance;
         const invalidBalance = parseInt(assetAmount, 10) > currentBalance;
         // console.log('xx', invalidBalance, haveValidFunds, currentBalance, assetAmount);
@@ -381,13 +377,13 @@ class MixingHook extends Component<IMixingHookProps, IMixingHookState> {
         if (assetSelect === 'default') {
             return 'Select Coin To Convert';
         } else {
-            const assetToRender = this.props.walletInfo.filter((e) => e.name.toLowerCase() === assetSelect)[0];
+            const assetToRender = this.props.walletInfo.filter((e) => e.symbol.toLowerCase() === assetSelect)[0];
             const assetLogo = BlockchainGeneric.getTokensLogo()
-                .filter((e) => e.name.toLowerCase() === assetSelect.toLowerCase())[0].logo;
+                .filter((e) => e.symbol.toLowerCase() === assetSelect.toLowerCase())[0].logo;
             return (
                 <div className="MIXR-Dropdown__item-inner--no-margin">
                     <img className="MIXR-Dropdown__item-image" src={assetLogo} />
-                    <p className="MIXR-Dropdown__item-content--bold">{assetToRender.name}</p>
+                    <p className="MIXR-Dropdown__item-content--bold">{assetToRender.symbol}</p>
                     <p className="MIXR-Dropdown__item-content">{assetToRender.name}</p>
                 </div>
             );
@@ -529,7 +525,7 @@ function MixingCreateHook(props: {
         // if any other select, is because it's a deposit
         // local variables
         for (const element of walletInfo) {
-            if (element.name.toLowerCase() === 'mix') {
+            if (element.symbol.toLowerCase() === 'mix') {
                 continue;
             }
             // get selected asset balance
@@ -587,7 +583,7 @@ function MixingCreateHook(props: {
             });
             // save in a map
             assetsToExchange.set(element.address, {
-                assetName: element.name,
+                assetName: element.symbol,
                 fee: '0',
                 receive: '0',
                 total: amount,
@@ -641,7 +637,7 @@ function MixingCreateHook(props: {
         // get address using of selected token name
         const assetAddress = (
             walletInfo.filter((element) =>
-                element.name.toLowerCase() === selectedAssetToTranfer.toLowerCase(),
+                element.symbol.toLowerCase() === selectedAssetToTranfer.toLowerCase(),
             )[0]
         ).address;
         // define amount
@@ -754,7 +750,7 @@ function MixingExchangeHook(props: {
         // get address using selected token name
         const assetAddress = (
             walletInfo.filter((element) =>
-                element.name.toLowerCase() === assetSelect.toLowerCase(),
+                element.symbol.toLowerCase() === assetSelect.toLowerCase(),
             )[0]
         ).address;
         // get contract using abi
@@ -820,7 +816,7 @@ function MixingExchangeHook(props: {
 
         const assetBalance = (
             walletInfo.filter((wElement) =>
-                wElement.name.toLowerCase() === assetSelect.toLowerCase(),
+                wElement.symbol.toLowerCase() === assetSelect.toLowerCase(),
             )[0]
         ).balance;
         // let's make sure it's empty
@@ -834,7 +830,7 @@ function MixingExchangeHook(props: {
         // if any other select, is because it's a deposit
         // local variables
         for (const element of walletInfo) {
-            if (element.name.toLowerCase() === assetSelect.toLowerCase()) {
+            if (element.symbol.toLowerCase() === assetSelect.toLowerCase()) {
                 continue;
             }
             // get selected asset balance
@@ -844,7 +840,7 @@ function MixingExchangeHook(props: {
             // if the asset selected is mix
             assetAddress = (
                 walletInfo.filter((wElement) =>
-                    wElement.name.toLowerCase() === assetSelect.toLowerCase(),
+                    wElement.symbol.toLowerCase() === assetSelect.toLowerCase(),
                 )[0]
             ).address;
             feeType = FeeType.DEPOSIT;
@@ -885,7 +881,7 @@ function MixingExchangeHook(props: {
             });
             // save in a map
             assetsToExchange.set(element.address, {
-                assetName: element.name,
+                assetName: element.symbol,
                 fee: '0',
                 receive: '0',
                 total: amount,

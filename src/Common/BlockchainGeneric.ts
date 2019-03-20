@@ -54,13 +54,13 @@ class BlockchainGeneric {
      */
     public static getTokensLogo() {
         return [
-            { name: 'MIX', logo: MIXicon },
-            { name: 'USDT', logo: USDTicon },
-            { name: 'TUSD', logo: TUSDicon },
-            { name: 'USDC', logo: USDCicon },
-            { name: 'PAX', logo: PAXicon },
-            { name: 'GUSD', logo: GUSDicon },
-            { name: 'DAI', logo: DAIicon },
+            { symbol: 'MIX', logo: MIXicon },
+            { symbol: 'USDT', logo: USDTicon },
+            { symbol: 'TUSD', logo: TUSDicon },
+            { symbol: 'USDC', logo: USDCicon },
+            { symbol: 'PAX', logo: PAXicon },
+            { symbol: 'GUSD', logo: GUSDicon },
+            { symbol: 'DAI', logo: DAIicon },
         ];
     }
 
@@ -107,6 +107,7 @@ class BlockchainGeneric {
             ).dividedBy(10 ** mixrDecimals);
             // same as above!
             const approved: [[string], number] = await mixrContract.getRegisteredTokens();
+            console.log('approved', approved);
             const approvedTokensAddress: [string] = approved[0];
             const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
             // save in a state array to render
@@ -117,6 +118,7 @@ class BlockchainGeneric {
                     decimals: new BigNumber(await mixrContract.decimals()).toNumber(),
                     mixrBalance: new BigNumber(0),
                     name: 'MIX',
+                    symbol: 'MIX',
                 },
             ];
             const validTokensForDeposit = await mixrContract.getTokensAcceptedForDeposits();
@@ -139,12 +141,14 @@ class BlockchainGeneric {
                 ).dividedBy(10 ** tokenDecimals);
                 // add it to the array
                 const tokenName = await mixrContract.getName(approvedTokensAddress[i]);
+                const tokenSymbol = await mixrContract.getSymbol(approvedTokensAddress[i]);
                 walletInfo.push({
                     address: approvedTokensAddress[i],
                     balance: sampleBalance.dp(2).toNumber(),
                     decimals: tokenDecimals,
                     mixrBalance: new BigNumber(await ERC.methods.balanceOf(mixrContract.address).call()),
                     name: tokenName,
+                    symbol: tokenSymbol,
                 });
             }
             // resolve with info

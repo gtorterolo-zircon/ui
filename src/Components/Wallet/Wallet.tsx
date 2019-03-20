@@ -64,8 +64,8 @@ class Wallet extends Component<IWalletState, {}> {
             // render array data
             return walletInfo.map((element) => {
                 return (
-                    <React.Fragment key={element.name}>
-                        <div className="Wallet__grid-item">{element.name}</div>
+                    <React.Fragment key={element.symbol}>
+                        <div className="Wallet__grid-item">{element.symbol}</div>
                         <div>
                             <p className="Wallet__grid-item">{element.balance}</p>
                             <p className="Wallet__grid-item--small">
@@ -76,7 +76,7 @@ class Wallet extends Component<IWalletState, {}> {
                         <div>
                             <img
                                 className="Wallet__grid-button"
-                                data-id={element.name}
+                                data-id={element.symbol}
                                 onClick={this.props.assetClick}
                                 src={DepositBtn}
                             />

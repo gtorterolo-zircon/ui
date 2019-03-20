@@ -22,6 +22,7 @@ import tetherIcon from '../../Assets/img/wallet-icons/tether-icon.svg';
 
 import './MIXR.css';
 
+let inputAmountAssetGlobal = '';
 const logger = createLogger({
     format: format.combine(
         format.timestamp(),
@@ -215,6 +216,7 @@ function MixingHook(props: {
     function handleChange(event: any) {
         setIsMixrLoaded(false);
         if (event.target.name === 'assetAmount') {
+            inputAmountAssetGlobal = event.target.value;
             setAssetAmount(event.target.value);
         }/*  else if (event.target.name === 'assetSelect') {
             setAssetSelect(event.target.value);
@@ -417,8 +419,10 @@ function MixingCreateHook(props: {
     const [transactionStatus, setTransactionStatus] = useState(TransactionStatus.None);
     const [isMixrLoaded, setIsMixrLoaded] = useState(true);
     const assetsToExchange: Map<string, IAsset> = new Map();
-    const promisesFeesToLoad: [Promise<{ address: string, fee: Promise<number> }>] = [true as any];
+    const promisesFeesToLoad: [Promise<{ address: string, fee: Promise<number>, input: string }>] = [true as any];
+    const totalAssetsInRender = props.walletInfo.length;
     let loading = true;
+    let totalLoadedAssets = 0;
 
     useEffect(() => {
         // typescript is a bit stupid and I need to add something to the array
@@ -529,6 +533,7 @@ function MixingCreateHook(props: {
                     {
                         address: element.address,
                         fee: estimatedFee,
+                        input: props.inputAmount,
                     }),
             );
             // wait from them all
@@ -537,6 +542,9 @@ function MixingCreateHook(props: {
                     const asset = assetsToExchange.get(feeForToken.address);
                     if (asset !== undefined && asset.fee === '0') {
                         const fee = new BigNumber(await feeForToken.fee).dividedBy(10 ** 24);
+                        if (inputAmountAssetGlobal !== feeForToken.input) {
+                            return;
+                        }
                         asset.fee = fee.toFixed(2);
                         asset.receive = new BigNumber(asset.total).minus(asset.fee).toFixed(2);
                         assetsToExchange.set(feeForToken.address, asset);
@@ -548,6 +556,11 @@ function MixingCreateHook(props: {
                         const assetsMap: any[] = [];
                         assetsToExchange.forEach((assetEach: IAsset) => assetsMap.push(mixrAsset(assetEach)));
                         ReactDOM.render(<React.Fragment>{assetsMap}</React.Fragment>, node);
+                        totalLoadedAssets += 1;
+                        if (totalLoadedAssets === totalAssetsInRender) {
+                            totalLoadedAssets = 0;
+                            setIsMixrLoaded(true);
+                        }
                     }
                 });
             });
@@ -568,11 +581,10 @@ function MixingCreateHook(props: {
             generateDataToRenderExchange(inputAmount);
             loading = false;
         }
-        if (assetsToExchange.size === 0) {
-            return;
+        if (assetsToExchange.size !== 0) {
+            // map it to html
+            assetsToExchange.forEach((element: IAsset) => assetsMap.push(mixrAsset(element)));
         }
-        // map it to html
-        assetsToExchange.forEach((element: IAsset) => assetsMap.push(mixrAsset(element)));
         return <React.Fragment>
             <div className="MIXR-New-Token">
                 <p className="MIXR-New-Token__title">
@@ -582,7 +594,12 @@ function MixingCreateHook(props: {
             </div>
             <div id="assetsList">
                 <React.Fragment>
-                    {assetsMap}
+                    {
+                        // tslint:disable-next-line jsx-no-multiline-js
+                        assetsToExchange.size === 0
+                            ? '<span className="whiteText">MIXR as not enough balance!</span>'
+                            : assetsMap
+                    }
                 </React.Fragment>
             </div>
         </React.Fragment>;
@@ -660,7 +677,7 @@ function MixingCreateHook(props: {
 
     return (
         <React.Fragment>
-            <div className="MIXR-Input__title--big" hidden={isMixrLoaded}>Loading...</div>
+            <div className="MIXR-Input__title--big" hidden={isMixrLoaded} >Loading...</div>
             {renderCreate()}
             {renderSelectionChoice()}
             {renderPopUp()}

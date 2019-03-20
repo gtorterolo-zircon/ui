@@ -17,9 +17,6 @@ import Popup from '../../Components/Popup/Popup';
 import MaxButton from '../../Assets/img/button-max.svg';
 import DropDownButton from '../../Assets/img/dropdown-button.svg';
 
-import tetherIcon from '../../Assets/img/wallet-icons/tether-icon.svg';
-
-
 import './MIXR.css';
 
 let inputAmountAssetGlobal = '';
@@ -255,6 +252,8 @@ function MixingHook(props: {
             assetName.push(element.name);
         }
         return assetName.map((element) => {
+            const assetLogo = BlockchainGeneric.getTokensLogo()
+                .filter((e) => e.name.toLowerCase() === element.toLowerCase())[0].logo;
             return (
                 <li
                     key={element.toLowerCase()}
@@ -263,7 +262,7 @@ function MixingHook(props: {
                     className="MIXR-Dropdown__item"
                 >
                     <div className="MIXR-Dropdown__item-inner">
-                        <img className="MIXR-Dropdown__item-image" src={tetherIcon} />
+                        <img className="MIXR-Dropdown__item-image" src={assetLogo} />
                         <p className="MIXR-Dropdown__item-content--bold">{element}</p>
                         <p className="MIXR-Dropdown__item-content">{element}</p>
                     </div>
@@ -342,9 +341,11 @@ function MixingHook(props: {
             return 'Select coin to convert';
         } else {
             const assetToRender = props.walletInfo.filter((e) => e.name.toLowerCase() === assetSelect)[0];
+            const assetLogo = BlockchainGeneric.getTokensLogo()
+                .filter((e) => e.name.toLowerCase() === assetSelect.toLowerCase())[0].logo;
             return (
                 <div className="MIXR-Dropdown__item-inner">
-                    <img className="MIXR-Dropdown__item-image" src={tetherIcon} />
+                    <img className="MIXR-Dropdown__item-image" src={assetLogo} />
                     <p className="MIXR-Dropdown__item-content--bold">{assetToRender.name}</p>
                     <p className="MIXR-Dropdown__item-content">{assetToRender.name}</p>
                 </div>

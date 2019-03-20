@@ -15,6 +15,14 @@ import {
     IWhitelistType,
 } from './CommonInterfaces';
 
+import DAIicon from '../Assets/img/wallet-icons/dai.svg';
+import GUSDicon from '../Assets/img/wallet-icons/gemini-dollar.svg';
+import PAXicon from '../Assets/img/wallet-icons/paxos.svg';
+import USDTicon from '../Assets/img/wallet-icons/tether-icon.svg';
+import TUSDicon from '../Assets/img/wallet-icons/true-usd.svg';
+import USDCicon from '../Assets/img/wallet-icons/usd-coin.svg';
+import MIXicon from '../Assets/img/wallet-icons/usd-coin.svg';
+
 /**
  * Blockchain generic is a class used to server with some static methods
  * that does some generic call which are used often in different parts
@@ -39,6 +47,21 @@ class BlockchainGeneric {
             web3,
             whitelistContract: contracts.whitelist,
         });
+    }
+
+    /**
+     * Get tokens logo
+     */
+    public static getTokensLogo() {
+        return [
+            { name: 'MIX', logo: MIXicon },
+            { name: 'USDT', logo: USDTicon },
+            { name: 'TUSD', logo: TUSDicon },
+            { name: 'USDC', logo: USDCicon },
+            { name: 'PAX', logo: PAXicon },
+            { name: 'GUSD', logo: GUSDicon },
+            { name: 'DAI', logo: DAIicon },
+        ];
     }
 
     /**
@@ -127,20 +150,6 @@ class BlockchainGeneric {
             // resolve with info
             resolve(walletInfo);
         });
-    }
-
-    /**
-     * Get tokens logo
-     */
-    private static getTokensLogo() {
-        return [
-            { name: 'TUSD', logo: '../../Assets/img/wallet-icons/tether-icon.svg' },
-            { name: 'X', logo: '../../Assets/img/wallet-icons/true-usd.svg' },
-            { name: 'X', logo: '../../Assets/img/wallet-icons/usd-coin.svg' },
-            { name: 'X', logo: '../../Assets/img/wallet-icons/paxos.svg' },
-            { name: 'X', logo: '../../Assets/img/wallet-icons/gemini-dollar.svg' },
-            { name: 'X', logo: '../../Assets/img/wallet-icons/dai.svg' },
-        ];
     }
 }
 

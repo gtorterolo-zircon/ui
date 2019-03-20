@@ -244,7 +244,7 @@ function MixingHook(props: {
 
     /**
      * Using state variables it renders the asset names in the dropdown
-     * @returns The mapped elements into html <option /> tag
+     * @returns The mapped elements into html <li /> tag
      */
     function renderAssets() {
         const { walletInfo } = props;
@@ -590,7 +590,7 @@ function MixingCreateHook(props: {
                     {
                         // tslint:disable-next-line jsx-no-multiline-js
                         assetsToExchange.size === 0
-                            ? '<span className="whiteText">MIXR as not enough balance!</span>'
+                            ? <span className="MIXR-Input__title">MIXR does not have enough balance!</span>
                             : assetsMap
                     }
                 </React.Fragment>

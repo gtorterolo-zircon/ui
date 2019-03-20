@@ -124,6 +124,7 @@ select {
     outline: none;
     border: none;
     background: #fff;
+    cursor: pointer;
 }
 
 .MIXR-Input__max-button {
@@ -133,6 +134,7 @@ select {
     outline: none;
     border: none;
     background: #fff;
+    cursor: pointer;
 }
 
 /* MIXR-New-Token css */
@@ -242,6 +244,7 @@ input {
     background: white;
     z-index: 1;
     position: inherit;
+    cursor: pointer;
 }
 
 .MIXR-Dropdown__item-inner {
@@ -250,6 +253,7 @@ input {
     line-height: 30px;
     display: grid;
     grid-template-columns: 30px 50px auto;
+    cursor: pointer;
 }
 
 .MIXR-Dropdown__item-inner--no-margin {
@@ -257,18 +261,14 @@ input {
     line-height: 30px;
     display: grid;
     grid-template-columns: 30px 50px auto;
+    cursor: pointer;
 }
 
 
 .MIXR-Dropdown__item {
     border-bottom: 1px solid #d3d3d3;
     height: 30px;
-}
-
-.MIXR-Dropdown__item:hover {
-    background: #10001f;
-    color: #fff;
-    opacity: 0.6;
+    cursor: pointer;
 }
 
 .MIXR-Dropdown-first-item {

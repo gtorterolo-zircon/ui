@@ -16,6 +16,7 @@ import Popup from '../../Components/Popup/Popup';
 
 import MaxButton from '../../Assets/img/button-max.svg';
 import DropDownButton from '../../Assets/img/dropdown-button.svg';
+import whiteDropDownButton from '../../Assets/img/wallet-icons/dropdown-arrow.svg';
 
 import './MIXR.css';
 
@@ -367,6 +368,9 @@ function MixingHook(props: {
                             </div>
                         </div>
                         <ul className="MIXR-Dropdown" hidden={dropdownOpen === false}>
+                            <li className="MIXR-Dropdown-first-item">
+                                <img className="MIXR-Dropdown-image" src={whiteDropDownButton} />
+                            </li>
                             {renderAssets()}
                         </ul>
                     </div>

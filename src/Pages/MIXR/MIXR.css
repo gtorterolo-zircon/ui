@@ -271,6 +271,15 @@ input {
     opacity: 0.6;
 }
 
+.MIXR-Dropdown-first-item {
+    background: #10001f;
+}
+
+.MIXR-Dropdown-image {
+    display: block;
+    margin-left: 196px;
+}
+
 .MIXR-Dropdown__item-image {
     line-height: 30px;
     padding: 5px 0px;

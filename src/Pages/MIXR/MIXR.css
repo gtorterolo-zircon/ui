@@ -298,3 +298,7 @@ input {
     line-height: 30px;
     font-size: 13px;
 }
+
+.white-text {
+    color: #fff;
+}

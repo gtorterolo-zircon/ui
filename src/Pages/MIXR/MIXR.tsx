@@ -344,7 +344,7 @@ function MixingHook(props: {
             const assetLogo = BlockchainGeneric.getTokensLogo()
                 .filter((e) => e.name.toLowerCase() === assetSelect.toLowerCase())[0].logo;
             return (
-                <div className="MIXR-Dropdown__item-inner">
+                <div className="MIXR-Dropdown__item-inner--no-margin">
                     <img className="MIXR-Dropdown__item-image" src={assetLogo} />
                     <p className="MIXR-Dropdown__item-content--bold">{assetToRender.name}</p>
                     <p className="MIXR-Dropdown__item-content">{assetToRender.name}</p>

@@ -17,11 +17,11 @@ import {
 
 import DAIicon from '../Assets/img/wallet-icons/dai.svg';
 import GUSDicon from '../Assets/img/wallet-icons/gemini-dollar.svg';
+import MIXicon from '../Assets/img/popup-images/error-popup-image.svg';
 import PAXicon from '../Assets/img/wallet-icons/paxos.svg';
 import USDTicon from '../Assets/img/wallet-icons/tether-icon.svg';
 import TUSDicon from '../Assets/img/wallet-icons/true-usd.svg';
 import USDCicon from '../Assets/img/wallet-icons/usd-coin.svg';
-import MIXicon from '../Assets/img/wallet-icons/usd-coin.svg';
 
 /**
  * Blockchain generic is a class used to server with some static methods

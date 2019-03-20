@@ -338,7 +338,7 @@ function MixingHook(props: {
 
     function renderSelectedAsset() {
         if (assetSelect === 'default') {
-            return 'Select coin to convert';
+            return 'Select Coin To Convert';
         } else {
             const assetToRender = props.walletInfo.filter((e) => e.name.toLowerCase() === assetSelect)[0];
             const assetLogo = BlockchainGeneric.getTokensLogo()

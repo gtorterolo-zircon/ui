@@ -225,7 +225,6 @@ class Mixing extends Component<IMixingProps, IMixingState> {
      * After the component is built and is updated!
      */
     public componentDidUpdate(prevProps: IMixingProps, prevState: IMixingState, snapshot: any) {
-        console.log('componentDidUpdate', prevProps.selectedAssetFromWallet, this.props.selectedAssetFromWallet);
         if (prevProps.selectedAssetFromWallet !== this.props.selectedAssetFromWallet) {
             this.setState({ assetSelect: this.props.selectedAssetFromWallet });
         }
@@ -331,7 +330,6 @@ class Mixing extends Component<IMixingProps, IMixingState> {
             (e) => e.symbol.toLowerCase() === assetSelect.toLowerCase(),
         )[0].balance;
         const invalidBalance = parseInt(assetAmount, 10) > currentBalance;
-        // console.log('xx', invalidBalance, haveValidFunds, currentBalance, assetAmount);
         if (invalidBalance && haveValidFunds === true) {
             this.setState({ haveValidFunds: false });
         } else if (invalidBalance === false && haveValidFunds === false) {
@@ -455,18 +453,16 @@ interface IMixingCreateHookState {
     transactionStatus: TransactionStatus;
     isMixrLoaded: boolean;
     inputValue: string;
+    assetsToExchange: Map<string, IAsset>;
 }
 // tslint:disable-next-line max-classes-per-file
 class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHookState> {
-    // const [selectedAssetToTranfer, setSelectedAssetToTranfer] = useState('');
-    // const [transactionStatus, setTransactionStatus] = useState(TransactionStatus.None);
-    // const [isMixrLoaded, setIsMixrLoaded] = useState(true);
     private promisesFeesToLoad: [Promise<{ address: string, fee: Promise<number>, input: string }>] = [true as any];
-    // let loading = true;
 
     constructor(props: any) {
         super(props);
         this.state = {
+            assetsToExchange: new Map(),
             inputValue: this.props.inputAmount,
             isMixrLoaded: true,
             selectedAssetToTranfer: '',
@@ -474,11 +470,16 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
         };
         // typescript is a bit stupid and I need to add something to the array
         // since I don't use it, I will also remove it. You bastard!
-        // promisesFeesToLoad.pop();
+        this.promisesFeesToLoad.pop();
+    }
+
+    public componentDidMount() {
+        this.generateDataToRenderExchange(this.props.inputAmount);
     }
 
     public componentDidUpdate(prevProps: IMixingCreateHookProps, prevState: IMixingCreateHookState, snapshot: any) {
         if (prevProps.inputAmount !== this.props.inputAmount) {
+            this.generateDataToRenderExchange(this.props.inputAmount);
             this.setState({ inputValue: this.props.inputAmount });
         }
     }
@@ -539,10 +540,10 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
             IERC20ABI,
             web3,
         } = this.props;
-        const { inputValue } = this.state;
 
         // let's make sure it's empty
-        const assetsToExchange: Map<string, IAsset> = new Map();
+        const assetsToGenerate: Map<string, IAsset> = new Map();
+        this.promisesFeesToLoad = [] as any;
 
         // if mix is selected, the user is redeeming
         // if any other select, is because it's a deposit
@@ -562,7 +563,6 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
             // get contract using abi
             const ERC = new web3.eth.Contract(IERC20ABI, element.address);
             // verify balance
-            console.log('amount', amount);
             if (element.mixrBalance.lt(new BigNumber(amount).multipliedBy(10 ** element.decimals))) {
                 continue;
             }
@@ -579,57 +579,44 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
                     {
                         address: element.address,
                         fee: estimatedFee,
-                        input: inputValue,
+                        input: amount,
                     }),
             );
-            // wait from them all
-            Promise.all(this.promisesFeesToLoad).then((result) => {
-                result.forEach(async (feeForToken) => {
-                    const asset = assetsToExchange.get(feeForToken.address);
-                    if (asset !== undefined && asset.fee === '0') {
-                        const fee = new BigNumber(await feeForToken.fee).dividedBy(10 ** 24);
-                        if (inputAmountAssetGlobal !== feeForToken.input) {
-                            return;
-                        }
-                        asset.fee = fee.toFixed(2);
-                        asset.receive = new BigNumber(asset.total).minus(asset.fee).toFixed(2);
-                        assetsToExchange.set(feeForToken.address, asset);
-                        //
-                        const node = document.getElementById('assetsList');
-                        if (node === null) {
-                            return;
-                        }
-                        const assetsMap: any[] = [];
-                        assetsToExchange.forEach((assetEach: IAsset) => assetsMap.push(this.mixrAsset(assetEach)));
-                        ReactDOM.render(<React.Fragment>{assetsMap}</React.Fragment>, node);
-                    }
-                });
-            });
             // save in a map
-            assetsToExchange.set(element.address, {
+            assetsToGenerate.set(element.address, {
                 assetName: element.symbol,
                 fee: '0',
                 receive: '0',
                 total: amount,
             });
         }
-        if (assetsToExchange.size === 0) {
-            const node = document.getElementById('assetsList');
-            if (node === null) {
-                return;
+        this.setState({ assetsToExchange: assetsToGenerate, isMixrLoaded: true });
+        // wait from them all
+        Promise.all(this.promisesFeesToLoad).then(async (feeForToken) => {
+            const localAssets = assetsToGenerate;
+            // tslint:disable-next-line prefer-for-of
+            for (let x = 0; x < feeForToken.length; x += 1) {
+                const asset = localAssets.get(feeForToken[x].address);
+                if (asset !== undefined && asset.fee === '0') {
+                    const fee = new BigNumber(await feeForToken[x].fee).dividedBy(10 ** 24);
+                    if (inputAmountAssetGlobal !== feeForToken[x].input) {
+                        continue;
+                    }
+                    asset.fee = fee.toFixed(2);
+                    asset.receive = new BigNumber(asset.total).minus(asset.fee).toFixed(2);
+                    localAssets.set(feeForToken[x].address, asset);
+                }
             }
-            ReactDOM.render(<div className="MIXR-Input__title">Not enought tokens available in MIXR</div>, node);
-        }
-        return assetsToExchange;
+            if (inputAmountAssetGlobal === feeForToken[0].input) {
+                this.setState({ assetsToExchange: localAssets, isMixrLoaded: false });
+            }
+        });
     }
 
     public renderCreate = () => {
-        const assetsToExchangeRender = this.generateDataToRenderExchange(this.state.inputValue);
+        const { assetsToExchange } = this.state;
         const assetsMap: any[] = [];
-        if (assetsToExchangeRender === undefined) {
-            return null;
-        }
-        assetsToExchangeRender.forEach((element: IAsset) => assetsMap.push(this.mixrAsset(element)));
+        assetsToExchange.forEach((element: IAsset) => assetsMap.push(this.mixrAsset(element)));
         return <React.Fragment>
             <div className="MIXR-New-Token">
                 <p className="MIXR-New-Token__title">
@@ -640,8 +627,8 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
             <div id="assetsList">
                 {
                     // tslint:disable-next-line jsx-no-multiline-js
-                    assetsToExchangeRender.size === 0
-                        ? <span className="MIXR-Input__title">MIXR does not have enough balance!</span>
+                    assetsToExchange.size === 0
+                        ? <div className="MIXR-Input__title">Not enought tokens available in MIXR!</div>
                         : assetsMap
                 }
             </div>

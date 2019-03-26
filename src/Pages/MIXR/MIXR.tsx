@@ -346,7 +346,7 @@ class Mixing extends Component<IMixingProps, IMixingState> {
             this.setState({ haveValidFunds: false });
         } else if (invalidBalance === false && haveValidFunds === false) {
             this.setState({ haveValidFunds: true });
-        } else if (typingAssetAmount !== true) {
+        } else {
             if (assetSelect === 'mix') {
                 return <MixingCreateHook
                     mixrContract={mixrContract}
@@ -355,6 +355,7 @@ class Mixing extends Component<IMixingProps, IMixingState> {
                     web3={web3}
                     userAccount={userAccount}
                     inputAmount={assetAmount}
+                    typingAssetAmount={typingAssetAmount}
                 />;
             } else if (assetSelect !== 'default') {
                 return <MixingExchangeHook
@@ -459,6 +460,7 @@ interface IMixingCreateHookProps {
     web3: IWeb3Type;
     userAccount: string;
     inputAmount: string;
+    typingAssetAmount: boolean;
 }
 interface IMixingCreateHookState {
     selectedAssetToTranfer: string;
@@ -490,9 +492,12 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
     }
 
     public componentDidUpdate(prevProps: IMixingCreateHookProps, prevState: IMixingCreateHookState, snapshot: any) {
-        if (prevProps.inputAmount !== this.props.inputAmount) {
-            this.generateDataToRenderExchange(this.props.inputAmount);
-            this.setState({ inputValue: this.props.inputAmount });
+        if (prevProps.typingAssetAmount !== this.props.typingAssetAmount &&
+            this.props.typingAssetAmount === false) {
+                if (prevProps.inputAmount !== this.state.inputValue) {
+                    this.generateDataToRenderExchange(this.props.inputAmount);
+                    this.setState({ inputValue: this.props.inputAmount });
+                }
         }
     }
 
@@ -619,7 +624,7 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
                     localAssets.set(feeForToken[x].address, asset);
                 }
             }
-            if (inputAmountAssetGlobal === feeForToken[0].input) {
+            if (feeForToken.length > 1 && inputAmountAssetGlobal === feeForToken[0].input) {
                 this.setState({ assetsToExchange: localAssets, isMixrLoaded: false });
             }
         });

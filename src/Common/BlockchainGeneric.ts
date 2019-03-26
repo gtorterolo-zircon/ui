@@ -107,7 +107,6 @@ class BlockchainGeneric {
             ).dividedBy(10 ** mixrDecimals);
             // same as above!
             const approved: [[string], number] = await mixrContract.getRegisteredTokens();
-            console.log('approved', approved);
             const approvedTokensAddress: [string] = approved[0];
             const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
             // save in a state array to render

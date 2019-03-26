@@ -19,6 +19,7 @@ import DropDownButton from '../../Assets/img/dropdown-button.svg';
 import whiteDropDownButton from '../../Assets/img/wallet-icons/dropdown-arrow.svg';
 
 import './MIXR.css';
+import { render } from 'react-dom';
 
 let rightDepositSelect = '';
 let inputAmountAssetGlobal = '';
@@ -138,7 +139,7 @@ class MIXR extends Component<{}, IMIXRState> {
         }
         let mixingHookeRender;
         if (isMixing) {
-            mixingHookeRender = <MixingHook
+            mixingHookeRender = <Mixing
                 mixrContract={mixrContract}
                 walletInfo={walletInfo}
                 IERC20ABI={IERC20ABI}
@@ -191,7 +192,7 @@ class MIXR extends Component<{}, IMIXRState> {
 
 }
 
-interface IMixingHookProps {
+interface IMixingProps {
     mixrContract: IMIXRContractType;
     walletInfo: IWalletType[];
     IERC20ABI: object;
@@ -199,7 +200,7 @@ interface IMixingHookProps {
     userAccount: string;
     selectedAssetFromWallet: string;
 }
-interface IMixingHookState {
+interface IMixingState {
     assetAmount: string;
     assetSelect: string;
     dropdownOpen: boolean;
@@ -207,7 +208,7 @@ interface IMixingHookState {
     isMixrLoaded: boolean;
 }
 // tslint:disable-next-line max-classes-per-file
-class MixingHook extends Component<IMixingHookProps, IMixingHookState> {
+class Mixing extends Component<IMixingProps, IMixingState> {
 
     constructor(props: any) {
         super(props);
@@ -223,7 +224,7 @@ class MixingHook extends Component<IMixingHookProps, IMixingHookState> {
     /**
      * After the component is built and is updated!
      */
-    public componentDidUpdate(prevProps: IMixingHookProps, prevState: IMixingHookState, snapshot: any) {
+    public componentDidUpdate(prevProps: IMixingProps, prevState: IMixingState, snapshot: any) {
         console.log('componentDidUpdate', prevProps.selectedAssetFromWallet, this.props.selectedAssetFromWallet);
         if (prevProps.selectedAssetFromWallet !== this.props.selectedAssetFromWallet) {
             this.setState({ assetSelect: this.props.selectedAssetFromWallet });
@@ -441,50 +442,71 @@ class MixingHook extends Component<IMixingHookProps, IMixingHookState> {
     }
 }
 
-function MixingCreateHook(props: {
-    mixrContract: IMIXRContractType,
-    walletInfo: IWalletType[],
-    IERC20ABI: object,
-    web3: IWeb3Type,
-    userAccount: string,
-    inputAmount: string,
-}) {
-    const [selectedAssetToTranfer, setSelectedAssetToTranfer] = useState('');
-    const [transactionStatus, setTransactionStatus] = useState(TransactionStatus.None);
-    const [isMixrLoaded, setIsMixrLoaded] = useState(true);
-    const assetsToExchange: Map<string, IAsset> = new Map();
-    const promisesFeesToLoad: [Promise<{ address: string, fee: Promise<number>, input: string }>] = [true as any];
-    let loading = true;
+interface IMixingCreateHookProps {
+    mixrContract: IMIXRContractType;
+    walletInfo: IWalletType[];
+    IERC20ABI: object;
+    web3: IWeb3Type;
+    userAccount: string;
+    inputAmount: string;
+}
+interface IMixingCreateHookState {
+    selectedAssetToTranfer: string;
+    transactionStatus: TransactionStatus;
+    isMixrLoaded: boolean;
+    inputValue: string;
+}
+// tslint:disable-next-line max-classes-per-file
+class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHookState> {
+    // const [selectedAssetToTranfer, setSelectedAssetToTranfer] = useState('');
+    // const [transactionStatus, setTransactionStatus] = useState(TransactionStatus.None);
+    // const [isMixrLoaded, setIsMixrLoaded] = useState(true);
+    private promisesFeesToLoad: [Promise<{ address: string, fee: Promise<number>, input: string }>] = [true as any];
+    // let loading = true;
 
-    useEffect(() => {
+    constructor(props: any) {
+        super(props);
+        this.state = {
+            inputValue: this.props.inputAmount,
+            isMixrLoaded: true,
+            selectedAssetToTranfer: '',
+            transactionStatus: TransactionStatus.None,
+        };
         // typescript is a bit stupid and I need to add something to the array
         // since I don't use it, I will also remove it. You bastard!
-        promisesFeesToLoad.pop();
-    });
+        // promisesFeesToLoad.pop();
+    }
+
+    public componentDidUpdate(prevProps: IMixingCreateHookProps, prevState: IMixingCreateHookState, snapshot: any) {
+        if (prevProps.inputAmount !== this.props.inputAmount) {
+            this.setState({ inputValue: this.props.inputAmount });
+        }
+    }
 
     /**
      * Close transaction related pop up
      */
-    function closePopUp() {
-        setTransactionStatus(TransactionStatus.None);
+    public closePopUp = () => {
+        this.setState({ transactionStatus: TransactionStatus.None });
     }
 
     /**
      * Renders popup according to component state
      */
-    function renderPopUp() {
+    public renderPopUp = () => {
+        const { transactionStatus } = this.state;
         switch (transactionStatus) {
             case TransactionStatus.Pending:
-                return <Popup status="inProgess" clickClose={closePopUp} />;
+                return <Popup status="inProgess" clickClose={this.closePopUp} />;
             case TransactionStatus.Success:
-                return <Popup status="success" clickClose={closePopUp} />;
+                return <Popup status="success" clickClose={this.closePopUp} />;
             case TransactionStatus.Fail:
-                return <Popup status="error" clickClose={closePopUp} />;
+                return <Popup status="error" clickClose={this.closePopUp} />;
         }
     }
 
-    function filterAssetHandler(key: string) {
-        setSelectedAssetToTranfer(key);
+    public filterAssetHandler = (key: string) => {
+        this.setState({ selectedAssetToTranfer: key });
     }
 
     /**
@@ -493,7 +515,7 @@ function MixingCreateHook(props: {
      * @param asset asset info being rendered
      * @returns a MIXRAsset to be put in html
      */
-    function mixrAsset(asset: IAsset) {
+    public mixrAsset = (asset: IAsset) => {
         return <MIXRAsset
             key={asset.assetName}
             assetName={asset.assetName}
@@ -501,7 +523,7 @@ function MixingCreateHook(props: {
             fee={(asset.fee === '0') ? ('...') : (asset.fee)}
             total={asset.total}
             // tslint:disable-next-line jsx-no-lambda
-            click={() => filterAssetHandler(asset.assetName)}
+            click={() => this.filterAssetHandler(asset.assetName)}
         />;
     }
 
@@ -510,16 +532,17 @@ function MixingCreateHook(props: {
      * @param amount amount use in exchange (from input)
      * @returns Returns a promise with an array of MIXRComponents
      */
-    function generateDataToRenderExchange(amount: string) {
+    public generateDataToRenderExchange = (amount: string) => {
         const {
             mixrContract,
             walletInfo,
             IERC20ABI,
             web3,
-        } = props;
+        } = this.props;
+        const { inputValue } = this.state;
 
         // let's make sure it's empty
-        assetsToExchange.clear();
+        const assetsToExchange: Map<string, IAsset> = new Map();
 
         // if mix is selected, the user is redeeming
         // if any other select, is because it's a deposit
@@ -539,6 +562,7 @@ function MixingCreateHook(props: {
             // get contract using abi
             const ERC = new web3.eth.Contract(IERC20ABI, element.address);
             // verify balance
+            console.log('amount', amount);
             if (element.mixrBalance.lt(new BigNumber(amount).multipliedBy(10 ** element.decimals))) {
                 continue;
             }
@@ -550,16 +574,16 @@ function MixingCreateHook(props: {
                 feeType,
             );
             // save promises and then async
-            promisesFeesToLoad.push(
+            this.promisesFeesToLoad.push(
                 Promise.resolve(
                     {
                         address: element.address,
                         fee: estimatedFee,
-                        input: props.inputAmount,
+                        input: inputValue,
                     }),
             );
             // wait from them all
-            Promise.all(promisesFeesToLoad).then((result) => {
+            Promise.all(this.promisesFeesToLoad).then((result) => {
                 result.forEach(async (feeForToken) => {
                     const asset = assetsToExchange.get(feeForToken.address);
                     if (asset !== undefined && asset.fee === '0') {
@@ -576,7 +600,7 @@ function MixingCreateHook(props: {
                             return;
                         }
                         const assetsMap: any[] = [];
-                        assetsToExchange.forEach((assetEach: IAsset) => assetsMap.push(mixrAsset(assetEach)));
+                        assetsToExchange.forEach((assetEach: IAsset) => assetsMap.push(this.mixrAsset(assetEach)));
                         ReactDOM.render(<React.Fragment>{assetsMap}</React.Fragment>, node);
                     }
                 });
@@ -596,14 +620,16 @@ function MixingCreateHook(props: {
             }
             ReactDOM.render(<div className="MIXR-Input__title">Not enought tokens available in MIXR</div>, node);
         }
+        return assetsToExchange;
     }
 
-    function renderCreate() {
-        const { inputAmount } = props;
-        if (loading) {
-            generateDataToRenderExchange(inputAmount);
-            loading = false;
+    public renderCreate = () => {
+        const assetsToExchangeRender = this.generateDataToRenderExchange(this.state.inputValue);
+        const assetsMap: any[] = [];
+        if (assetsToExchangeRender === undefined) {
+            return null;
         }
+        assetsToExchangeRender.forEach((element: IAsset) => assetsMap.push(this.mixrAsset(element)));
         return <React.Fragment>
             <div className="MIXR-New-Token">
                 <p className="MIXR-New-Token__title">
@@ -611,7 +637,14 @@ function MixingCreateHook(props: {
                         <span className="MIXR-New-Token__title--light"> NEW MIX TOKEN</span>
                 </p>
             </div>
-            <div id="assetsList" />
+            <div id="assetsList">
+                {
+                    // tslint:disable-next-line jsx-no-multiline-js
+                    assetsToExchangeRender.size === 0
+                        ? <span className="MIXR-Input__title">MIXR does not have enough balance!</span>
+                        : assetsMap
+                }
+            </div>
         </React.Fragment >;
     }
 
@@ -619,20 +652,23 @@ function MixingCreateHook(props: {
      * Called when onClick to reset selection
      * Cleans selection variables values
      */
-    function changeSelection() {
-        setSelectedAssetToTranfer('');
+    public changeSelection = () => {
+        this.setState({ selectedAssetToTranfer: '' });
     }
 
     /**
      * Method called when onClick from confirm button transaction
      */
-    function confirmTransaction() {
+    public confirmTransaction = () => {
         const {
             mixrContract,
             walletInfo,
             userAccount,
-            inputAmount,
-        } = props;
+        } = this.props;
+        const {
+            inputValue,
+            selectedAssetToTranfer,
+        } = this.state;
         // otherwise it's a redeem action
         // get address using of selected token name
         const assetAddress = (
@@ -642,7 +678,7 @@ function MixingCreateHook(props: {
         ).address;
         // define amount
         // TODO: needs to use convertTokenAmount method
-        const amountInBasketWei = new BigNumber(inputAmount).multipliedBy(10 ** 24).toString(10);
+        const amountInBasketWei = new BigNumber(inputValue).multipliedBy(10 ** 24).toString(10);
         // approve transaction
         mixrContract.approve(
             mixrContract.address,
@@ -652,7 +688,7 @@ function MixingCreateHook(props: {
             },
         ).then(async () => {
             // redeem
-            setTransactionStatus(TransactionStatus.Pending);
+            this.setState({ transactionStatus: TransactionStatus.Pending });
             mixrContract.redeemMIX(
                 assetAddress,
                 amountInBasketWei,
@@ -660,9 +696,9 @@ function MixingCreateHook(props: {
                     from: userAccount,
                 },
             ).then(() => {
-                setTransactionStatus(TransactionStatus.Success);
+                this.setState({ transactionStatus: TransactionStatus.Success });
             }).catch(() => {
-                setTransactionStatus(TransactionStatus.Fail);
+                this.setState({ transactionStatus: TransactionStatus.Fail });
             });
         });
     }
@@ -670,28 +706,31 @@ function MixingCreateHook(props: {
     /**
      * Render the selection choice after select one option
      */
-    function renderSelectionChoice() {
+    public renderSelectionChoice = () => {
+        const { selectedAssetToTranfer } = this.state;
         if (selectedAssetToTranfer === '') {
             return null;
         }
         return <div className="MIXR__selection">
             <p
                 className="MIXR-Input__title MIXR-Input__title--vertical-align"
-                onClick={changeSelection}
+                onClick={this.changeSelection}
             >
                 CHANGE SELECTION
             </p>
-            <button className="MIXR__selection-button" onClick={confirmTransaction}>CONFIRM</button>
+            <button className="MIXR__selection-button" onClick={this.confirmTransaction}>CONFIRM</button>
         </div>;
     }
 
-    return (
-        <React.Fragment>
-            {renderCreate()}
-            {renderSelectionChoice()}
-            {renderPopUp()}
-        </React.Fragment>
-    );
+    public render() {
+        return (
+            <React.Fragment>
+                {this.renderCreate()}
+                {this.renderSelectionChoice()}
+                {this.renderPopUp()}
+            </React.Fragment>
+        );
+    }
 }
 
 function MixingExchangeHook(props: {

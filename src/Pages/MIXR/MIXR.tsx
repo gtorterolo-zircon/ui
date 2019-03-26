@@ -202,6 +202,7 @@ interface IMixingProps {
 }
 interface IMixingState {
     assetAmount: string;
+    typingAssetAmount: boolean;
     assetSelect: string;
     dropdownOpen: boolean;
     haveValidFunds: boolean;
@@ -218,6 +219,7 @@ class Mixing extends Component<IMixingProps, IMixingState> {
             dropdownOpen: false,
             haveValidFunds: true,
             isMixrLoaded: true,
+            typingAssetAmount: false,
         };
     }
 
@@ -236,7 +238,12 @@ class Mixing extends Component<IMixingProps, IMixingState> {
     public handleChange = (event: any) => {
         if (event.target.name === 'assetAmount') {
             inputAmountAssetGlobal = event.target.value;
-            this.setState({ assetAmount: event.target.value });
+            this.setState({ assetAmount: event.target.value, typingAssetAmount: true });
+            setTimeout((newAssetAmount: string) => {
+                if (inputAmountAssetGlobal === newAssetAmount) {
+                    this.setState({ typingAssetAmount: false });
+                }
+            }, 500, event.target.value);
         }
     }
 
@@ -322,7 +329,12 @@ class Mixing extends Component<IMixingProps, IMixingState> {
             web3,
             userAccount,
         } = this.props;
-        const { assetAmount, assetSelect, haveValidFunds } = this.state;
+        const {
+            assetAmount,
+            assetSelect,
+            haveValidFunds,
+            typingAssetAmount,
+        } = this.state;
         if (assetAmount === undefined || assetAmount.length < 1) {
             return null;
         }
@@ -334,7 +346,7 @@ class Mixing extends Component<IMixingProps, IMixingState> {
             this.setState({ haveValidFunds: false });
         } else if (invalidBalance === false && haveValidFunds === false) {
             this.setState({ haveValidFunds: true });
-        } else {
+        } else if (typingAssetAmount !== true) {
             if (assetSelect === 'mix') {
                 return <MixingCreateHook
                     mixrContract={mixrContract}

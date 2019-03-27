@@ -30,7 +30,7 @@
     color: #00d0de;
     font-weight: 300;
     opacity: 0.6;
-
+    cursor: pointer;
 }
 
 
@@ -95,5 +95,10 @@
     border-radius: 3px;
     font-weight: 500;
     background: #64e36b;
+    cursor: pointer;
+}
+
+.Profile__button:hover {
+    background: #adf0b0;
 }
 

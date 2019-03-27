@@ -725,7 +725,7 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
         }
         return <div className="MIXR__selection">
             <p
-                className="MIXR-Input__title MIXR-Input__title--vertical-align"
+                className="MIXR-Input__title MIXR-Input__title--vertical-align MIXR-Input--change-selection"
                 onClick={this.changeSelection}
             >
                 CHANGE SELECTION

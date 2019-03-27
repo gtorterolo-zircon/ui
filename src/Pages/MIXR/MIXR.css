@@ -66,6 +66,10 @@
     opacity: 0.6;
 }
 
+.MIXR-Input--change-selection:hover {
+    color: #92cdd1;
+}
+
 .MIXR-Input__title--vertical-align {
     line-height: 36px;
     cursor: pointer;
@@ -233,6 +237,10 @@ input {
     border-radius: 3px;
     font-size: 13px;
     cursor: pointer;
+}
+
+.MIXR__selection-button:hover {
+    background: #adf0b0;
 }
 
 

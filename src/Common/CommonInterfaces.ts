@@ -48,7 +48,7 @@ export interface IWeb3Type {
  */
 export interface IERC20Type {
     (address: string): IERC20Type;
-    decimals: () => Promise<number>;
+    decimals: () => Promise<BigNumber>;
     balanceOf: (user: string) => Promise<number>;
 }
 /**

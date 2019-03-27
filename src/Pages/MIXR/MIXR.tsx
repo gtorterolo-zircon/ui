@@ -631,9 +631,17 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
     }
 
     public renderCreate = () => {
-        const { assetsToExchange } = this.state;
+        const { assetsToExchange, selectedAssetToTranfer } = this.state;
         const assetsMap: any[] = [];
-        assetsToExchange.forEach((element: IAsset) => assetsMap.push(this.mixrAsset(element)));
+        if (selectedAssetToTranfer !== '') {
+            assetsToExchange.forEach((element: IAsset) => {
+                if (element.assetName === selectedAssetToTranfer) {
+                    assetsMap.push(this.mixrAsset(element));
+                }
+            });
+        } else {
+            assetsToExchange.forEach((element: IAsset) => assetsMap.push(this.mixrAsset(element)));
+        }
         return <React.Fragment>
             <div className="MIXR-New-Token">
                 <p className="MIXR-New-Token__title">

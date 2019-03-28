@@ -186,31 +186,27 @@ function ApproveHook(
                     APPROVE
                 </p>
                 <br />
-                <p className="Profile-Input__title">PUBLIC ADDRESSES TO APPROVE</p>
-
+                <p className="Profile-Input__title Profile-Input__title--padding">PUBLIC ADDRESSES TO APPROVE</p>
+                <input
+                    className="Profile__input-approvals"
+                    type="text"
+                    placeholder="Address to approve"
+                    name="addressToApprove"
+                    value={addressToApprove}
+                    onChange={handleChange}
+                    required={true}
+                />
+                <p className="Profile-Input__title Profile-Input__title--padding">AMOUNT TO APPROVE</p>
+                <input
+                    className="Profile__input-approvals"
+                    type="number"
+                    placeholder="Amount to approve"
+                    name="amountToApprove"
+                    value={amountToApprove}
+                    onChange={handleChange}
+                    required={true}
+                />
                 <div className="Profile__inputs-grid">
-                    <input
-                        className="Profile__input-approvals"
-                        type="text"
-                        placeholder="Address to approve"
-                        name="addressToApprove"
-                        value={addressToApprove}
-                        onChange={handleChange}
-                        required={true}
-                    />
-                    <div>
-                        <p className="Profile-Input__title Profile-Input__title--padding">AMOUNT TO APPROVE</p>
-                        <input
-                            className="Profile__input-approvals"
-                            type="number"
-                            placeholder="Amount to approve"
-                            name="amountToApprove"
-                            value={amountToApprove}
-                            onChange={handleChange}
-                            required={true}
-                        />
-                    </div>
-                    <div />
                     <div />
                     <div className="Profile__button-grid">
                         <input className="Profile__button" type="submit" value="SUBMIT" />

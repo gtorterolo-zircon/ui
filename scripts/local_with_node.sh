@@ -31,8 +31,12 @@ start_ganache() {
 
     # move to contracts folder so it can deploy the contracts to the network
     cd ../Contracts
+    # verify if the ../chaindata folder exists and if not, create it, to store chain data
+    if [[ ! -e ../chaindata ]]; then
+        mkdir ../chaindata
+    fi
     # run ganache-cli and put it on background so we can use the shell to deploy the contracts
-    ganache-cli --host 0.0.0.0 --port "$ganache_port" "${accounts[@]}" &
+    npx ganache-cli --mnemonic "rose current recycle double floor door scare dog lake claim rate lemon original fix better" --networkId "201903" --db="../chaindata" --host 0.0.0.0 --port "$ganache_port" "${accounts[@]}" &
     # get pid of ganache-cli
     export GANACHE_SHELL_PID=$!
     # wait for 10 seconds to let ganache start
@@ -51,7 +55,19 @@ if [[ $DEPLOY_ACTION = "start" ]]; then
     else
         echo "Starting our own ganache instance"
         start_ganache
-        truffle deploy --network development
+        # verify if it's the first time running this container
+        CONTAINER_ALREADY_STARTED="CONTAINER_ALREADY_STARTED_PLACEHOLDER"
+        if [ ! -e $CONTAINER_ALREADY_STARTED ]; then
+            touch $CONTAINER_ALREADY_STARTED
+            # deploy contracts
+            npx truffle deploy --network development
+            # move to ui folder to perform extra actions
+            cd ../ui
+            # build the ui (needs to be after deploy contracts)
+            npm run build
+            # deploy test tokens
+            npm run test-config
+        fi
     fi
 # if we are running the script in stop mode
 elif [[ $DEPLOY_ACTION = "stop" ]]; then

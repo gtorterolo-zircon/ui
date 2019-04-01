@@ -9,7 +9,7 @@
         "yarn": ">= 1.10.0"
     },
     "scripts": {
-        "docker": "npm run deploy-contracts && npm run start",
+        "docker": "npm run deploy-contracts && npm run live",
         "deploy-network": "scripts/local_with_docker.sh",
         "deploy-contracts": "DEPLOY_ACTION=start scripts/local_with_node.sh",
         "test-config": "node -r esm __test-config__/config.js",
@@ -17,10 +17,12 @@
         "pretest:final": "npm run deploy-contracts && npm run test-config",
         "test:final": "react-scripts test --env=jsdom --coverage",
         "posttest:final": "DEPLOY_ACTION=stop scripts/local_with_node.sh",
+        "debug:chrome": "google-chrome --remote-debugging-port=9222",
         "docs": "typedoc --out docs ./src",
         "start": "react-scripts start",
         "build": "react-scripts build",
         "eject": "react-scripts eject",
+        "live": "serve -s build -l 3000",
         "link-contracts": "run-script-os",
         "link-contracts:linux:darwin": "cd src && ln -s ../../Contracts/build/contracts contracts",
         "link-contracts:win32": "cd src && mklink \\D contracts ..\\..\\Contracts\\build\\contracts"
@@ -35,6 +37,7 @@
         "react": "^16.8.2",
         "react-copy-to-clipboard": "^5.0.1",
         "react-dom": "^16.8.2",
+        "react-responsive-carousel": "^3.1.47",
         "react-router-dom": "^4.3.1",
         "react-scripts": "2.1.5",
         "react-slick": "^0.23.2",
@@ -43,7 +46,8 @@
         "truffle-contract": "4.0.5",
         "typescript": "3.3.3",
         "web3": "1.0.0-beta.35",
-        "winston": "^3.2.1"
+        "winston": "^3.2.1",
+        "serve": "10.1.2"
     },
     "devDependencies": {
         "enzyme": "^3.9.0",

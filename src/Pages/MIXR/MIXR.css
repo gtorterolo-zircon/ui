@@ -56,7 +56,18 @@
     color: #00d0de;
     font-weight: 300;
     opacity: 0.6;
+}
 
+.MIXR-Input__title--big {
+    font-size: 18px;
+    letter-spacing: 1.4px;
+    color: #00d0de;
+    font-weight: 300;
+    opacity: 0.6;
+}
+
+.MIXR-Input--change-selection:hover {
+    color: #92cdd1;
 }
 
 .MIXR-Input__title--vertical-align {
@@ -79,9 +90,20 @@ select {
     background: #fff;
 }
 
+.MIXR-Input__name-amount {
+    width: 96%;
+    height: 29px;
+    line-height: 29px;
+    font-size: 12px;
+    border-radius: 2px;
+    border: none;
+    background: #fff;
+    padding-left: 10px;
+}
+
 .MIXR-Input__coin-amount {
     width: 95%;
-    height: 26px;
+    height: 27px;
     border-radius: 2px;
     border: none;
     background: #fff;
@@ -91,6 +113,7 @@ select {
 
 .MIXR-Input__coin-amount-container {
     position: relative;
+    height: 29px;
 }
 
 .MIXR-Input__coin-option-container {
@@ -98,13 +121,24 @@ select {
     background: #fff;
 }
 
+.MIXR-Input__down-button {
+    position: absolute;
+    top: 0;
+    right: 18px;
+    outline: none;
+    border: none;
+    background: #fff;
+    cursor: pointer;
+}
+
 .MIXR-Input__max-button {
     position: absolute;
-    top: 6px;
+    top: 8px;
     right: 0;
     outline: none;
     border: none;
     background: #fff;
+    cursor: pointer;
 }
 
 /* MIXR-New-Token css */
@@ -131,7 +165,7 @@ select {
 .MIXR-Asset__grid {
     position: relative;
     display: grid;
-    grid-template-columns: 1fr 1fr 52px 1fr;
+    grid-template-columns: 120px 1fr 52px 1fr;
     max-width: 70%;
     grid-column-gap: 20px;
     padding: 10px 0px;
@@ -203,4 +237,76 @@ input {
     border-radius: 3px;
     font-size: 13px;
     cursor: pointer;
+}
+
+.MIXR__selection-button:hover {
+    background: #adf0b0;
+}
+
+
+/* */
+
+.MIXR-Dropdown {
+    margin-top: 20px;
+    border-radius: 3px;
+    background: white;
+    z-index: 1;
+    position: inherit;
+    cursor: pointer;
+}
+
+.MIXR-Dropdown__item-inner {
+    padding-left: 10px;
+    height: 30px;
+    line-height: 30px;
+    display: grid;
+    grid-template-columns: 30px 50px auto;
+    cursor: pointer;
+}
+
+.MIXR-Dropdown__item-inner--no-margin {
+    height: 30px;
+    line-height: 30px;
+    display: grid;
+    grid-template-columns: 30px 50px auto;
+    cursor: pointer;
+}
+
+
+.MIXR-Dropdown__item {
+    border-bottom: 1px solid #d3d3d3;
+    height: 30px;
+    cursor: pointer;
+}
+
+.MIXR-Dropdown-first-item {
+    background: #10001f;
+}
+
+.MIXR-Dropdown-image {
+    display: block;
+    margin-left: 196px;
+}
+
+.MIXR-Dropdown__item-image {
+    line-height: 30px;
+    padding: 5px 0px;
+    height: 22px;
+}
+
+.MIXR-Dropdown__item-content {
+    margin-right: 6px;
+    line-height: 30px;
+    font-size: 13px;
+}
+
+.MIXR-Dropdown__item-content--bold {
+    font-weight: 700;
+    margin-right: 4px;
+    line-height: 30px;
+    font-size: 13px;
+}
+
+.white-text {
+    color: #fff;
 }

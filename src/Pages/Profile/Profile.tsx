@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import React, { Component, useEffect, useState } from 'react';
+import React, { Component, useState } from 'react';
 
 import BlockchainGeneric from '../../Common/BlockchainGeneric';
 import { IBlockchainState, IMIXRContractType, IWeb3Type } from '../../Common/CommonInterfaces';
@@ -24,9 +24,9 @@ interface IProfile extends IBlockchainState {
     action: TypeAction;
 }
 /**
- * Class Admin
- * @dev This is the skeleton for W13, also known as Special Wallet
- * It's main objective is to handle governators requests.
+ * Class Profile
+ * @dev This class does the work for W9 and W19 requirements
+ * Just like a private wallet.
  */
 class Profile extends Component<{}, IProfile> {
     /**
@@ -135,37 +135,8 @@ class Profile extends Component<{}, IProfile> {
 function ApproveHook(
     props: { mixrContract: IMIXRContractType, userAccount: string, IERC20ABI: object, web3: IWeb3Type },
 ) {
-    const [load, setLoad] = useState(false);
     const [addressToApprove, setAddressToApprove] = useState('');
     const [amountToApprove, setAmountToApprove] = useState('');
-    const [inTokenToApprove, setInTokenToApprove] = useState('default');
-    const [availableTokens, setAvailableTokens] = useState([{}] as [{ address: string, name: string }]);
-
-    useEffect(() => {
-        if (load === false) {
-            getAvailableTokens().then((result) => {
-                setAvailableTokens(result);
-            });
-            setLoad(true);
-        }
-    });
-
-    async function getAvailableTokens() {
-        const { mixrContract } = props;
-
-        const tokensAvailable: [{ address: string, name: string }] = [{} as any];
-        tokensAvailable.pop();
-        const approved: [[string], number] = await mixrContract.getRegisteredTokens();
-        const approvedTokensAddress: [string] = approved[0];
-        const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
-        // iterate over accepted tokens to add them of state component for rendering
-        for (let i = 0; i < totalApprovedTokens; i += 1) {
-            // get token info
-            const name = await mixrContract.getName(approvedTokensAddress[i]);
-            tokensAvailable.push({ address: approvedTokensAddress[i], name });
-        }
-        return tokensAvailable;
-    }
 
     /**
      * Handle interface user changes
@@ -175,8 +146,6 @@ function ApproveHook(
             setAddressToApprove(event.target.value);
         } else if (event.target.name === 'amountToApprove') {
             setAmountToApprove(event.target.value);
-        } else if (event.target.name === 'inTokenToApprove') {
-            setInTokenToApprove(event.target.value);
         }
         event.preventDefault();
     }
@@ -191,12 +160,15 @@ function ApproveHook(
             IERC20ABI,
             web3,
         } = props;
-        const ERC = new web3.eth.Contract(IERC20ABI, inTokenToApprove);
+        const ERC = new web3.eth.Contract(IERC20ABI, mixrContract.address);
         try {
-            mixrContract.getDecimals(inTokenToApprove).then((decimals: string) => {
+            // TODO: working, but we might want a better way of doing it
+            // this prevents bignumber to exponentiate and result int something like 1e+23
+            BigNumber.config({ EXPONENTIAL_AT: 36 });
+            mixrContract.decimals().then((decimals: BigNumber) => {
                 ERC.methods.approve(
                     addressToApprove,
-                    new BigNumber(amountToApprove).multipliedBy(10 ** parseInt(decimals, 10)).toString(),
+                    new BigNumber(amountToApprove).multipliedBy(10 ** new BigNumber(decimals).toNumber()).toString(),
                 ).send({
                     from: userAccount,
                 });
@@ -207,20 +179,6 @@ function ApproveHook(
         event.preventDefault();
     }
 
-    /**
-     * Render available tokens from state
-     */
-    function renderAvailableTokens() {
-        if (availableTokens[0].address === undefined) {
-            return null;
-        }
-        return availableTokens.map((token) => {
-            return (
-                <option value={token.address} key={token.address}>{props.web3.utils.hexToUtf8(token.name)}</option>
-            );
-        });
-    }
-
     return (
         <React.Fragment>
             <form onSubmit={handleSubmit}>
@@ -228,37 +186,28 @@ function ApproveHook(
                     APPROVE
                 </p>
                 <br />
-                <p className="Profile-Input__title">PUBLIC ADDRESSES TO APPROVE</p>
-
+                <p className="Profile-Input__title Profile-Input__title--padding">PUBLIC ADDRESSES TO APPROVE</p>
+                <input
+                    className="Profile__input-approvals"
+                    type="text"
+                    placeholder="Address to approve"
+                    name="addressToApprove"
+                    value={addressToApprove}
+                    onChange={handleChange}
+                    required={true}
+                />
+                <p className="Profile-Input__title Profile-Input__title--padding">AMOUNT TO APPROVE</p>
+                <input
+                    className="Profile__input-approvals"
+                    type="number"
+                    placeholder="Amount to approve"
+                    name="amountToApprove"
+                    value={amountToApprove}
+                    onChange={handleChange}
+                    required={true}
+                />
                 <div className="Profile__inputs-grid">
-                    <select
-                        value={inTokenToApprove}
-                        name="inTokenToApprove"
-                        onChange={handleChange}
-                        required={true}
-                    >
-                        <option disabled={true} value="default">Select Token</option>
-                        {renderAvailableTokens()}
-                    </select>
-                    <input
-                        className="Profile__input-approvals"
-                        type="text"
-                        placeholder="Address to approve"
-                        name="addressToApprove"
-                        value={addressToApprove}
-                        onChange={handleChange}
-                        required={true}
-                    />
-                    <p className="Profile-Input__title Profile-Input__title--padding">AMOUNT TO APPROVE</p>
-                    <input
-                        className="Profile__input-approvals"
-                        type="number"
-                        placeholder="Amount to approve"
-                        name="amountToApprove"
-                        value={amountToApprove}
-                        onChange={handleChange}
-                        required={true}
-                    />
+                    <div />
                     <div className="Profile__button-grid">
                         <input className="Profile__button" type="submit" value="SUBMIT" />
                     </div>
@@ -273,35 +222,7 @@ function ApproveHook(
  */
 function AllowanceHook(props: any) {
     const [addressToVerify, setAddressToVerify] = useState('');
-    const [inTokenToApprove, setInTokenToApprove] = useState('default');
-    const [load, setLoad] = useState(false);
-    const [availableTokens, setAvailableTokens] = useState([{}] as [{ address: string, name: string }]);
 
-    useEffect(() => {
-        if (load === false) {
-            getAvailableTokens().then((result) => {
-                setAvailableTokens(result);
-            });
-            setLoad(true);
-        }
-    });
-
-    async function getAvailableTokens() {
-        const { mixrContract } = props;
-
-        const tokensAvailable: [{ address: string, name: string }] = [{} as any];
-        tokensAvailable.pop();
-        const approved: [[string], number] = await mixrContract.getRegisteredTokens();
-        const approvedTokensAddress: [string] = approved[0];
-        const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
-        // iterate over accepted tokens to add them of state component for rendering
-        for (let i = 0; i < totalApprovedTokens; i += 1) {
-            // get token info
-            const name = await mixrContract.getName(approvedTokensAddress[i]);
-            tokensAvailable.push({ address: approvedTokensAddress[i], name });
-        }
-        return tokensAvailable;
-    }
 
     /**
      * Handle interface user changes
@@ -309,8 +230,6 @@ function AllowanceHook(props: any) {
     function handleChange(event: any) {
         if (event.target.name === 'addressToVerify') {
             setAddressToVerify(event.target.value);
-        } else if (event.target.name === 'inTokenToApprove') {
-            setInTokenToApprove(event.target.value);
         }
         event.preventDefault();
     }
@@ -326,34 +245,17 @@ function AllowanceHook(props: any) {
             web3,
         } = props;
         try {
-            const ERC = new web3.eth.Contract(IERC20ABI, inTokenToApprove);
+            const ERC = new web3.eth.Contract(IERC20ABI, mixrContract.address);
             ERC.methods.allowance(userAccount, addressToVerify).call().then(async (allowed: string) => {
                 // TODO: let's have a proper popup
-                alert(
-                    new BigNumber(allowed)
-                        .dividedBy(
-                            10 ** new BigNumber(await mixrContract.getDecimals(inTokenToApprove)).toNumber()
-                        ).toNumber(),
-                );
+                alert(new BigNumber(allowed).dividedBy(10 **
+                    new BigNumber(await mixrContract.decimals()).toNumber(),
+                ).toNumber());
             });
         } catch (e) {
-            alert('Token is not registered!');
+            alert('Some error occurred!');
         }
         event.preventDefault();
-    }
-
-    /**
-     * Render available tokens from state
-     */
-    function renderAvailableTokens() {
-        if (availableTokens[0].address === undefined) {
-            return null;
-        }
-        return availableTokens.map((token) => {
-            return (
-                <option value={token.address} key={token.address}>{props.web3.utils.hexToUtf8(token.name)}</option>
-            );
-        });
     }
 
     return (
@@ -363,18 +265,11 @@ function AllowanceHook(props: any) {
             </p>
             <br />
             <form onSubmit={handleSubmit}>
-                <select
-                    className="Profile__input-approvals--full-width"
-                    value={inTokenToApprove}
-                    name="inTokenToApprove"
-                    onChange={handleChange}
-                    required={true}
-                >
-                    <option disabled={true} value="default">Select Token</option>
-                    {renderAvailableTokens()}
-                </select>
+                <p className="Profile-Input__title Profile-Input__title--padding">
+                    ADDRESS TO VERIFY
+                </p>
                 <input
-                    className="Profile__input-approvals--full-width"
+                    className="Profile__input-approvals"
                     type="text"
                     name="addressToVerify"
                     value={addressToVerify}
@@ -382,6 +277,7 @@ function AllowanceHook(props: any) {
                     placeholder="Address to verify"
                 />
                 <div className="Profile__inputs-grid">
+                    <div />
                     <div className="Profile__button-grid">
                         <input className="Profile__button" type="submit" value="SUBMIT" />
                     </div>

@@ -40,7 +40,7 @@ start_ganache() {
         rm -rf ./build
     fi
     #deploy the contracts
-    npx truffle deploy --network development
+    npm run deploy:ganache
 }
 
 if ganache_running; then

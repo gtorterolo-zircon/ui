@@ -41,6 +41,7 @@
     font-weight: 300;
 }
 
+
 .Wallet__grid-item--small {
     font-size: 10px;
     color: #958ca0;
@@ -51,6 +52,7 @@
 .Wallet__grid-button {
     display: block;
     padding-left: 12px;
+    cursor: pointer;
 }
 
 

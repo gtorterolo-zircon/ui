@@ -1,3 +1,13 @@
+import BigNumber from 'bignumber.js';
+
+/**
+ * Defenition of fee types
+ */
+export enum FeeType {
+   REDEMPTION = -1,
+   TRANSFER = 0,
+   DEPOSIT = 1,
+}
 /**
  * Interface for IERC20 definition
  * using web3.js package
@@ -17,6 +27,7 @@ export interface IERC20TypeDefault {
  * Interfaces for web3 definition
  */
 interface IWeb3EthContract {
+    // tslint:disable-next-line callable-types
     new(jsonInterface: object, address: string, options?: object): IERC20TypeDefault;
 }
 interface IWeb3Eth {
@@ -37,7 +48,7 @@ export interface IWeb3Type {
  */
 export interface IERC20Type {
     (address: string): IERC20Type;
-    decimals: () => Promise<number>;
+    decimals: () => Promise<BigNumber>;
     balanceOf: (user: string) => Promise<number>;
 }
 /**
@@ -47,6 +58,9 @@ export interface IWalletType {
     name: string;
     address: string;
     balance: number;
+    decimals: number;
+    mixrBalance: BigNumber;
+    symbol: string;
 }
 /**
  * Interface for mixr contract definition
@@ -61,22 +75,46 @@ export interface IMIXRContractType extends IERC20Type {
         transactionType: number,
     ) => Promise<number>;
     getRegisteredTokens: () => Promise<[[string], number]>;
+    getTokensAcceptedForDeposits: () => Promise<[[string], number]>;
+    getTokensAcceptedForRedemptions: () => Promise<[[string], number]>;
     depositToken: (token: string, depositInTokenWei: string, options?: any) => Promise<void>;
-    redeemMIXR: (token: string, redemptionInBasketWei: string, options?: any) => Promise<void>;
+    redeemMIX: (token: string, redemptionInBasketWei: string, options?: any) => Promise<void>;
     approve: (address: string, amount: string, options: object) => Promise<void>;
     registerDetailedToken: (address: string, options: object) => Promise<void>;
+    registerStandardToken:
+        (address: string, name: string, symbol: string, decimals: string, options: object) => Promise<void>;
     getName: (address: string) => Promise<string>;
+    getSymbol: (address: string) => Promise<string>;
     getDecimals: (address: string) => Promise<string>;
-    isGovernor: (address: string) => Promise<boolean>;
     getTargetProportion: (address: string) => Promise<string>;
+    getDepositFee: () => Promise<BigNumber>;
+    getRedemptionFee: () => Promise<BigNumber>;
+    getTransferFee: () => Promise<BigNumber>;
+    setBaseFee: (amount: string, type: number, options: object) => Promise<void>;
+    setTokensTargetProportion: (tokens: string[],  proportions: string[], options: object) => Promise<void>;
 }
 /**
- * TODO:
+ * Interface for Whitelist contract definition
+ */
+export interface IWhitelistType {
+    isGovernor: (address: string) => Promise<boolean>;
+}
+/**
+ * Blockchain state interface
  */
 export interface IBlockchainState {
     mixrContract?: IMIXRContractType;
+    whitelistContract?: IWhitelistType;
+    bildContract?: IBILDState;
     IERC20ABI?: object;
     userAccount?: string;
     web3?: IWeb3Type;
     walletInfo?: IWalletType[];
+}
+/**
+ * Interface for BILD contract
+ */
+export interface IBILDState extends IERC20Type {
+    setMinimumStake: (minimumStake: string, options?: object) => Promise<void>;
+    getMinimumStake: () => Promise<BigNumber>;
 }

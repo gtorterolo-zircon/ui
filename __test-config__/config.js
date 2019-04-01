@@ -6,6 +6,7 @@ const portscanner = require('portscanner');
 
 const SampleERC20Contract = require('../src/contracts/SampleDetailedERC20.json');
 const MIXRContract = require('../src/contracts/MIXR.json');
+const WhitelistContract = require('../src/contracts/Whitelist.json');
 const FixidityLibMockContract = require('../src/contracts/FixidityLibMock.json');
 const FeesbMockContract = require('../src/contracts/FeesMock.json');
 
@@ -46,9 +47,11 @@ const configContracts = async () => {
     const walletFees = accounts[3];
 
     // set some variables
-    const mixrDecimals = 24;
+    // const mixrDecimals = 24;
     const defaultERC20Decimals = 18;
-    const tokensDeposit = 2;
+    const tokensToDeploy = 525000;
+    const tokensToUser = 50;
+    const tokensToDeposit = tokensToDeploy - tokensToUser;
 
     // verify web3
     if (web3 === undefined) {
@@ -60,10 +63,54 @@ const configContracts = async () => {
     ContractMIXR.setProvider(web3.currentProvider);
     const mixr = await ContractMIXR.deployed();
 
+    // load MIXR contract
+    const ContractWhitelist = truffleContract(WhitelistContract);
+    ContractWhitelist.setProvider(web3.currentProvider);
+    const whitelist = await ContractWhitelist.deployed();
+
     // load the ERC20 sample
     const ContractSampleERC20 = truffleContract(SampleERC20Contract);
     ContractSampleERC20.setProvider(web3.currentProvider);
-    const ERC20Sample = await ContractSampleERC20.deployed();
+    const ERC20Gemini = await ContractSampleERC20.new(
+        governor,
+        tokenNumber(defaultERC20Decimals, tokensToDeploy),
+        defaultERC20Decimals,
+        'Gemini Dollar',
+        'GUSD',
+        { from: governor },
+    );
+    const ERC20Tether = await ContractSampleERC20.new(
+        governor,
+        tokenNumber(defaultERC20Decimals, tokensToDeploy),
+        defaultERC20Decimals,
+        'Tether',
+        'USDT',
+        { from: governor },
+    );
+    const ERC20True = await ContractSampleERC20.new(
+        governor,
+        tokenNumber(defaultERC20Decimals, tokensToDeploy),
+        defaultERC20Decimals,
+        'True USD',
+        'TUSD',
+        { from: governor },
+    );
+    const ERC20USD = await ContractSampleERC20.new(
+        governor,
+        tokenNumber(defaultERC20Decimals, tokensToDeploy),
+        defaultERC20Decimals,
+        'USD Coin',
+        'USDC',
+        { from: governor },
+    );
+    const ERC20Paxos = await ContractSampleERC20.new(
+        governor,
+        tokenNumber(defaultERC20Decimals, tokensToDeploy),
+        defaultERC20Decimals,
+        'Paxos Coin',
+        'PAX',
+        { from: governor },
+    );
 
     // load fixidity
     const ContractFixidityLibMock = truffleContract(FixidityLibMockContract);
@@ -82,7 +129,7 @@ const configContracts = async () => {
 
     console.log('Setting permitions ...');
     // deploy mixr and sample erc20
-    await mixr.addGovernor(governor, {
+    await whitelist.addGovernor(governor, {
         from: owner,
     });
 
@@ -91,17 +138,16 @@ const configContracts = async () => {
     // set base fee
     const baseFee = new BigNumber(10).pow(23).toString(10);
     // set account to receive fees
-    await mixr.setStakeholderAccount(walletFees, { from: governor });
+    await mixr.setBILDContract(walletFees, { from: owner });
     // define amounts
-    const tokensToDeposit = tokenNumber(defaultERC20Decimals, tokensDeposit);
-    const MIXToMint = new BigNumber(10).pow(mixrDecimals).multipliedBy(tokensDeposit);
+    const tokensInDeposit = tokenNumber(defaultERC20Decimals, tokensToDeposit - tokensToUser);
 
 
     // add first token
-    await mixr.registerStandardToken(ERC20Sample.address, web3.utils.utf8ToHex('SAMPLE'), 18, { from: governor });
+    await mixr.registerDetailedToken(ERC20Gemini.address, { from: governor });
     await mixr.setTokensTargetProportion(
         [
-            ERC20Sample.address,
+            ERC20Gemini.address,
         ],
         [
             fixed1.toString(10),
@@ -109,14 +155,105 @@ const configContracts = async () => {
         { from: governor },
     );
     //
-    await mixr.setTransactionFee(ERC20Sample.address, baseFee, DEPOSIT, { from: governor });
-    await mixr.setTransactionFee(ERC20Sample.address, baseFee, REDEMPTION, { from: governor });
+    await mixr.setBaseFee(baseFee, DEPOSIT, { from: governor });
+    await mixr.setBaseFee(baseFee, REDEMPTION, { from: governor });
     //
-    await ERC20Sample.transfer(user, tokenNumber(defaultERC20Decimals, 100), { from: governor });
+    await ERC20Gemini.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
     // approve and deposit
-    await mixr.approve(mixr.address, MIXToMint.toString(10), { from: user });
-    await ERC20Sample.approve(mixr.address, tokensToDeposit.toString(10), { from: user });
-    await mixr.depositToken(ERC20Sample.address, tokensToDeposit.toString(10), { from: user });
+    await ERC20Gemini.approve(mixr.address, tokensInDeposit, { from: governor });
+    await mixr.depositToken(ERC20Gemini.address, tokensInDeposit, { from: governor });
+
+
+    // add second token
+    await mixr.registerDetailedToken(ERC20Tether.address, { from: governor });
+    await mixr.setTokensTargetProportion(
+        [
+            ERC20Gemini.address,
+            ERC20Tether.address,
+        ],
+        [
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 2)).toString(10),
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 2)).toString(10),
+        ],
+        { from: governor },
+    );
+    //
+    await ERC20Tether.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
+    // approve and deposit
+    await ERC20Tether.approve(mixr.address, tokensInDeposit, { from: governor });
+    await mixr.depositToken(ERC20Tether.address, tokensInDeposit, { from: governor });
+
+
+    // add third token
+    await mixr.registerDetailedToken(ERC20True.address, { from: governor });
+    await mixr.setTokensTargetProportion(
+        [
+            ERC20Gemini.address,
+            ERC20Tether.address,
+            ERC20True.address,
+        ],
+        [
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 4)).toString(10),
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 4)).toString(10),
+            new BigNumber(await fixidityLibMock.newFixedFraction(2, 4)).toString(10),
+        ],
+        { from: governor },
+    );
+    //
+    await ERC20True.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
+    // approve and deposit
+    await ERC20True.approve(mixr.address, tokensInDeposit, { from: governor });
+    await mixr.depositToken(ERC20True.address, tokensInDeposit, { from: governor });
+
+
+    // add fourth token
+    await mixr.registerDetailedToken(ERC20USD.address, { from: governor });
+    await mixr.setTokensTargetProportion(
+        [
+            ERC20Gemini.address,
+            ERC20Tether.address,
+            ERC20True.address,
+            ERC20USD.address,
+        ],
+        [
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 4)).toString(10),
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 4)).toString(10),
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 4)).toString(10),
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 4)).toString(10),
+        ],
+        { from: governor },
+    );
+    //
+    await ERC20USD.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
+    // approve and deposit
+    await ERC20USD.approve(mixr.address, tokensInDeposit, { from: governor });
+    await mixr.depositToken(ERC20USD.address, tokensInDeposit, { from: governor });
+
+
+    // add fifth token
+    await mixr.registerDetailedToken(ERC20Paxos.address, { from: governor });
+    await mixr.setTokensTargetProportion(
+        [
+            ERC20Gemini.address,
+            ERC20Tether.address,
+            ERC20True.address,
+            ERC20USD.address,
+            ERC20Paxos.address,
+        ],
+        [
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 5)).toString(10),
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 5)).toString(10),
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 5)).toString(10),
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 5)).toString(10),
+            new BigNumber(await fixidityLibMock.newFixedFraction(1, 5)).toString(10),
+        ],
+        { from: governor },
+    );
+    //
+    await ERC20Paxos.transfer(user, tokenNumber(defaultERC20Decimals, tokensToUser), { from: governor });
+    // approve and deposit
+    await ERC20Paxos.approve(mixr.address, tokensInDeposit, { from: governor });
+    await mixr.depositToken(ERC20Paxos.address, tokensInDeposit, { from: governor });
 };
 
 configContracts().then(() => {

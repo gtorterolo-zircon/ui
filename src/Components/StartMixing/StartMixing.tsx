@@ -11,7 +11,7 @@ import './StartMixing.css';
 const StartMixing = (props: any) => (
     <div>
         <div className="Start-Mixing__container">
-            <p className="Start-Mixing__title">THE CEMENT MIXR PROVIDES ON DEMAND LIQUIDITY AND
+            <p className="Start-Mixing__title">CEMENT MIXR PROVIDES ON DEMAND LIQUIDITY AND
                     DECENTRALIZED  EXCHANGE FOR STABLECOINS</p>
             <p className="Start-Mixing__content">Deposit a stablecoin into the MIXR and seamlessly exchange it
                     for any other stablecoin, or simply create new MIXUSD token.</p>

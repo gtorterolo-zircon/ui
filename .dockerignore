@@ -1,0 +1,26 @@
+# ignore node related
+*/node_modules
+*/npm-debug.log
+
+# ignore docker related
+Dockerfile*
+docker-compose*
+.dockerignore
+
+# ignore local configs
+*/.git
+*/.gitignore
+*/.env
+*/.vscode
+
+# ignore deployments
+*/bin
+*/obj
+*/build
+*/coverage
+*/docs
+
+# ignore misc files
+*/README.md
+*/LICENSE
+*/*.png

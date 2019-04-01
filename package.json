@@ -25,7 +25,10 @@
         "live": "serve -s build -l 3000",
         "link-contracts": "run-script-os",
         "link-contracts:linux:darwin": "cd src && ln -s ../../Contracts/build/contracts contracts",
-        "link-contracts:win32": "cd src && mklink \\D contracts ..\\..\\Contracts\\build\\contracts"
+        "link-contracts:win32": "cd src && mklink \\D contracts ..\\..\\Contracts\\build\\contracts",
+        "copy-contracts": "run-script-os",
+        "copy-contracts:linux:darwin": "cd src && cp ../../Contracts/build/contracts contracts",
+        "copy-contracts:win32": "cd src && mkdir contracts && copy \\D contracts ..\\..\\Contracts\\build\\contracts\\*.json"
     },
     "dependencies": {
         "@types/react": "16.8.3",

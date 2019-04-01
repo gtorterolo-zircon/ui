@@ -74,9 +74,9 @@ export interface IMIXRContractType extends IERC20Type {
         transactionAmount: string,
         transactionType: number,
     ) => Promise<number>;
-    getRegisteredTokens: () => Promise<[[string], number]>;
-    getTokensAcceptedForDeposits: () => Promise<[[string], number]>;
-    getTokensAcceptedForRedemptions: () => Promise<[[string], number]>;
+    getRegisteredTokens: () => Promise<[string]>;
+    getTokensAcceptedForDeposits: () => Promise<[string]>;
+    getTokensAcceptedForRedemptions: () => Promise<[string]>;
     depositToken: (token: string, depositInTokenWei: string, options?: any) => Promise<void>;
     redeemMIX: (token: string, redemptionInBasketWei: string, options?: any) => Promise<void>;
     approve: (address: string, amount: string, options: object) => Promise<void>;
@@ -87,9 +87,9 @@ export interface IMIXRContractType extends IERC20Type {
     getSymbol: (address: string) => Promise<string>;
     getDecimals: (address: string) => Promise<string>;
     getTargetProportion: (address: string) => Promise<string>;
-    getDepositFee: () => Promise<BigNumber>;
-    getRedemptionFee: () => Promise<BigNumber>;
-    getTransferFee: () => Promise<BigNumber>;
+    baseDepositFee: () => Promise<BigNumber>;
+    baseRedemptionFee: () => Promise<BigNumber>;
+    baseTransferFee: () => Promise<BigNumber>;
     setBaseFee: (amount: string, type: number, options: object) => Promise<void>;
     setTokensTargetProportion: (tokens: string[],  proportions: string[], options: object) => Promise<void>;
 }

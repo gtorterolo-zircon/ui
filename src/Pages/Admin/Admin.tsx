@@ -249,8 +249,8 @@ function RegisterTokensHook(props: { mixrContract: IMIXRContractType, userAccoun
      */
     function updateRegisteredTokens() {
         const { mixrContract } = props;
-        mixrContract.getRegisteredTokens().then((tokens: [[string], number]) => {
-            const tokenMap = tokens[0];
+        mixrContract.getRegisteredTokens().then((tokens: [string]) => {
+            const tokenMap = tokens;
             const tokenElements = tokenMap.map(
                 (token) => <li className="Admin-Input__title Admin-Input__title--padding" key={token}>{token}</li>,
             );
@@ -404,9 +404,8 @@ function SetTargetProportionHook(props: { mixrContract: IMIXRContractType, web3:
 
         const tokensAndPorportions: [{ address: string, name: string, proportion: string }] = [{} as any];
         tokensAndPorportions.pop();
-        const approved: [[string], number] = await mixrContract.getRegisteredTokens();
-        const approvedTokensAddress: [string] = approved[0];
-        const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
+        const approvedTokensAddress: [string] = await mixrContract.getRegisteredTokens();
+        const totalApprovedTokens: number = approvedTokensAddress.length;
         const mixrDecimals = new BigNumber(await mixrContract.decimals()).toNumber();
         // iterate over accepted tokens to add them of state component for rendering
         for (let i = 0; i < totalApprovedTokens; i += 1) {
@@ -512,13 +511,13 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
         const { mixrContract } = props;
         const mixrDecimals = new BigNumber(await mixrContract.decimals()).toNumber();
         const baseFeeDeposit = new BigNumber(
-            await mixrContract.getDepositFee(),
+            await mixrContract.baseDepositFee(),
         ).dividedBy(10 ** mixrDecimals).toString();
         const baseFeeRedemption = new BigNumber(
-            await mixrContract.getRedemptionFee(),
+            await mixrContract.baseRedemptionFee(),
         ).dividedBy(10 ** mixrDecimals).toString();
         const baseFeeTransfer = new BigNumber(
-            await mixrContract.getTransferFee(),
+            await mixrContract.baseTransferFee(),
         ).dividedBy(10 ** mixrDecimals).toString();
         return { deposit: baseFeeDeposit, redemption: baseFeeRedemption, transfer: baseFeeTransfer };
     }

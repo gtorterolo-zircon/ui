@@ -1,6 +1,6 @@
 {
     "name": "client",
-    "version": "0.0.1",
+    "version": "0.1.4",
     "private": true,
     "engineStrict": true,
     "engines": {
@@ -27,7 +27,7 @@
         "link-contracts:linux:darwin": "cd src && ln -s ../../Contracts/build/contracts contracts",
         "link-contracts:win32": "cd src && mklink \\D contracts ..\\..\\Contracts\\build\\contracts",
         "copy-contracts": "run-script-os",
-        "copy-contracts:linux:darwin": "cd src && cp ../../Contracts/build/contracts contracts",
+        "copy-contracts:linux:darwin": "cd src && cp -r ../../Contracts/build/contracts contracts",
         "copy-contracts:win32": "cd src && mkdir contracts && copy \\D contracts ..\\..\\Contracts\\build\\contracts\\*.json"
     },
     "dependencies": {

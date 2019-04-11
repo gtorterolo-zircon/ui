@@ -55,14 +55,6 @@ class Admin extends Component<{}, IAdmin> {
      */
     public async componentDidMount() {
         await BlockchainGeneric.onLoad().then((result) => {
-            this.setState({
-                IERC20ABI: result.IERC20ABI,
-                bildContract: result.bildContract,
-                mixrContract: result.mixrContract,
-                userAccount: result.userAccount,
-                walletInfo: result.walletInfo,
-                web3: result.web3,
-            });
             if (
                 result.userAccount === undefined ||
                 result.whitelistContract === undefined ||
@@ -71,7 +63,16 @@ class Admin extends Component<{}, IAdmin> {
                 return;
             }
             result.whitelistContract.isGovernor(result.userAccount).then((isGovernor) => {
-                this.setState({ isGovernor });
+                console.log((result.whitelistContract as any).address, result.userAccount, isGovernor);
+                this.setState({
+                    IERC20ABI: result.IERC20ABI,
+                    bildContract: result.bildContract,
+                    isGovernor,
+                    mixrContract: result.mixrContract,
+                    userAccount: result.userAccount,
+                    walletInfo: result.walletInfo,
+                    web3: result.web3,
+                });
             });
         });
     }

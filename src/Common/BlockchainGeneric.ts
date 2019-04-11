@@ -55,7 +55,7 @@ class BlockchainGeneric {
     public static getTokensLogo() {
         return [
             { symbol: 'MIX', logo: MIXicon },
-            { symbol: 'USDT', logo: USDTicon },
+            { symbol: 'BRN', logo: USDTicon },
             { symbol: 'TUSD', logo: TUSDicon },
             { symbol: 'USDC', logo: USDCicon },
             { symbol: 'PAX', logo: PAXicon },
@@ -124,7 +124,7 @@ class BlockchainGeneric {
             // iterate over accepted tokens to add them of state component for rendering
             for (let i = 0; i < totalApprovedTokens; i += 1) {
                 if (validTokensForDeposit
-                    .find((name) => name === approvedTokensAddress[i]) === undefined ||
+                    .find((name) => name === approvedTokensAddress[i]) === undefined &&
                     validTokensForRedemption
                         .find((name) => name === approvedTokensAddress[i]) === undefined) {
                     continue;

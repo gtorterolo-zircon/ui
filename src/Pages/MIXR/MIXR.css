@@ -310,3 +310,8 @@ input {
 .white-text {
     color: #fff;
 }
+
+.Basket__Logo {
+    padding: 30px;
+    width: 250px;
+}

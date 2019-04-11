@@ -15,13 +15,12 @@ import StartMixing from '../../Components/StartMixing/StartMixing';
 import Popup from '../../Components/Popup/Popup';
 
 import MaxButton from '../../Assets/img/button-max.svg';
+import BasketIMG from '../../Assets/img/cementdao-basket.svg';
 import DropDownButton from '../../Assets/img/dropdown-button.svg';
 import whiteDropDownButton from '../../Assets/img/wallet-icons/dropdown-arrow.svg';
 
 import './MIXR.css';
-import { render } from 'react-dom';
 
-let rightDepositSelect = '';
 let inputAmountAssetGlobal = '';
 const logger = createLogger({
     format: format.combine(
@@ -169,7 +168,9 @@ class MIXR extends Component<{}, IMIXRState> {
                             isMixing && mixingHookeRender
                         }
                     </div>
-                    <div className="MIXR__basket-composition" />
+                    <div className="MIXR__basket-composition">
+                        <img className="Basket__Logo" src={BasketIMG} alt="cementDAO basket" />
+                    </div>
                 </div>
             </div>
         );
@@ -494,10 +495,10 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
     public componentDidUpdate(prevProps: IMixingCreateHookProps, prevState: IMixingCreateHookState, snapshot: any) {
         if (prevProps.typingAssetAmount !== this.props.typingAssetAmount &&
             this.props.typingAssetAmount === false) {
-                if (prevProps.inputAmount !== this.state.inputValue) {
-                    this.generateDataToRenderExchange(this.props.inputAmount);
-                    this.setState({ inputValue: this.props.inputAmount });
-                }
+            if (prevProps.inputAmount !== this.state.inputValue) {
+                this.generateDataToRenderExchange(this.props.inputAmount);
+                this.setState({ inputValue: this.props.inputAmount });
+            }
         }
     }
 
@@ -810,19 +811,16 @@ function MixingExchangeHook(props: {
         const tokensToDeposit = new BigNumber(10 ** 18).multipliedBy(tokens).toString(10);
         // const MIXToMint = new BigNumber(10).pow(mixrDecimals).multipliedBy(tokens);
         // approve token
+        setTransactionStatus(TransactionStatus.Pending);
         ERC.methods.approve(mixrContract.address, tokensToDeposit)
-            .send({ from: userAccount })
-            .then(() => {
-                setTransactionStatus(TransactionStatus.Pending);
-                // deposit
-                mixrContract.depositToken(assetAddress, tokensToDeposit, {
-                    from: userAccount,
-                }).then(() => {
-                    setTransactionStatus(TransactionStatus.Success);
-                }).catch(() => {
-                    setTransactionStatus(TransactionStatus.Fail);
-                });
-            });
+            .send({ from: userAccount });
+        mixrContract.depositToken(assetAddress, tokensToDeposit, {
+            from: userAccount,
+        }).then(() => {
+            setTransactionStatus(TransactionStatus.Success);
+        }).catch(() => {
+            setTransactionStatus(TransactionStatus.Fail);
+        });
     }
 
     /**

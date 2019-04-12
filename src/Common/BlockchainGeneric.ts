@@ -55,7 +55,7 @@ class BlockchainGeneric {
     public static getTokensLogo() {
         return [
             { symbol: 'MIX', logo: MIXicon },
-            { symbol: 'BRN', logo: USDTicon },
+            { symbol: 'USDT', logo: USDTicon },
             { symbol: 'TUSD', logo: TUSDicon },
             { symbol: 'USDC', logo: USDCicon },
             { symbol: 'PAX', logo: PAXicon },

@@ -52,16 +52,17 @@ class BlockchainGeneric {
     /**
      * Get tokens logo
      */
-    public static getTokensLogo() {
-        return [
-            { symbol: 'MIX', logo: MIXicon },
-            { symbol: 'USDT', logo: USDTicon },
-            { symbol: 'TUSD', logo: TUSDicon },
-            { symbol: 'USDC', logo: USDCicon },
-            { symbol: 'PAX', logo: PAXicon },
-            { symbol: 'GUSD', logo: GUSDicon },
-            { symbol: 'DAI', logo: DAIicon },
-        ];
+    public static getTokensLogo(tokenSymbol: string) {
+        switch (tokenSymbol) {
+            case 'mix': return MIXicon;
+            case 'usdt': return USDTicon;
+            case 'tusd': return TUSDicon;
+            case 'usdc': return USDCicon;
+            case 'pax': return PAXicon;
+            case 'gusd': return GUSDicon;
+            case 'dai': return DAIicon;
+            default: return MIXicon;
+        }
     }
 
     /**

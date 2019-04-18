@@ -279,8 +279,7 @@ class Mixing extends Component<IMixingProps, IMixingState> {
     public renderAssets = () => {
         const { walletInfo } = this.props;
         return walletInfo.map((element) => {
-            const assetLogo = BlockchainGeneric.getTokensLogo()
-                .filter((e) => e.symbol.toLowerCase() === element.symbol.toLowerCase())[0].logo;
+            const assetLogo = BlockchainGeneric.getTokensLogo(element.symbol.toLowerCase());
             return (
                 <li
                     key={element.symbol.toLowerCase()}
@@ -391,8 +390,7 @@ class Mixing extends Component<IMixingProps, IMixingState> {
             return 'Select Coin To Convert';
         } else {
             const assetToRender = this.props.walletInfo.filter((e) => e.symbol.toLowerCase() === assetSelect)[0];
-            const assetLogo = BlockchainGeneric.getTokensLogo()
-                .filter((e) => e.symbol.toLowerCase() === assetSelect.toLowerCase())[0].logo;
+            const assetLogo = BlockchainGeneric.getTokensLogo(assetSelect.toLowerCase());
             return (
                 <div className="MIXR-Dropdown__item-inner--no-margin">
                     <img className="MIXR-Dropdown__item-image" src={assetLogo} />
@@ -813,14 +811,15 @@ function MixingExchangeHook(props: {
         // approve token
         setTransactionStatus(TransactionStatus.Pending);
         ERC.methods.approve(mixrContract.address, tokensToDeposit)
-            .send({ from: userAccount });
-        mixrContract.depositToken(assetAddress, tokensToDeposit, {
-            from: userAccount,
-        }).then(() => {
-            setTransactionStatus(TransactionStatus.Success);
-        }).catch(() => {
-            setTransactionStatus(TransactionStatus.Fail);
-        });
+            .send({ from: userAccount }).then(() => {
+                mixrContract.depositToken(assetAddress, tokensToDeposit, {
+                    from: userAccount,
+                }).then(() => {
+                    setTransactionStatus(TransactionStatus.Success);
+                }).catch(() => {
+                    setTransactionStatus(TransactionStatus.Fail);
+                });
+            });
     }
 
     /**

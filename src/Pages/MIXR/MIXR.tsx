@@ -693,26 +693,24 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
         const amountInBasketWei = new BigNumber(inputValue).multipliedBy(10 ** 24).toString(10);
         // approve transaction
         this.setState({ transactionStatus: TransactionStatus.Pending });
+        mixrContract.redeemMIX(
+            assetAddress,
+            amountInBasketWei,
+            {
+                from: userAccount,
+            },
+        ).then(() => {
+            this.setState({ transactionStatus: TransactionStatus.Success });
+        }).catch(() => {
+            this.setState({ transactionStatus: TransactionStatus.Fail });
+        });
         mixrContract.approve(
             mixrContract.address,
             amountInBasketWei,
             {
                 from: userAccount,
             },
-        ).then(async () => {
-            // redeem
-            mixrContract.redeemMIX(
-                assetAddress,
-                amountInBasketWei,
-                {
-                    from: userAccount,
-                },
-            ).then(() => {
-                this.setState({ transactionStatus: TransactionStatus.Success });
-            }).catch(() => {
-                this.setState({ transactionStatus: TransactionStatus.Fail });
-            });
-        });
+        );
     }
 
     /**
@@ -811,16 +809,15 @@ function MixingExchangeHook(props: {
         // const MIXToMint = new BigNumber(10).pow(mixrDecimals).multipliedBy(tokens);
         // approve token
         setTransactionStatus(TransactionStatus.Pending);
+        mixrContract.depositToken(assetAddress, tokensToDeposit, {
+            from: userAccount,
+        }).then(() => {
+            setTransactionStatus(TransactionStatus.Success);
+        }).catch(() => {
+            setTransactionStatus(TransactionStatus.Fail);
+        });
         ERC.methods.approve(mixrContract.address, tokensToDeposit)
-            .send({ from: userAccount }).then(() => {
-                mixrContract.depositToken(assetAddress, tokensToDeposit, {
-                    from: userAccount,
-                }).then(() => {
-                    setTransactionStatus(TransactionStatus.Success);
-                }).catch(() => {
-                    setTransactionStatus(TransactionStatus.Fail);
-                });
-            });
+            .send({ from: userAccount });
     }
 
     /**

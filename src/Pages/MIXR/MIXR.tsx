@@ -170,6 +170,7 @@ class MIXR extends Component<{}, IMIXRState> {
                     </div>
                     <div className="MIXR__basket-composition">
                         <img className="Basket__Logo" src={BasketIMG} alt="cementDAO basket" />
+                        <p className="whitetext">*static image - dynamic representation of basket coming soon</p>
                     </div>
                 </div>
             </div>
@@ -691,6 +692,7 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
         // TODO: needs to use convertTokenAmount method
         const amountInBasketWei = new BigNumber(inputValue).multipliedBy(10 ** 24).toString(10);
         // approve transaction
+        this.setState({ transactionStatus: TransactionStatus.Pending });
         mixrContract.approve(
             mixrContract.address,
             amountInBasketWei,
@@ -699,7 +701,6 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
             },
         ).then(async () => {
             // redeem
-            this.setState({ transactionStatus: TransactionStatus.Pending });
             mixrContract.redeemMIX(
                 assetAddress,
                 amountInBasketWei,

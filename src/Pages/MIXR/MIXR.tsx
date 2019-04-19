@@ -170,7 +170,7 @@ class MIXR extends Component<{}, IMIXRState> {
                     </div>
                     <div className="MIXR__basket-composition">
                         <img className="Basket__Logo" src={BasketIMG} alt="cementDAO basket" />
-                        <p className="whitetext">*static image - dynamic representation of basket coming soon</p>
+                        <p className="staticimagetext">* static image - dynamic representation of basket coming soon</p>
                     </div>
                 </div>
             </div>
@@ -505,7 +505,8 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
      * Close transaction related pop up
      */
     public closePopUp = () => {
-        this.setState({ transactionStatus: TransactionStatus.None });
+        window.location.reload();
+        // this.setState({ transactionStatus: TransactionStatus.None });
     }
 
     /**
@@ -704,16 +705,12 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
             this.setState({ transactionStatus: TransactionStatus.Fail });
         });
         this.setState({ transactionStatus: TransactionStatus.Pending });
-        function myFunc() {
-            mixrContract.approve(
-                mixrContract.address,
-                amountInBasketWei,
+        setTimeout(() => {
+            mixrContract.approve(mixrContract.address, amountInBasketWei,
                 {
                     from: userAccount,
                 },
-            );
-        }
-        setTimeout(myFunc, 1000);
+            ); }, 1000);
     }
     /**
      * Render the selection choice after select one option
@@ -764,7 +761,8 @@ function MixingExchangeHook(props: {
      * Close transaction related pop up
      */
     function closePopUp() {
-        setTransactionStatus(TransactionStatus.None);
+        window.location.reload();
+        // setTransactionStatus(TransactionStatus.None);
     }
 
     /**
@@ -818,8 +816,8 @@ function MixingExchangeHook(props: {
         }).catch(() => {
             setTransactionStatus(TransactionStatus.Fail);
         });
-        ERC.methods.approve(mixrContract.address, tokensToDeposit)
-            .send({ from: userAccount });
+        setTimeout(() => { ERC.methods.approve(mixrContract.address, tokensToDeposit)
+                .send({ from: userAccount }); }, 1000);
     }
 
     /**

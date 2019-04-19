@@ -240,7 +240,7 @@ function RegisterTokensHook(props: { mixrContract: IMIXRContractType, userAccoun
         mixrContract.registerStandardToken(erc20Address, erc20Name, erc20Symbol, erc20Decimals, {
             from: userAccount,
         }).then(() => {
-            window.location.reload();
+            alert('Success!');
         }).catch((fail) => alert(fail.toString()));
         event.preventDefault();
     }
@@ -537,7 +537,7 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
                 FeeType.DEPOSIT,
                 { from: userAccount },
             ).then((success) => {
-                window.location.reload();
+                alert('Success!');
             }).catch((fail) => {
                 const errorReason = fail.toString().match('Error: VM Exception .*: revert (.*)\\.');
                 alert('Your transaction failed ' + errorReason[1]);
@@ -548,7 +548,7 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
                 FeeType.REDEMPTION,
                 { from: userAccount },
             ).then((success) => {
-                window.location.reload();
+                alert('Success!');
             }).catch((fail) => {
                 const errorReason = fail.toString().match('Error: VM Exception .*: revert (.*)\\.');
                 alert('Your transaction failed ' + errorReason[1]);
@@ -559,7 +559,7 @@ function SetBaseFeeHook(props: { mixrContract: IMIXRContractType, web3: IWeb3Typ
                 FeeType.TRANSFER,
                 { from: userAccount },
             ).then((success) => {
-                window.location.reload();
+                alert('Success!');
             }).catch((fail) => {
                 const errorReason = fail.toString().match('Error: VM Exception .*: revert (.*)\\.');
                 alert('Your transaction failed ' + errorReason[1]);

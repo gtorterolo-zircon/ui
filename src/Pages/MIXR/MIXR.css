@@ -316,6 +316,8 @@ input {
     width: 200px;
 }
 
-.whitetext {
-    color: white;
+.staticimagetext {
+    color: #3a3a3a;
+    padding: 0px 25px;
+    font-size: 0.75em;
 }

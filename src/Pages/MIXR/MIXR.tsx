@@ -692,7 +692,6 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
         // TODO: needs to use convertTokenAmount method
         const amountInBasketWei = new BigNumber(inputValue).multipliedBy(10 ** 24).toString(10);
         // approve transaction
-        this.setState({ transactionStatus: TransactionStatus.Pending });
         mixrContract.redeemMIX(
             assetAddress,
             amountInBasketWei,
@@ -704,15 +703,18 @@ class MixingCreateHook extends Component<IMixingCreateHookProps, IMixingCreateHo
         }).catch(() => {
             this.setState({ transactionStatus: TransactionStatus.Fail });
         });
-        mixrContract.approve(
-            mixrContract.address,
-            amountInBasketWei,
-            {
-                from: userAccount,
-            },
-        );
+        this.setState({ transactionStatus: TransactionStatus.Pending });
+        function myFunc() {
+            mixrContract.approve(
+                mixrContract.address,
+                amountInBasketWei,
+                {
+                    from: userAccount,
+                },
+            );
+        }
+        setTimeout(myFunc, 1000);
     }
-
     /**
      * Render the selection choice after select one option
      */

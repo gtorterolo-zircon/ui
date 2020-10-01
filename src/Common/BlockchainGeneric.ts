@@ -106,9 +106,9 @@ class BlockchainGeneric {
                 await mixrContract.balanceOf(userAccount),
             ).dividedBy(10 ** mixrDecimals);
             // same as above!
-            const approved: [[string], number] = await mixrContract.getRegisteredTokens();
-            const approvedTokensAddress: [string] = approved[0];
-            const totalApprovedTokens: number = new BigNumber(approved[1]).toNumber();
+            const approved: [string] = await mixrContract.getRegisteredTokens();
+            const approvedTokensAddress: [string] = approved;
+            const totalApprovedTokens: number = approved.length;
             // save in a state array to render
             const walletInfo: IWalletType[] = [
                 {
@@ -124,9 +124,9 @@ class BlockchainGeneric {
             const validTokensForRedemption = await mixrContract.getTokensAcceptedForRedemptions();
             // iterate over accepted tokens to add them of state component for rendering
             for (let i = 0; i < totalApprovedTokens; i += 1) {
-                if (validTokensForDeposit[0]
+                if (validTokensForDeposit
                     .find((name) => name === approvedTokensAddress[i]) === undefined ||
-                    validTokensForRedemption[0]
+                    validTokensForRedemption
                         .find((name) => name === approvedTokensAddress[i]) === undefined) {
                     continue;
                 }
